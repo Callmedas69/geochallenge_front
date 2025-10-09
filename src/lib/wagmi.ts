@@ -14,17 +14,10 @@ export const config = getDefaultConfig({
   chains: [baseSepolia, base],
   transports: {
     [baseSepolia.id]: http(baseSepolia.rpcUrls.default.http[0], {
-      // Enable polling for better event detection on Base Sepolia
-      batch: {
-        multicall: true,
-      },
-      pollingInterval: 4_000, // Poll every 4 seconds
+      batch: true, // Enable batch requests for better performance
     }),
     [base.id]: http(base.rpcUrls.default.http[0], {
-      batch: {
-        multicall: true,
-      },
-      pollingInterval: 4_000,
+      batch: true,
     }),
   },
   ssr: true,

@@ -10,21 +10,24 @@ import { createWalletClient, http, type Address } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { baseSepolia } from 'viem/chains'
 
-// Environment variables
-const VALIDATOR_PRIVATE_KEY = process.env.VALIDATOR_PRIVATE_KEY as `0x${string}`
-const GEOCHALLENEGE_PROXY_ADDRESS = process.env.NEXT_PUBLIC_GEOCHALLENEGE_ADDRESS as Address
-
-if (!VALIDATOR_PRIVATE_KEY) {
-  throw new Error('VALIDATOR_PRIVATE_KEY not set in environment variables')
+// Environment variables - validated at runtime
+const getValidatorPrivateKey = () => {
+  const key = process.env.VALIDATOR_PRIVATE_KEY as `0x${string}`
+  if (!key) {
+    throw new Error('VALIDATOR_PRIVATE_KEY not set in environment variables')
+  }
+  return key
 }
 
+const GEOCHALLENEGE_PROXY_ADDRESS = process.env.NEXT_PUBLIC_GEOCHALLENEGE_ADDRESS as Address
+
 // EIP-712 Domain
-const DOMAIN = {
+const getDomain = () => ({
   name: 'GeoChallenge',
   version: '1',
   chainId: 84532, // Base Sepolia
   verifyingContract: GEOCHALLENEGE_PROXY_ADDRESS,
-} as const
+} as const)
 
 // EIP-712 Types
 const TYPES = {
@@ -54,7 +57,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create wallet client for signing
-    const account = privateKeyToAccount(VALIDATOR_PRIVATE_KEY)
+    const validatorKey = getValidatorPrivateKey()
+    const account = privateKeyToAccount(validatorKey)
     const walletClient = createWalletClient({
       account,
       chain: baseSepolia,
@@ -78,7 +82,7 @@ export async function POST(request: NextRequest) {
     // Sign with EIP-712
     const signature = await walletClient.signTypedData({
       account,
-      domain: DOMAIN,
+      domain: getDomain(),
       types: TYPES,
       primaryType: 'CompletionProof',
       message: proof,

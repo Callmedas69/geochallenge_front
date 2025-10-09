@@ -51,18 +51,14 @@ export function useSubmitProof() {
       }
 
       // Step 2: Submit proof to contract
-      const proof = {
-        competitionId: BigInt(proofResponse.proof.competitionId),
-        winner: proofResponse.proof.winner as `0x${string}`,
-        completionTime: BigInt(proofResponse.proof.completionTime),
-        metadata: proofResponse.proof.metadata,
-      }
+      // Convert proof to bytes32 hash (you may need to adjust this based on your backend response)
+      const proofHash = proofResponse.proof.metadata as `0x${string}` // Assuming backend sends hash
 
       return writeContract({
         address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
         abi: geoChallenge_implementation_ABI,
-        functionName: 'submitWinnerProof',
-        args: [proof, proofResponse.signature],
+        functionName: 'iamtheWinner',
+        args: [competitionId, proofHash, proofResponse.signature],
       })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to submit proof'

@@ -64,7 +64,7 @@ export function useAllCompetitions() {
       staleTime: 30000, // 30s
       gcTime: 300000, // 5min
     },
-  })
+  }) as { data: any; isLoading: boolean }
 
   // Parse and combine data
   const competitions = useMemo(() => {
@@ -108,7 +108,8 @@ export function useAllCompetitions() {
     }
 
     return result
-  }, [rawData, competitionIds])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawData])
 
   return {
     competitions,
