@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(done)",
+      "Bash(npm install:*)",
+      "Bash(npx wagmi:*)",
+      "Bash(timeout 15 npm run typecheck)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run dev:*)",
+      "Bash(taskkill:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(del \"src\\hooks\\useAdminStats.ts\")",
+      "mcp__ide__getDiagnostics",
+      "Bash(npm run typecheck:*)",
+      "Bash(timeout:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run:*)",
+      "Bash(npx tsx:*)",
+      "Bash(node:*)",
+      "Bash(dir /s /b srcabi*.ts)",
+      "Bash(find:*)",
+      "Bash(dir /s /b srcassetsstar*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

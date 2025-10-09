@@ -1,0 +1,232 @@
+export const competitionManager_ABI = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_competitionContract",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "competitionId",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "collection",
+        type: "address",
+      },
+    ],
+    name: "CompetitionCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "competitionId",
+        type: "uint256",
+      },
+      { indexed: false, internalType: "string", name: "name", type: "string" },
+    ],
+    name: "CompetitionValidated",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "competitionContract",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          { internalType: "string", name: "name", type: "string" },
+          { internalType: "string", name: "description", type: "string" },
+          {
+            internalType: "address",
+            name: "collectionAddress",
+            type: "address",
+          },
+          { internalType: "uint8[]", name: "rarityTiers", type: "uint8[]" },
+          { internalType: "uint256", name: "ticketPrice", type: "uint256" },
+          { internalType: "address", name: "treasuryWallet", type: "address" },
+          { internalType: "uint256", name: "treasuryPercent", type: "uint256" },
+          { internalType: "uint256", name: "deadline", type: "uint256" },
+          { internalType: "bool", name: "boosterBoxEnabled", type: "bool" },
+          {
+            internalType: "address",
+            name: "boosterBoxAddress",
+            type: "address",
+          },
+          { internalType: "address", name: "verifierAddress", type: "address" },
+        ],
+        internalType: "struct ICompetitionStorage.CreateCompetitionParams",
+        name: "params",
+        type: "tuple",
+      },
+    ],
+    name: "createCompetitionData",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "collectionAddress",
+            type: "address",
+          },
+          { internalType: "uint8[]", name: "rarityTiers", type: "uint8[]" },
+          { internalType: "uint256", name: "ticketPrice", type: "uint256" },
+          { internalType: "address", name: "treasuryWallet", type: "address" },
+          { internalType: "uint256", name: "treasuryPercent", type: "uint256" },
+          { internalType: "uint256", name: "deadline", type: "uint256" },
+          { internalType: "bool", name: "boosterBoxEnabled", type: "bool" },
+          {
+            internalType: "address",
+            name: "boosterBoxAddress",
+            type: "address",
+          },
+          { internalType: "address", name: "verifierAddress", type: "address" },
+          {
+            internalType: "enum ICompetitionStorage.CompetitionState",
+            name: "state",
+            type: "uint8",
+          },
+          { internalType: "address", name: "winner", type: "address" },
+          { internalType: "uint256", name: "prizePool", type: "uint256" },
+          { internalType: "uint256", name: "totalTickets", type: "uint256" },
+          { internalType: "bool", name: "winnerDeclared", type: "bool" },
+          {
+            internalType: "uint256",
+            name: "winnerDeclaredAt",
+            type: "uint256",
+          },
+          { internalType: "bool", name: "emergencyPaused", type: "bool" },
+        ],
+        internalType: "struct ICompetitionStorage.Competition",
+        name: "competition",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          { internalType: "string", name: "name", type: "string" },
+          { internalType: "string", name: "description", type: "string" },
+          {
+            internalType: "address",
+            name: "collectionAddress",
+            type: "address",
+          },
+          { internalType: "uint8[]", name: "rarityTiers", type: "uint8[]" },
+          { internalType: "uint256", name: "ticketPrice", type: "uint256" },
+          { internalType: "address", name: "treasuryWallet", type: "address" },
+          { internalType: "uint256", name: "treasuryPercent", type: "uint256" },
+          { internalType: "uint256", name: "deadline", type: "uint256" },
+          { internalType: "bool", name: "boosterBoxEnabled", type: "bool" },
+          {
+            internalType: "address",
+            name: "boosterBoxAddress",
+            type: "address",
+          },
+          { internalType: "address", name: "verifierAddress", type: "address" },
+        ],
+        internalType: "struct ICompetitionStorage.CreateCompetitionParams",
+        name: "params",
+        type: "tuple",
+      },
+    ],
+    name: "getCreationGasEstimate",
+    outputs: [
+      { internalType: "uint256", name: "gasEstimate", type: "uint256" },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          { internalType: "string", name: "name", type: "string" },
+          { internalType: "string", name: "description", type: "string" },
+          {
+            internalType: "address",
+            name: "collectionAddress",
+            type: "address",
+          },
+          { internalType: "uint8[]", name: "rarityTiers", type: "uint8[]" },
+          { internalType: "uint256", name: "ticketPrice", type: "uint256" },
+          { internalType: "address", name: "treasuryWallet", type: "address" },
+          { internalType: "uint256", name: "treasuryPercent", type: "uint256" },
+          { internalType: "uint256", name: "deadline", type: "uint256" },
+          { internalType: "bool", name: "boosterBoxEnabled", type: "bool" },
+          {
+            internalType: "address",
+            name: "boosterBoxAddress",
+            type: "address",
+          },
+          { internalType: "address", name: "verifierAddress", type: "address" },
+        ],
+        internalType: "struct ICompetitionStorage.CreateCompetitionParams",
+        name: "params",
+        type: "tuple",
+      },
+      { internalType: "uint256", name: "competitionId", type: "uint256" },
+    ],
+    name: "processCompetitionCreation",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          { internalType: "string", name: "name", type: "string" },
+          { internalType: "string", name: "description", type: "string" },
+          {
+            internalType: "address",
+            name: "collectionAddress",
+            type: "address",
+          },
+          { internalType: "uint8[]", name: "rarityTiers", type: "uint8[]" },
+          { internalType: "uint256", name: "ticketPrice", type: "uint256" },
+          { internalType: "address", name: "treasuryWallet", type: "address" },
+          { internalType: "uint256", name: "treasuryPercent", type: "uint256" },
+          { internalType: "uint256", name: "deadline", type: "uint256" },
+          { internalType: "bool", name: "boosterBoxEnabled", type: "bool" },
+          {
+            internalType: "address",
+            name: "boosterBoxAddress",
+            type: "address",
+          },
+          { internalType: "address", name: "verifierAddress", type: "address" },
+        ],
+        internalType: "struct ICompetitionStorage.CreateCompetitionParams",
+        name: "params",
+        type: "tuple",
+      },
+    ],
+    name: "validateCompetitionParams",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;

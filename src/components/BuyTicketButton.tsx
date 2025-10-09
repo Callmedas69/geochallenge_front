@@ -1,0 +1,124 @@
+/**
+ * @title BuyTicketButton Component
+ * @notice Simple button to purchase competition tickets
+ * @dev KISS principle: Clear states, professional UX, proper error handling
+ */
+
+'use client'
+
+import { useBuyTicket } from '@/hooks/useUserActions'
+import { useUserTicketBalance } from '@/hooks/usePublicCompetitions'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { formatEther } from 'viem'
+import { useAccount } from 'wagmi'
+import { CheckCircle, Loader2, Ticket } from 'lucide-react'
+
+interface BuyTicketButtonProps {
+  competitionId: bigint
+  ticketPrice: bigint
+  collectionAddress: string
+  disabled?: boolean
+}
+
+export function BuyTicketButton({
+  competitionId,
+  ticketPrice,
+  collectionAddress,
+  disabled = false,
+}: BuyTicketButtonProps) {
+  const { address } = useAccount()
+  const { buyTicket, isPending, isConfirming, isSuccess, error } = useBuyTicket()
+  const { data: ticketBalance } = useUserTicketBalance(address, competitionId)
+
+  const handleBuyTicket = async () => {
+    try {
+      await buyTicket(competitionId, ticketPrice)
+    } catch (err) {
+      console.error('Failed to buy ticket:', err)
+    }
+  }
+
+  // Already owns ticket
+  if (ticketBalance && ticketBalance > BigInt(0)) {
+    return (
+      <Alert className="border-green-500 bg-green-50">
+        <CheckCircle className="h-4 w-4 text-green-600" />
+        <AlertDescription className="text-green-800">
+          You already own a ticket for this competition
+        </AlertDescription>
+      </Alert>
+    )
+  }
+
+  // Success state
+  if (isSuccess) {
+    return (
+      <Alert className="border-green-500 bg-green-50">
+        <CheckCircle className="h-4 w-4 text-green-600" />
+        <AlertDescription className="text-green-800 font-semibold">
+          ✅ Ticket purchased successfully!
+        </AlertDescription>
+      </Alert>
+    )
+  }
+
+  // Not connected
+  if (!address) {
+    return (
+      <Button disabled className="w-full" size="lg">
+        Connect Wallet to Buy Ticket
+      </Button>
+    )
+  }
+
+  return (
+    <div className="space-y-3">
+      <Button
+        onClick={handleBuyTicket}
+        disabled={isPending || isConfirming || disabled}
+        className="w-full"
+        size="lg"
+      >
+        {isPending && (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Waiting for approval...
+          </>
+        )}
+        {isConfirming && (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Confirming purchase...
+          </>
+        )}
+        {!isPending && !isConfirming && (
+          <>
+            <Ticket className="mr-2 h-4 w-4" />
+            Buy Ticket - {formatEther(ticketPrice)} ETH
+          </>
+        )}
+      </Button>
+
+      {/* Error Display */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>
+            {error.message.includes('Already owns ticket')
+              ? 'You already own a ticket for this competition'
+              : error.message.includes('Not eligible')
+              ? `You must own an NFT from ${collectionAddress.slice(0, 6)}...${collectionAddress.slice(-4)}`
+              : error.message.includes('Competition not active')
+              ? 'This competition is not currently active'
+              : 'Failed to purchase ticket. Please try again.'}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Info */}
+      <p className="text-xs text-muted-foreground text-center">
+        Required: Own NFT from {collectionAddress.slice(0, 6)}...{collectionAddress.slice(-4)}
+      </p>
+    </div>
+  )
+}
