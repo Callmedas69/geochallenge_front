@@ -1,20 +1,21 @@
 /**
  * @title Homepage
- * @notice Main landing page with platform stats and competitions
- * @dev KISS principle: Simple layout with competitions list
+ * @notice Main landing page showing active competitions only
+ * @dev KISS principle: Simple layout with active competitions
  */
 
 "use client";
 
-import { PlatformStats } from "@/components/PlatformStats";
-import { CompetitionList } from "@/components/CompetitionList";
+import { ActiveCompetitionList } from "@/components/ActiveCompetitionList";
 import { EventNotifications } from "@/components/EventNotifications";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      {/* Global event notifications (Phase 4) */}
+      {/* Global event notifications */}
       <EventNotifications />
 
       {/* Hero Section */}
@@ -26,10 +27,17 @@ export default function HomePage() {
 
       <Separator />
 
-      {/* Main Content: Competitions */}
+      {/* Main Content: Active Competitions Only */}
       <section className="space-y-4 mb-8">
-        <h2 className="text-2xl font-bold tracking-tight">Competitions</h2>
-        <CompetitionList />
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold tracking-tight">
+            Active Competitions
+          </h2>
+          <Link href="/browse">
+            <Button variant="outline">View All Competitions</Button>
+          </Link>
+        </div>
+        <ActiveCompetitionList />
       </section>
     </div>
   );

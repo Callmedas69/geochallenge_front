@@ -15,9 +15,9 @@ import { Separator } from "@/components/ui/separator";
 // ============================================================================
 
 const FOOTER_LINKS = {
-  product: [
+  geoLinks: [
     { label: "Home", href: "/" },
-    { label: "Competitions", href: "/competitions" },
+    { label: "Competitions", href: "/browse" },
     { label: "How It Works", href: "/how-it-works" },
   ],
   // resources: [
@@ -82,9 +82,9 @@ export function Footer() {
 
           {/* Product Links */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold">Product</h4>
+            <h4 className="text-sm font-semibold">Links</h4>
             <ul className="space-y-2">
-              {FOOTER_LINKS.product.map((link) => (
+              {FOOTER_LINKS.geoLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
