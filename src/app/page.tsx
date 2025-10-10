@@ -19,8 +19,8 @@ export default function HomePage() {
       <EventNotifications />
 
       {/* Hero Section */}
-      <div className="text-center space-y-4 py-8 min-h-screen flex items-center justify-center">
-        <p className="text-2xl font-bold italic max-w-2xl mx-auto">
+      <div className="text-center space-y-4 py-8 min-h-[calc(100vh-8rem)] md:min-h-[calc(100vh-6rem)] flex items-center justify-center">
+        <p className="text-lg sm:text-xl md:text-2xl font-bold italic max-w-2xl mx-auto px-4">
           "Complete the sets, win prizes."
         </p>
       </div>
@@ -29,12 +29,14 @@ export default function HomePage() {
 
       {/* Main Content: Active Competitions Only */}
       <section className="space-y-4 mb-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
             Active Competitions
           </h2>
           <Link href="/browse">
-            <Button variant="outline">View All Competitions</Button>
+            <Button variant="outline" className="w-full sm:w-auto">
+              View All Competitions
+            </Button>
           </Link>
         </div>
         <ActiveCompetitionList />

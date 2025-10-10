@@ -70,7 +70,7 @@ export function Footer() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="text-muted-foreground hover:text-primary transition-colors"
+                    className="text-muted-foreground hover:text-primary transition-colors !text-black/50"
                     aria-label={social.label}
                   >
                     <Icon className="w-5 h-5" />
@@ -88,7 +88,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors !text-black/50"
                   >
                     {link.label}
                   </Link>

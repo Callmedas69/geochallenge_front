@@ -6,6 +6,7 @@ import { WagmiProvider } from "wagmi";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { Toaster } from "@/components/ui/sonner";
 import { config } from "../lib/wagmi";
+import { obsidianTheme } from "@/components/CustomConnectButton";
 import { useState } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -24,7 +25,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider showRecentTransactions={false}>
+        <RainbowKitProvider theme={obsidianTheme} showRecentTransactions={false}>
           {children}
         </RainbowKitProvider>
       </QueryClientProvider>

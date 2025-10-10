@@ -1,20 +1,59 @@
-## Error Type
-Runtime TypeError
+"use client";
 
-## Error Message
-Cannot read properties of undefined (reading 'map')
+import { CustomConnectButton } from "@/components/CustomConnectButton";
+import Link from "next/link";
+import MenuBar from "./MenuBar";
 
+export function Header() {
+  return (
+    <header className="w-full border-b border-border">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        {/* Desktop Layout */}
+        <div className="hidden md:flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link href="/">
+              <h1 className="text-4xl font-bold tracking-tighter font-heading text-foreground">
+                GEOART
+              </h1>
+            </Link>
+          </div>
 
-    at Footer (src\components\Footer.tsx:87:37)
-    at RootLayout (src\app\layout.tsx:40:11)
+          {/* Navigation - Centered */}
+          <div className="flex items-center justify-center flex-1">
+            <MenuBar />
+          </div>
 
-## Code Frame
-  85 |             <h4 className="text-sm font-semibold">Product</h4>
-  86 |             <ul className="space-y-2">
-> 87 |               {FOOTER_LINKS.product.map((link) => (
-     |                                     ^
-  88 |                 <li key={link.href}>
-  89 |                   <Link
-  90 |                     href={link.href}
+          {/* Wallet Connect */}
+          <div className="flex items-center">
+            <CustomConnectButton />
+          </div>
+        </div>
 
-Next.js version: 15.5.4 (Webpack)
+        {/* Mobile Layout */}
+        <div className="md:hidden">
+          {/* Top Row: Logo and Wallet */}
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link href="/">
+                <h1 className="text-3xl font-bold tracking-tighter font-heading text-foreground">
+                  GEOART
+                </h1>
+              </Link>
+            </div>
+            <div className="flex items-center">
+              <CustomConnectButton />
+            </div>
+          </div>
+
+          {/* Bottom Row: Navigation */}
+          <div className="pb-3 border-t border-border/50">
+            <div className="pt-3">
+              <MenuBar />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}

@@ -59,14 +59,14 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
   if (isLoading || loadingMetadata) {
     return (
       <Card className="h-full">
-        <div className="flex gap-4">
-          <div className="w-32 flex-shrink-0">
-            <Skeleton className="aspect-[5/7] rounded-l-lg" />
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="w-full sm:w-44 flex-shrink-0 p-6">
+            <Skeleton className="aspect-[5/7] max-w-[200px] mx-auto sm:max-w-none" />
           </div>
-          <div className="flex-1 py-6 pr-6">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-4 w-1/2 mt-2" />
-            <Skeleton className="h-20 w-full mt-4" />
+          <div className="flex-1 p-6 pt-4 sm:pt-6">
+            <Skeleton className="h-5 sm:h-6 w-3/4" />
+            <Skeleton className="h-3 sm:h-4 w-1/2 mt-2" />
+            <Skeleton className="h-16 sm:h-20 w-full mt-4" />
           </div>
         </div>
       </Card>
@@ -104,10 +104,10 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
   return (
     <Link href={`/competition/${competitionId.toString()}`}>
       <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           {/* LEFT: Collection Image Thumbnail - Trading Card Aspect Ratio (5:7) */}
-          <div className="w-44 flex-shrink-0 items-center justify-center pl-8">
-            <div className="aspect-[5/7] relative bg-muted overflow-hidden">
+          <div className="w-full sm:w-44 flex-shrink-0 p-6">
+            <div className="aspect-[5/7] relative bg-muted overflow-hidden max-w-[200px] mx-auto sm:max-w-none">
               {loadingImage ? (
                 <Skeleton className="w-full h-full" />
               ) : imageUrl ? (
@@ -115,6 +115,8 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
                   src={imageUrl}
                   alt={metadata?.[0] || "Collection"}
                   fill
+                  sizes="(max-width: 640px) 200px, 176px"
+                  className="object-cover"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -126,67 +128,71 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
 
           {/* RIGHT: Competition Details */}
           <div className="flex-1 min-w-0">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg flex items-center gap-2 whitespace-nowrap">
-                  <Trophy className="w-5 h-5 text-yellow-500" />
-                  {metadata?.[0] ||
-                    `Competition #${competitionId.toString()}`}{" "}
-                  (#{competitionId.toString()})
+            <CardHeader className="pb-4 pt-4 sm:pt-6">
+              <div className="flex items-start sm:items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2 flex-wrap sm:whitespace-nowrap">
+                  <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 flex-shrink-0" />
+                  <span className="break-words">
+                    {metadata?.[0] ||
+                      `Competition #${competitionId.toString()}`}{" "}
+                    <span className="text-muted-foreground text-sm">
+                      (#{competitionId.toString()})
+                    </span>
+                  </span>
                 </CardTitle>
-                <Badge className={stateInfo.color}>{stateInfo.label}</Badge>
+                <Badge className={`${stateInfo.color} flex-shrink-0`}>{stateInfo.label}</Badge>
               </div>
               <CardDescription className="line-clamp-2">
                 {metadata?.[1] ||
                   `Collection: ${competition.collectionAddress.slice(0, 6)}...${competition.collectionAddress.slice(-4)}`}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 pb-6">
               {/* Prize Pool */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-muted-foreground">
                     Prize Pool
                   </span>
                 </div>
-                <span className="font-semibold">{prizePoolETH} ETH</span>
+                <span className="font-semibold text-sm sm:text-base">{prizePoolETH} ETH</span>
               </div>
 
               {/* Tickets Sold */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-muted-foreground">
                     Tickets Sold
                   </span>
                 </div>
-                <span className="font-semibold">
+                <span className="font-semibold text-sm sm:text-base">
                   {competition.totalTickets.toString()}
                 </span>
               </div>
 
               {/* Ticket Price */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Trophy className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-muted-foreground">
                     Ticket Price
                   </span>
                 </div>
-                <span className="font-semibold">{ticketPriceETH} ETH</span>
+                <span className="font-semibold text-sm sm:text-base">{ticketPriceETH} ETH</span>
               </div>
 
               {/* Deadline */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-muted-foreground">
                     Deadline
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">
+                  <span className="text-xs sm:text-sm font-medium">
                     {deadlineDate.toLocaleDateString()}
                   </span>
                   {isExpired && competition.state === 1 && (
@@ -200,9 +206,9 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
               {/* Countdown Timer - Only show for active competitions */}
               {competition.state === 1 && (
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       Time Left
                     </span>
                   </div>
@@ -213,17 +219,17 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
                       </Badge>
                     ) : countdown.totalSeconds < 86400 ? (
                       // Less than 1 day - show in red
-                      <Badge variant="destructive" className="text-xs font-mono">
+                      <Badge variant="destructive" className="text-[10px] sm:text-xs font-mono px-1.5 sm:px-2">
                         {countdownText}
                       </Badge>
                     ) : countdown.totalSeconds < 259200 ? (
                       // Less than 3 days - show in yellow/orange
-                      <Badge className="bg-orange-500 text-xs font-mono">
+                      <Badge className="bg-orange-500 text-[10px] sm:text-xs font-mono px-1.5 sm:px-2">
                         {countdownText}
                       </Badge>
                     ) : (
                       // More than 3 days - show in green
-                      <Badge className="bg-green-500 text-xs font-mono">
+                      <Badge className="bg-green-500 text-[10px] sm:text-xs font-mono px-1.5 sm:px-2">
                         {countdownText}
                       </Badge>
                     )}
@@ -233,12 +239,12 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
 
               {/* Winner */}
               {competition.winnerDeclared && (
-                <div className="pt-2 border-t">
+                <div className="pt-2 sm:pt-3 border-t">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       Winner
                     </span>
-                    <span className="text-sm font-mono">
+                    <span className="text-xs sm:text-sm font-mono">
                       {competition.winner.slice(0, 6)}...
                       {competition.winner.slice(-4)}
                     </span>
@@ -248,7 +254,7 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
 
               {/* Emergency Paused */}
               {competition.emergencyPaused && (
-                <Badge variant="destructive" className="w-full justify-center">
+                <Badge variant="destructive" className="w-full justify-center text-xs sm:text-sm">
                   ⏸️ Emergency Paused
                 </Badge>
               )}

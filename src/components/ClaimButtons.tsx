@@ -89,7 +89,7 @@ export function ClaimPrizeButton({
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between p-4 bg-white rounded-lg">
           <span className="text-sm font-medium">Prize Amount:</span>
-          <span className="text-2xl font-bold text-yellow-600">
+          <span className="text-xl sm:text-2xl font-bold text-yellow-600">
             {formatEther(prizeAmount)} ETH
           </span>
         </div>
@@ -209,7 +209,7 @@ export function ClaimParticipantPrizeButton({
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between p-4 bg-white rounded-lg">
           <span className="text-sm font-medium">{hasWinner ? 'Consolation:' : 'Your Share:'}</span>
-          <span className="text-2xl font-bold text-blue-600">
+          <span className="text-xl sm:text-2xl font-bold text-blue-600">
             {formatEther(prizePerTicket)} ETH
           </span>
         </div>
@@ -310,7 +310,7 @@ export function ClaimRefundButton({
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between p-4 bg-white rounded-lg">
           <span className="text-sm font-medium">Refund Amount:</span>
-          <span className="text-2xl font-bold text-red-600">
+          <span className="text-xl sm:text-2xl font-bold text-red-600">
             {formatEther(refundAmount)} ETH
           </span>
         </div>

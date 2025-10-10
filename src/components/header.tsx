@@ -8,7 +8,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { CustomConnectButton } from "@/components/CustomConnectButton";
 import { useAccount } from "wagmi";
 import { Badge } from "@/components/ui/badge";
 import { useCardCompetitionOwner } from "@/hooks/useContracts";
@@ -81,22 +81,22 @@ export function Header() {
         showHeader ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
         <div className="flex justify-between items-center">
           {/* Logo & Title */}
           <Link
             href="/"
-            className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity"
           >
-            <div className={`font-bold`}>
-              <h1 className="flex text-4xl tracking-tightest font-heading font-bold">
+            <div className="font-bold">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl tracking-tighter sm:tracking-tightest md:tracking-tightest font-heading font-bold !text-black">
                 GEOCHALLENGE
               </h1>
             </div>
           </Link>
 
           {/* Navigation - Desktop */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-6">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -106,11 +106,11 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   className={`
-                    flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary
-                    ${isActive ? "text-primary" : "text-muted-foreground"}
+                    flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-primary
+                    ${isActive ? "text-primary" : "text-muted-foreground"} !text-black/50
                   `}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   {item.label}
                 </Link>
               );
@@ -123,13 +123,13 @@ export function Header() {
                 <Link
                   href="/admin"
                   className={`
-                    flex items-center gap-2 text-sm font-medium transition-colors hover:text-yellow-600
+                    flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-yellow-600
                     ${pathname === "/admin" ? "text-yellow-600" : "text-muted-foreground"}
                   `}
                 >
-                  <Crown className="w-4 h-4" />
+                  <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   Admin
-                  <Badge className="bg-yellow-500 text-white text-xs">
+                  <Badge className="bg-yellow-500 text-white text-[10px] sm:text-xs">
                     Owner
                   </Badge>
                 </Link>
@@ -138,13 +138,13 @@ export function Header() {
           </nav>
 
           {/* Wallet Connect */}
-          <div className="flex items-center gap-3">
-            <ConnectButton />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <CustomConnectButton />
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <nav className="flex md:hidden items-center gap-4 mt-4 pt-4 border-t">
+        <nav className="flex md:hidden items-center gap-3 sm:gap-4 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -154,11 +154,11 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary
+                  flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-primary
                   ${isActive ? "text-primary" : "text-muted-foreground"}
                 `}
               >
-                <Icon className="w-4 h-4" />
+                <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 {item.label}
               </Link>
             );
@@ -169,11 +169,11 @@ export function Header() {
             <Link
               href="/admin"
               className={`
-                flex items-center gap-2 text-sm font-medium transition-colors hover:text-yellow-600
+                flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-yellow-600
                 ${pathname === "/admin" ? "text-yellow-600" : "text-muted-foreground"}
               `}
             >
-              <Crown className="w-4 h-4" />
+              <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               Admin
             </Link>
           )}

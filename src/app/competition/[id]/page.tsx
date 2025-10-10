@@ -65,6 +65,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { geoChallenge_implementation_ABI } from "@/abi";
 import { CONTRACT_ADDRESSES } from "@/lib/contractList";
 
@@ -355,18 +356,22 @@ export default function CompetitionDetailPage({
           </Link>
         </Button>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex-1">
-            <h1 className="text-4xl font-bold flex items-center gap-3">
-              <Trophy className="h-8 w-8 text-yellow-500" />
-              {metadata?.[0] || `Competition #${id}`} (#{id})
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold flex items-center gap-2 sm:gap-3">
+              <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500 flex-shrink-0" />
+              <span className="break-words">
+                {metadata?.[0] || `Competition #${id}`} (#{id})
+              </span>
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-sm sm:text-base text-muted-foreground mt-2">
               {metadata?.[1] ||
                 `Collection: ${competition.collectionAddress.slice(0, 10)}...${competition.collectionAddress.slice(-8)}`}
             </p>
           </div>
-          <Badge className={stateInfo.color}>{stateInfo.label}</Badge>
+          <Badge className={`${stateInfo.color} flex-shrink-0`}>
+            {stateInfo.label}
+          </Badge>
         </div>
 
         {competition.emergencyPaused && (
@@ -389,15 +394,19 @@ export default function CompetitionDetailPage({
         <div className="lg:col-span-2 space-y-6">
           {/* Prize Pool & Details */}
           <Card>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 p-6">
               {/* Main Stats Grid */}
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 {/* Prize Pool */}
-                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
-                  <DollarSign className="h-8 w-8 text-yellow-500" />
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Prize Pool</p>
-                    <p className="text-xl font-bold">{prizePoolETH} Ξ</p>
+                <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg">
+                  <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      Prize Pool
+                    </p>
+                    <p className="text-lg sm:text-xl font-bold truncate">
+                      {prizePoolETH} Ξ
+                    </p>
                     {competition.prizePool === BigInt(0) ? (
                       <p className="text-xs text-muted-foreground mt-1">
                         Grows with ticket sales
@@ -412,10 +421,12 @@ export default function CompetitionDetailPage({
                 </div>
 
                 {/* Booster Box Prize */}
-                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
-                  <Package className="h-8 w-8 text-purple-500" />
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Booster Box</p>
+                <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg">
+                  <Package className="h-6 w-6 sm:h-8 sm:w-8 text-purple-500 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      Booster Box
+                    </p>
                     {competition.boosterBoxEnabled ? (
                       <Badge variant="default" className="bg-green-500 mt-1">
                         Enabled
@@ -429,25 +440,27 @@ export default function CompetitionDetailPage({
                 </div>
 
                 {/* Ticket Price */}
-                <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
-                  <Trophy className="h-8 w-8 text-blue-500" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg">
+                  <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Ticket Price
                     </p>
-                    <p className="text-xl font-bold">{ticketPriceETH} Ξ</p>
+                    <p className="text-lg sm:text-xl font-bold truncate">
+                      {ticketPriceETH} Ξ
+                    </p>
                   </div>
                 </div>
 
                 {/* Tickets Sold - Live Counter */}
                 <div
-                  className={`flex items-center gap-3 p-4 bg-muted rounded-lg transition-all ${
+                  className={`flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg transition-all ${
                     pulse ? "ring-2 ring-green-500 ring-offset-2" : ""
                   }`}
                 >
-                  <Ticket className="h-8 w-8 text-blue-500" />
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Ticket className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
                       Tickets Sold
                       {pulse && (
                         <Badge
@@ -459,7 +472,7 @@ export default function CompetitionDetailPage({
                       )}
                     </p>
                     <p
-                      className={`text-xl font-bold transition-transform ${
+                      className={`text-lg sm:text-xl font-bold transition-transform truncate ${
                         pulse ? "scale-110 text-green-500" : ""
                       }`}
                     >
@@ -486,11 +499,13 @@ export default function CompetitionDetailPage({
                     <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-4">
                       {/* Column 1: Collection Image */}
                       {collectionInfo.contractInfo.packImage && (
-                        <div className="flex justify-center sm:justify-start">
-                          <img
+                        <div className="relative w-full sm:w-44 h-56 flex-shrink-0">
+                          <Image
                             src={collectionInfo.contractInfo.packImage}
                             alt={collectionInfo.contractInfo.nftName}
-                            className="w-full h-56 rounded object-cover"
+                            fill
+                            sizes="(max-width: 640px) 100vw, 176px"
+                            className="object-cover rounded"
                           />
                         </div>
                       )}
@@ -505,9 +520,9 @@ export default function CompetitionDetailPage({
                             rel="noopener noreferrer"
                             className="group/link"
                           >
-                            <h4 className="font-bold text-2xl hover:text-primary transition-colors flex items-center gap-2">
+                            <h4 className="font-bold text-xl sm:text-2xl hover:text-primary transition-colors flex items-center gap-2 !text-black">
                               {collectionInfo.contractInfo.nftName}
-                              <ExternalLink className="h-4 w-4 opacity-0 group-hover/link:opacity-100 transition-opacity" />
+                              <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 opacity-0 group-hover/link:opacity-100 transition-opacity" />
                             </h4>
                           </a>
                           {collectionInfo.contractInfo.isVerified && (
@@ -518,12 +533,12 @@ export default function CompetitionDetailPage({
                         </div>
 
                         {/* Description */}
-                        <p className="text-lg text-muted-foreground italic leading-none">
+                        <p className="text-sm sm:text-base text-muted-foreground italic leading-snug">
                           {collectionInfo.contractInfo.description}
                         </p>
 
                         {/* Price & Market Cap */}
-                        <div className="flex flex-wrap gap-4 text-lg">
+                        <div className="flex flex-wrap gap-3 sm:gap-4 text-sm sm:text-base">
                           <div>
                             <span className="text-muted-foreground">
                               Price:{" "}
@@ -546,7 +561,7 @@ export default function CompetitionDetailPage({
                         {loadingRarityStats ? (
                           <Skeleton className="h-8 w-full" />
                         ) : rarityStats?.data ? (
-                          <div className="flex flex-wrap gap-2 text-lg">
+                          <div className="flex flex-wrap gap-2">
                             {rarityStats.data.common > 0 && (
                               <Badge
                                 className={`${getRarityColor(1)} text-white`}
@@ -741,14 +756,16 @@ export default function CompetitionDetailPage({
               ) : ticketMetadata?.image ? (
                 <div className="space-y-4">
                   {/* Ticket NFT Image */}
-                  <div className="relative">
-                    <img
+                  <div className="relative w-full aspect-[5/7]">
+                    <Image
                       src={ticketMetadata.image}
                       alt={ticketMetadata.name}
-                      className="w-full h-auto rounded-xl object-cover"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 33vw"
+                      className="object-cover rounded-xl"
                     />
                     {/* Quantity Badge */}
-                    <Badge className="absolute top-2 right-2 bg-blue-600 text-white text-lg px-3 py-1">
+                    <Badge className="absolute top-2 right-2 bg-blue-600 text-white text-sm sm:text-lg px-2 sm:px-3 py-1">
                       x{userTicketBalance?.toString()}
                     </Badge>
                   </div>
