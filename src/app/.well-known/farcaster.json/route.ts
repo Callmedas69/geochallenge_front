@@ -3,11 +3,9 @@ export async function GET() {
 
   const manifest = {
     accountAssociation: {
-      // Fill these after deployment via Base Build tool at:
-      // https://www.base.dev/preview?tab=account
-      header: "",
-      payload: "",
-      signature: "",
+      header: "eyJmaWQiOjIyNDIwLCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4MTY4RDhiNGY1MEJCM2FBNjdEMDVhNjkzN0I2NDMwMDQyNTcxMThFRCJ9",
+      payload: "eyJkb21haW4iOiJjaGFsbGVuZ2UuZ2VvYXJ0LnN0dWRpbyJ9",
+      signature: "MHgzZmYyNTg2NGNjMGNlNjNmNjg4NTcwZmI4Zjc2ZjMyZWEwMDFkN2M0MTM1NTIwZmFkNTNjOTYzYzQxMjI3NWZlMjVmNTE2M2E5MmRkMzE0YzgwZmMzODRhNjU2ZjZkMzdmNjZlMmU5NjkwZmUwNGI2NmQ5YzZjMzJlNzA1YzM4YTFj",
     },
     baseBuilder: {
       allowedAddresses: [""], // Add your Base Account address here
@@ -32,8 +30,8 @@ export async function GET() {
       primaryCategory: "social",
       tags: ["trading-cards", "competition", "nft", "base", "geoart"],
       heroImageUrl: `${URL}/hero.png`, // TODO: Add hero image
-      tagline: "Collect the full set. Win the prize.",
-      ogTitle: "GeoChallenge – Trading Card Competition",
+      tagline: "Complete sets, win prizes",
+      ogTitle: "GeoChallenge Trading Cards",
       ogDescription:
         "Complete your GeoArt collection and compete for prizes on Base",
       ogImageUrl: `${URL}/og.png`, // TODO: Add OG image

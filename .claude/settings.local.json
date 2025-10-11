@@ -19,7 +19,8 @@
       "Bash(node:*)",
       "Bash(dir /s /b srcabi*.ts)",
       "Bash(find:*)",
-      "Bash(dir /s /b srcassetsstar*)"
+      "Bash(dir /s /b srcassetsstar*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
