@@ -154,7 +154,7 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-primary
+                  flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-primary !text-black/50
                   ${isActive ? "text-primary" : "text-muted-foreground"}
                 `}
               >
@@ -169,7 +169,7 @@ export function Header() {
             <Link
               href="/admin"
               className={`
-                flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-yellow-600
+                flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-yellow-600 !text-black/50
                 ${pathname === "/admin" ? "text-yellow-600" : "text-muted-foreground"}
               `}
             >
