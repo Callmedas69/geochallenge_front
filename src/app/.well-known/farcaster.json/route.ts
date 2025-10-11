@@ -8,7 +8,7 @@ export async function GET() {
       signature: "MHgzZmYyNTg2NGNjMGNlNjNmNjg4NTcwZmI4Zjc2ZjMyZWEwMDFkN2M0MTM1NTIwZmFkNTNjOTYzYzQxMjI3NWZlMjVmNTE2M2E5MmRkMzE0YzgwZmMzODRhNjU2ZjZkMzdmNjZlMmU5NjkwZmUwNGI2NmQ5YzZjMzJlNzA1YzM4YTFj",
     },
     baseBuilder: {
-      allowedAddresses: [""], // Add your Base Account address here
+      allowedAddresses: ["0xd76bb115a0487ef0336ab7b73e4eb07f83934160"], // Add your Base Account address here
     },
     miniapp: {
       version: "1",
@@ -35,7 +35,7 @@ export async function GET() {
       ogDescription:
         "Complete your GeoArt collection and compete for prizes on Base",
       ogImageUrl: `${URL}/og.png`, // TODO: Add OG image
-      noindex: false,
+      noindex: true,
     },
   };
 
