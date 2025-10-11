@@ -18,11 +18,31 @@ const sanchez = Sanchez({
   weight: ["400"],
 });
 
-export const metadata: Metadata = {
-  title: "GeoChallenge – Collect. Compete. Conquer.",
-  description:
-    "A GeoArt trading card competition platform built for Vibemarket. Complete your set. Claim your glory. Fully onchain.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const URL = process.env.NEXT_PUBLIC_URL as string;
+
+  return {
+    title: "GeoChallenge – Collect. Compete. Conquer.",
+    description:
+      "A GeoArt trading card competition platform built for Vibemarket. Complete your set. Claim your glory. Fully onchain.",
+    other: {
+      "fc:miniapp": JSON.stringify({
+        version: "next",
+        imageUrl: `${URL}/embed.png`, // TODO: Add embed image
+        button: {
+          title: "Launch GeoChallenge",
+          action: {
+            type: "launch_miniapp",
+            name: "GeoChallenge",
+            url: URL,
+            splashImageUrl: `${URL}/splash.png`, // TODO: Add splash image
+            splashBackgroundColor: "#0a0a0a",
+          },
+        },
+      }),
+    },
+  };
+}
 
 export default function RootLayout({
   children,

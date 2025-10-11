@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { config } from "../lib/wagmi";
 import { obsidianTheme } from "@/components/CustomConnectButton";
 import { useState } from "react";
+import { MiniAppInit } from "@/components/MiniAppInit";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -26,6 +27,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider theme={obsidianTheme} showRecentTransactions={false}>
+          <MiniAppInit />
           {children}
         </RainbowKitProvider>
       </QueryClientProvider>
