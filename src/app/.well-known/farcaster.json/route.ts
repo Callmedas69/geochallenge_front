@@ -1,5 +1,5 @@
 export async function GET() {
-  const URL = process.env.NEXT_PUBLIC_URL as string;
+  const URL = process.env.NEXT_PUBLIC_URL || "https://challenge.geoart.studio";
 
   const manifest = {
     accountAssociation: {
@@ -17,7 +17,7 @@ export async function GET() {
       iconUrl: `${URL}/icon-512.png`, // TODO: Add 512x512 app icon
       splashImageUrl: `${URL}/splash.png`, // TODO: Add splash screen image
       splashBackgroundColor: "#0a0a0a",
-      webhookUrl: `${URL}/api/webhook`, // Optional: Add webhook if needed
+      // webhookUrl: `${URL}/api/webhook`, // Optional: Uncomment if you need webhook notifications
       subtitle: "Collect. Compete. Conquer.",
       description:
         "A GeoArt trading card competition platform. Complete your collection across all rarity tiers and claim your prize. Built on Base, powered by Vibemarket.",
