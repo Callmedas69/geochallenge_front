@@ -14,27 +14,27 @@ export async function GET() {
       version: "1",
       name: "GeoChallenge",
       homeUrl: URL,
-      iconUrl: `${URL}/icon-512.png`, // TODO: Add 512x512 app icon
-      splashImageUrl: `${URL}/splash.png`, // TODO: Add splash screen image
+      iconUrl: `${URL}/icon-512.png`,
+      splashImageUrl: `${URL}/splash.png`,
       splashBackgroundColor: "#0a0a0a",
-      // webhookUrl: `${URL}/api/webhook`, // Optional: Uncomment if you need webhook notifications
+      // webhookUrl: `${URL}/api/webhook`,
       subtitle: "Collect. Compete. Conquer.",
       description:
         "A GeoChallenge trading card competition platform. Complete your collection across all rarity tiers and claim your prize. Built on Base for Vibemarket, by GeoArt.",
       screenshotUrls: [
-        // TODO: Add 3-5 screenshot URLs
+        
         `${URL}/screenshot-1.png`,
         `${URL}/screenshot-2.png`,
         `${URL}/screenshot-3.png`,
       ],
       primaryCategory: "social",
       tags: ["trading-cards", "competition", "nft", "base", "geoart"],
-      heroImageUrl: `${URL}/hero.png`, // TODO: Add hero image
+      heroImageUrl: `${URL}/hero.png`,
       tagline: "Complete sets, win prizes",
       ogTitle: "GeoChallenge Trading Cards",
       ogDescription:
         "Complete your GeoArt collection and compete for prizes on Base",
-      ogImageUrl: `${URL}/og.png`, // TODO: Add OG image
+      ogImageUrl: `${URL}/og.png`, 
       noindex: true,
     },
   };

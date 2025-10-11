@@ -20,7 +20,13 @@
       "Bash(dir /s /b srcabi*.ts)",
       "Bash(find:*)",
       "Bash(dir /s /b srcassetsstar*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(git check-ignore:*)",
+      "WebFetch(domain:challenge.geoart.studio)",
+      "WebFetch(domain:docs.farcaster.xyz)",
+      "WebFetch(domain:miniapps.farcaster.xyz)",
+      "Bash(identify:*)",
+      "Bash(awk:*)"
     ],
     "deny": [],
     "ask": []
