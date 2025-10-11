@@ -20,7 +20,7 @@ export async function GET() {
       // webhookUrl: `${URL}/api/webhook`, // Optional: Uncomment if you need webhook notifications
       subtitle: "Collect. Compete. Conquer.",
       description:
-        "A GeoArt trading card competition platform. Complete your collection across all rarity tiers and claim your prize. Built on Base, powered by Vibemarket.",
+        "A GeoChallenge trading card competition platform. Complete your collection across all rarity tiers and claim your prize. Built on Base for Vibemarket, by GeoArt.",
       screenshotUrls: [
         // TODO: Add 3-5 screenshot URLs
         `${URL}/screenshot-1.png`,
