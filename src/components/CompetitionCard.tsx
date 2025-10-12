@@ -20,7 +20,14 @@ import { useCollectionImage } from "@/hooks/useCollectionImage";
 import { useCountdown, formatCountdown } from "@/hooks/useCountdown";
 import { useReadContract } from "wagmi";
 import { formatEther } from "viem";
-import { Trophy, Users, Calendar, DollarSign, ImageIcon, Clock } from "lucide-react";
+import {
+  Trophy,
+  Users,
+  Calendar,
+  DollarSign,
+  ImageIcon,
+  Clock,
+} from "lucide-react";
 import Link from "next/link";
 import { geoChallenge_implementation_ABI } from "@/abi";
 import { CONTRACT_ADDRESSES } from "@/lib/contractList";
@@ -140,7 +147,9 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
                     </span>
                   </span>
                 </CardTitle>
-                <Badge className={`${stateInfo.color} flex-shrink-0`}>{stateInfo.label}</Badge>
+                <Badge className={`${stateInfo.color} flex-shrink-0`}>
+                  {stateInfo.label}
+                </Badge>
               </div>
               <CardDescription className="line-clamp-2">
                 {metadata?.[1] ||
@@ -156,7 +165,9 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
                     Prize Pool
                   </span>
                 </div>
-                <span className="font-semibold text-sm sm:text-base">{prizePoolETH} ETH</span>
+                <span className="font-semibold text-sm sm:text-base">
+                  {prizePoolETH} ETH
+                </span>
               </div>
 
               {/* Tickets Sold */}
@@ -180,7 +191,9 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
                     Ticket Price
                   </span>
                 </div>
-                <span className="font-semibold text-sm sm:text-base">{ticketPriceETH} ETH</span>
+                <span className="font-semibold text-sm sm:text-base">
+                  {ticketPriceETH} ETH
+                </span>
               </div>
 
               {/* Deadline */}
@@ -219,7 +232,10 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
                       </Badge>
                     ) : countdown.totalSeconds < 86400 ? (
                       // Less than 1 day - show in red
-                      <Badge variant="destructive" className="text-[10px] sm:text-xs font-mono px-1.5 sm:px-2">
+                      <Badge
+                        variant="destructive"
+                        className="text-[10px] sm:text-xs font-mono px-1.5 sm:px-2"
+                      >
                         {countdownText}
                       </Badge>
                     ) : countdown.totalSeconds < 259200 ? (
@@ -254,7 +270,10 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
 
               {/* Emergency Paused */}
               {competition.emergencyPaused && (
-                <Badge variant="destructive" className="w-full justify-center text-xs sm:text-sm">
+                <Badge
+                  variant="destructive"
+                  className="w-full justify-center text-xs sm:text-sm"
+                >
                   ⏸️ Emergency Paused
                 </Badge>
               )}

@@ -299,35 +299,18 @@ export function useTicketMetadata(
       try {
         setLoading(true);
 
-        const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
-
-        // Fetch NFTs owned by user for this specific contract
-        const url = `https://base-sepolia.g.alchemy.com/nft/v3/${alchemyApiKey}/getNFTsForOwner?owner=${userAddress}&contractAddresses[]=${contractAddress}&withMetadata=true`;
+        // Call our API route instead of Alchemy directly
+        const url = `/api/ticket/metadata?userAddress=${userAddress}&contractAddress=${contractAddress}&tokenId=${tokenId}`;
 
         const response = await fetch(url);
 
         if (!response.ok) {
-          throw new Error('Failed to fetch user tickets from Alchemy');
+          throw new Error('Failed to fetch ticket metadata');
         }
 
-        const result = await response.json();
+        const metadata = await response.json();
 
-        // Find the ticket with matching tokenId
-        const ticket = result.ownedNfts?.find(
-          (nft: any) => nft.tokenId === tokenId
-        );
-
-        if (!ticket) {
-          throw new Error('Ticket not found in wallet');
-        }
-
-        setData({
-          name: ticket.name || ticket.title || 'Competition Ticket',
-          description: ticket.description || '',
-          image: ticket.image?.cachedUrl || ticket.image?.originalUrl || ticket.image?.thumbnailUrl || ticket.image?.pngUrl || '',
-          balance: parseInt(ticket.balance || '0'),
-          tokenId: ticket.tokenId,
-        });
+        setData(metadata);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');

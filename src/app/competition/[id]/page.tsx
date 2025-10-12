@@ -754,21 +754,18 @@ export default function CompetitionDetailPage({
               {loadingTicketMetadata ? (
                 <Skeleton className="h-48 w-full rounded-lg" />
               ) : ticketMetadata?.image ? (
-                <div className="space-y-4">
-                  {/* Ticket NFT Image */}
-                  <div className="relative w-full aspect-[5/7]">
-                    <Image
-                      src={ticketMetadata.image}
-                      alt={ticketMetadata.name}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 33vw"
-                      className="object-cover rounded-xl"
-                    />
-                    {/* Quantity Badge */}
-                    <Badge className="absolute top-2 right-2 bg-blue-600 text-white text-sm sm:text-lg px-2 sm:px-3 py-1">
-                      x{userTicketBalance?.toString()}
-                    </Badge>
-                  </div>
+                <div className="relative w-full aspect-video">
+                  <Image
+                    src={ticketMetadata.image}
+                    alt={ticketMetadata.name}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 33vw"
+                    className="object-contain rounded-xl"
+                  />
+                  {/* Quantity Badge */}
+                  {/* <Badge className="absolute top-2 right-2 bg-blue-600 text-white text-sm sm:text-lg px-2 sm:px-3 py-1">
+                    x{userTicketBalance?.toString()}
+                  </Badge> */}
                 </div>
               ) : (
                 <div className="flex items-center justify-center p-4 bg-white rounded-lg">

@@ -107,7 +107,7 @@ export function CollectionArtGallery({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
         {displayedCards.map((card) => {
           const isOwned = card.ownedCount > 0;
           const starImage =
