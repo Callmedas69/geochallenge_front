@@ -3,15 +3,35 @@
  * @notice Minimal homepage optimized for Farcaster frames
  * @dev KISS principle: No hero section, just active competitions
  * @dev Route: /fc (Farcaster-specific route)
- * @dev SDK ready() is already called in root layout via MiniAppInit
  */
 
 "use client";
 
 import { FarcasterCompetitionList } from "@/components/FarcasterCompetitionList";
 import { EventNotifications } from "@/components/EventNotifications";
+import { useEffect, useState } from "react";
+import { sdk } from "@farcaster/miniapp-sdk";
 
 export default function FarcasterHomePage() {
+  const [isReady, setIsReady] = useState(false);
+
+  // Call ready() once page content is loaded
+  useEffect(() => {
+    // Small delay to ensure DOM is fully painted
+    const timer = setTimeout(async () => {
+      try {
+        await sdk.actions.ready();
+        setIsReady(true);
+        console.log("✅ Farcaster SDK: Ready call successful from /fc page");
+      } catch (error) {
+        console.warn("⚠️ Farcaster SDK: Not in miniApp context", error);
+        setIsReady(true); // Still show content if not in Farcaster
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="container mx-auto px-3 py-4 space-y-4">
       {/* Global event notifications - compact */}
