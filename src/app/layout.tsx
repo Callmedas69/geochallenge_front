@@ -35,8 +35,8 @@ export async function generateMetadata(): Promise<Metadata> {
           action: {
             type: "launch_miniapp",
             name: "GeoChallenge",
-            url: URL,
-            splashImageUrl: `${URL}/splash.png`, // TODO: Add splash image
+            url: `${URL}/fc`,
+            splashImageUrl: `${URL}/splash.png`,
             splashBackgroundColor: "#0a0a0a",
           },
         },
