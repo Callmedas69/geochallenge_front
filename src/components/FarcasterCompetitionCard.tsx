@@ -134,7 +134,8 @@ export function FarcasterCompetitionCard({
                 <h3 className="text-sm font-semibold leading-tight flex items-center gap-1.5 flex-1 min-w-0">
                   <Trophy className="w-3.5 h-3.5 text-yellow-500 flex-shrink-0" />
                   <span className="truncate">
-                    {metadata?.[0] || `Competition #${competitionId.toString()}`}
+                    {metadata?.[0] ||
+                      `Competition #${competitionId.toString()}`}
                   </span>
                 </h3>
                 <Badge className={`${stateInfo.color} text-xs flex-shrink-0`}>

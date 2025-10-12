@@ -416,9 +416,7 @@ export default function FarcasterCompetitionDetailPage({
           <div className="flex items-center justify-between p-2 bg-muted rounded">
             <div className="flex items-center gap-2">
               <Package className="h-5 w-5 text-purple-500" />
-              <span className="text-sm text-muted-foreground">
-                Booster Box
-              </span>
+              <span className="text-sm text-muted-foreground">Booster Box</span>
             </div>
             {competition.boosterBoxEnabled ? (
               <Badge variant="default" className="bg-green-500 text-xs">
@@ -492,10 +490,10 @@ export default function FarcasterCompetitionDetailPage({
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 min-w-0"
                   >
-                    <h3 className="font-bold text-base hover:text-primary truncate">
+                    <h3 className="font-bold text-base !text-black hover:text-primary truncate">
                       {collectionInfo.contractInfo.nftName}
                     </h3>
-                    <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                    <ExternalLink className="h-3 w-3 !text-black flex-shrink-0" />
                   </a>
                   {collectionInfo.contractInfo.isVerified && (
                     <Badge className="bg-blue-500 text-xs">✓</Badge>
@@ -510,27 +508,37 @@ export default function FarcasterCompetitionDetailPage({
                 {rarityStats?.data && (
                   <div className="flex flex-wrap gap-1">
                     {rarityStats.data.common > 0 && (
-                      <Badge className={`${getRarityColor(1)} text-white text-xs`}>
+                      <Badge
+                        className={`${getRarityColor(1)} text-white text-xs`}
+                      >
                         {rarityStats.data.common} Common
                       </Badge>
                     )}
                     {rarityStats.data.rare > 0 && (
-                      <Badge className={`${getRarityColor(2)} text-white text-xs`}>
+                      <Badge
+                        className={`${getRarityColor(2)} text-white text-xs`}
+                      >
                         {rarityStats.data.rare} Rare
                       </Badge>
                     )}
                     {rarityStats.data.epic > 0 && (
-                      <Badge className={`${getRarityColor(3)} text-white text-xs`}>
+                      <Badge
+                        className={`${getRarityColor(3)} text-white text-xs`}
+                      >
                         {rarityStats.data.epic} Epic
                       </Badge>
                     )}
                     {rarityStats.data.legendary > 0 && (
-                      <Badge className={`${getRarityColor(4)} text-white text-xs`}>
+                      <Badge
+                        className={`${getRarityColor(4)} text-white text-xs`}
+                      >
                         {rarityStats.data.legendary} Legendary
                       </Badge>
                     )}
                     {rarityStats.data.mythic > 0 && (
-                      <Badge className={`${getRarityColor(5)} text-white text-xs`}>
+                      <Badge
+                        className={`${getRarityColor(5)} text-white text-xs`}
+                      >
                         {rarityStats.data.mythic} Mythic
                       </Badge>
                     )}
