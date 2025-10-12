@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "sonner";
+import { MiniAppInit } from "@/components/MiniAppInit";
 
 const leagueSpartan = League_Spartan({
   variable: "--font-heading",
@@ -27,8 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
       "A GeoArt trading card competition platform built for Vibemarket. Complete your set. Claim your glory. Fully onchain.",
     other: {
       "fc:miniapp": JSON.stringify({
-        version: "next",
-        imageUrl: `${URL}/embed.png`, // TODO: Add embed image
+        version: "1",
+        imageUrl: `${URL}/hero.png`,
         button: {
           title: "Launch GeoChallenge",
           action: {
@@ -55,6 +56,7 @@ export default function RootLayout({
         className={`${leagueSpartan.variable} ${sanchez.variable} antialiased flex flex-col min-h-screen`}
       >
         <Providers>
+          <MiniAppInit />
           <Header />
           <main className="">{children}</main>
           <Footer />
