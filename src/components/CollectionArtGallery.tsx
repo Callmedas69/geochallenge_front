@@ -115,7 +115,7 @@ export function CollectionArtGallery({
 
           return (
             <div
-              key={`${card.rarity}-${card.name}`}
+              key={card.imageUrl}
               className="relative aspect-[5/7] rounded-lg overflow-hidden bg-muted hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md"
             >
               <GalleryImage imageUrl={card.imageUrl} isOwned={isOwned} />

@@ -6,3 +6,5 @@
 
 export { CompetitionCard } from './CompetitionCard';
 export { CompetitionList } from './CompetitionList';
+export { CompetitionTicket } from './CompetitionTicket';
+export { CompetitionProgress } from './CompetitionProgress';

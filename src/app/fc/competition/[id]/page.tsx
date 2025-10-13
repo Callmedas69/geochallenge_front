@@ -20,6 +20,10 @@ import {
 } from "@/components/ClaimButtons";
 import { SubmitWinnerProof } from "@/components/SubmitWinnerProof";
 import { CollectionArtGallery } from "@/components/CollectionArtGallery";
+import {
+  CompetitionTicket,
+  CompetitionProgress,
+} from "@/components/farcaster";
 import { getRarityName, getRarityColor } from "@/lib/types";
 import {
   calculateWinnerPrize,
@@ -33,7 +37,6 @@ import {
   useContractInfo,
   useCollectionRarityStats,
   useProgressCalculator,
-  useTicketMetadata,
   useCollectionArt,
 } from "@/hooks/useVibeAPI";
 import {
@@ -148,14 +151,6 @@ export default function FarcasterCompetitionDetailPage({
     competition?.collectionAddress || "",
     competition?.rarityTiers || []
   );
-
-  // Fetch ticket metadata (only when user is connected)
-  const { data: ticketMetadata, loading: loadingTicketMetadata } =
-    useTicketMetadata(
-      address, // Only fetch if user is connected
-      CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
-      competitionId.toString()
-    );
 
   // Live ticket counter state
   const [pulse, setPulse] = useState(false);
@@ -437,32 +432,14 @@ export default function FarcasterCompetitionDetailPage({
         </CardContent>
       </Card>
 
-      {/* Competition Ticket - Show when user has ticket */}
-      {address && hasTicket && ticketMetadata?.image && (
-        <Card>
-          <CardHeader className="p-3 pb-2">
-            <CardTitle className="text-sm">Your Ticket</CardTitle>
-          </CardHeader>
-          <CardContent className="p-3">
-            {loadingTicketMetadata ? (
-              <Skeleton className="w-full aspect-[5/7] max-w-[200px] mx-auto" />
-            ) : (
-              <div className="relative w-full aspect-[5/7] max-w-[200px] mx-auto">
-                <Image
-                  src={ticketMetadata.image}
-                  alt={ticketMetadata.name || "Competition Ticket"}
-                  fill
-                  sizes="200px"
-                  className="object-cover rounded-lg"
-                />
-                <Badge className="absolute top-2 right-2 bg-blue-600 text-white">
-                  x{userTicketBalance?.toString()}
-                </Badge>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      {/* Competition Ticket */}
+      <CompetitionTicket
+        address={address}
+        hasTicket={hasTicket}
+        userTicketBalance={userTicketBalance}
+        competitionId={competitionId}
+        debugMode={true}
+      />
 
       {/* Actions - Fixed spacing at bottom */}
       <div className="space-y-3 pb-4">
@@ -705,37 +682,12 @@ export default function FarcasterCompetitionDetailPage({
       </Card>
 
       {/* Progress */}
-      {address && hasTicket && progress && (
-        <Card>
-          <CardContent className="p-3 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="font-medium">Your Progress</span>
-              <span
-                className={`font-bold ${
-                  progress.percentage === 100
-                    ? "text-green-600"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {progress.percentage.toFixed(0)}%
-              </span>
-            </div>
-            <Progress value={progress.percentage} className="h-4" />
-            <p className="text-xs text-muted-foreground">
-              {progress.totalOwned}/{progress.totalRequired} cards owned
-            </p>
-
-            {progress.isComplete && (
-              <Alert className="bg-green-50 border-green-200">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-xs text-green-800">
-                  Complete! Submit proof to win.
-                </AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
-      )}
+      <CompetitionProgress
+        progress={progress}
+        loading={loadingProgress}
+        address={address}
+        hasTicket={hasTicket}
+      />
 
       {/* Winner Info */}
       {competition.winnerDeclared && (

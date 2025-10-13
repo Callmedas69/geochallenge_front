@@ -19,6 +19,11 @@ import {
 } from "@/components/ClaimButtons";
 import { SubmitWinnerProof } from "@/components/SubmitWinnerProof";
 import { CollectionArtGallery } from "@/components/CollectionArtGallery";
+import {
+  CompetitionTicket,
+  OverallProgress,
+  RarityBreakdown,
+} from "@/components/competition";
 import { getRarityName, getRarityColor } from "@/lib/types";
 import {
   calculateWinnerPrize,
@@ -32,7 +37,6 @@ import {
   useContractInfo,
   useCollectionRarityStats,
   useProgressCalculator,
-  useTicketMetadata,
   useCollectionArt,
 } from "@/hooks/useVibeAPI";
 import {
@@ -143,14 +147,6 @@ export default function CompetitionDetailPage({
     competition?.collectionAddress || "",
     competition?.rarityTiers || []
   );
-
-  // Fetch ticket metadata from user's wallet using Alchemy API
-  const { data: ticketMetadata, loading: loadingTicketMetadata } =
-    useTicketMetadata(
-      address,
-      CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
-      competitionId.toString()
-    );
 
   // Live ticket counter state
   const [pulse, setPulse] = useState(false);
@@ -602,6 +598,16 @@ export default function CompetitionDetailPage({
                       </div>
                     </div>
 
+                    {/* Overall Progress - Only if user has wallet connected and has ticket */}
+                    {address && hasTicket && (
+                      <div className="mt-4 pt-4 border-t">
+                        <OverallProgress
+                          progress={progress}
+                          loading={loadingProgress}
+                        />
+                      </div>
+                    )}
+
                     {/* Collection Art Gallery - Contested Tiers */}
                     {(loadingCollectionArt ||
                       (collectionArt?.cards &&
@@ -749,37 +755,12 @@ export default function CompetitionDetailPage({
           )}
 
           {/* Your Ticket Status */}
-          {hasTicket && (
-            <div>
-              {loadingTicketMetadata ? (
-                <Skeleton className="h-48 w-full rounded-lg" />
-              ) : ticketMetadata?.image ? (
-                <div className="relative w-full aspect-video">
-                  <Image
-                    src={ticketMetadata.image}
-                    alt={ticketMetadata.name}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 33vw"
-                    className="object-contain rounded-xl"
-                  />
-                  {/* Quantity Badge */}
-                  {/* <Badge className="absolute top-2 right-2 bg-blue-600 text-white text-sm sm:text-lg px-2 sm:px-3 py-1">
-                    x{userTicketBalance?.toString()}
-                  </Badge> */}
-                </div>
-              ) : (
-                <div className="flex items-center justify-center p-4 bg-white rounded-lg">
-                  <Trophy className="h-8 w-8 text-blue-600 mr-3" />
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground">You own</p>
-                    <p className="text-2xl font-bold text-blue-600">
-                      {userTicketBalance?.toString()} Ticket(s)
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          <CompetitionTicket
+            competitionId={competitionId}
+            address={address}
+            hasTicket={hasTicket}
+            userTicketBalance={userTicketBalance}
+          />
 
           {/* Deadline Countdown */}
           <Card>
@@ -835,126 +816,19 @@ export default function CompetitionDetailPage({
             </CardContent>
           </Card>
 
-          {/* Collection Progress - Only if user has wallet connected and has ticket */}
+          {/* Rarity Breakdown - Only if user has wallet connected and has ticket */}
           {address && hasTicket && (
             <Card>
               <CardHeader>
-                <CardTitle>Your Collection Progress</CardTitle>
-                <CardDescription>
-                  Track your NFT collection completion
-                </CardDescription>
+                <CardTitle>Your Progress</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {loadingProgress ? (
-                  <Skeleton className="h-32 w-full" />
-                ) : progress ? (
-                  <>
-                    {/* Overall Progress Bar */}
-                    <div>
-                      <div className="flex justify-between mb-2 text-sm">
-                        <span className="font-medium">Overall Progress</span>
-                        <span
-                          className={`font-bold ${
-                            progress.percentage === 100
-                              ? "text-green-600"
-                              : progress.percentage >= 67
-                                ? "text-blue-600"
-                                : progress.percentage >= 34
-                                  ? "text-orange-600"
-                                  : "text-red-600"
-                          }`}
-                        >
-                          {progress.percentage.toFixed(0)}%
-                        </span>
-                      </div>
-                      <Progress
-                        value={progress.percentage}
-                        className={`h-6 ${
-                          progress.percentage === 100
-                            ? "[&>div]:bg-green-600"
-                            : progress.percentage >= 67
-                              ? "[&>div]:bg-blue-600"
-                              : progress.percentage >= 34
-                                ? "[&>div]:bg-orange-500"
-                                : "[&>div]:bg-red-500"
-                        }`}
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {progress.totalOwned}/{progress.totalRequired} unique
-                        cards owned
-                      </p>
-                    </div>
-
-                    {/* Per-Rarity Breakdown */}
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium text-muted-foreground">
-                        Rarity Breakdown:
-                      </p>
-                      {Object.entries(progress.rarityBreakdown).map(
-                        ([rarity, stats]) => {
-                          const rarityNum = Number(rarity);
-                          const isComplete = stats.owned >= stats.required;
-
-                          return (
-                            <div
-                              key={rarity}
-                              className="flex items-center justify-between p-2 bg-muted/50 rounded"
-                            >
-                              <Badge
-                                className={`${getRarityColor(rarityNum)} text-white text-xs`}
-                              >
-                                {getRarityName(rarityNum)}
-                              </Badge>
-                              <span
-                                className={`text-sm font-semibold ${
-                                  isComplete
-                                    ? "text-green-600"
-                                    : "text-muted-foreground"
-                                }`}
-                              >
-                                {stats.owned}/{stats.required}
-                                {isComplete && " ✓"}
-                              </span>
-                            </div>
-                          );
-                        }
-                      )}
-                    </div>
-
-                    {/* Complete Set Alert */}
-                    {progress.isComplete && (
-                      <Alert className="bg-green-50 border-green-200">
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
-                        <AlertDescription className="text-green-800 font-medium">
-                          🎉 Complete set! You can submit proof to win.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-
-                    {/* Find Missing Cards CTA */}
-                    {!progress.isComplete && (
-                      <a
-                        href={`https://vibechain.com/market/${competition.collectionAddress}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                      >
-                        <div className="p-3 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors group cursor-pointer">
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-sm">
-                              Find Missing Cards
-                            </span>
-                            <ExternalLink className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                          </div>
-                        </div>
-                      </a>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-center text-sm text-muted-foreground py-4">
-                    Connect wallet to see progress
-                  </div>
-                )}
+              <CardContent>
+                <RarityBreakdown
+                  progress={progress}
+                  loading={loadingProgress}
+                  collectionAddress={competition.collectionAddress}
+                  showCTA={true}
+                />
               </CardContent>
             </Card>
           )}

@@ -1,66 +1,92 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createPublicClient, http } from 'viem';
+import { baseSepolia } from 'viem/chains';
+import { geoChallenge_implementation_ABI } from '@/abi/geoChallenge_implementation_ABI';
+import { CONTRACT_ADDRESSES } from '@/lib/contractList';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
+    const competitionId = searchParams.get('competitionId');
     const userAddress = searchParams.get('userAddress');
-    const contractAddress = searchParams.get('contractAddress');
-    const tokenId = searchParams.get('tokenId');
 
-    if (!userAddress || !contractAddress || !tokenId) {
+    if (!competitionId || !userAddress) {
       return NextResponse.json(
-        { error: 'userAddress, contractAddress, and tokenId are required' },
+        { error: 'competitionId and userAddress are required' },
         { status: 400 }
       );
     }
 
-    const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY;
+    console.log('[Ticket API] Fetching metadata for competition:', competitionId, 'user:', userAddress);
 
-    if (!alchemyApiKey) {
-      return NextResponse.json(
-        { error: 'Alchemy API key not configured' },
-        { status: 500 }
-      );
+    // Create viem client to read from GeoChallenge contract
+    const client = createPublicClient({
+      chain: baseSepolia,
+      transport: http(),
+    });
+
+    // Call uri() function on GeoChallenge contract (ERC1155 standard)
+    const metadataUri = await client.readContract({
+      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge as `0x${string}`,
+      abi: geoChallenge_implementation_ABI,
+      functionName: 'uri',
+      args: [BigInt(competitionId)],
+    });
+
+    console.log('[Ticket API] Contract URI:', metadataUri);
+
+    if (!metadataUri || typeof metadataUri !== 'string') {
+      throw new Error('Invalid metadata URI from contract');
     }
 
-    // Fetch NFTs owned by user for this specific contract
-    const url = `https://base-sepolia.g.alchemy.com/nft/v3/${alchemyApiKey}/getNFTsForOwner?owner=${userAddress}&contractAddresses[]=${contractAddress}&withMetadata=true`;
+    // Check if it's a data URI (base64 encoded JSON)
+    if (metadataUri.startsWith('data:application/json;base64,')) {
+      const base64Data = metadataUri.replace('data:application/json;base64,', '');
+      const jsonString = Buffer.from(base64Data, 'base64').toString('utf-8');
+      const metadata = JSON.parse(jsonString);
 
-    const response = await fetch(url);
+      console.log('[Ticket API] Parsed data URI metadata:', metadata);
 
-    if (!response.ok) {
-      throw new Error(`Alchemy API error: ${response.status}`);
+      return NextResponse.json({
+        name: metadata.name || 'Competition Ticket',
+        description: metadata.description || '',
+        image: metadata.image || '',
+        attributes: metadata.attributes || [],
+      });
     }
 
-    const result = await response.json();
+    // Handle regular HTTP/IPFS URIs
+    let fetchUrl = metadataUri;
 
-    // Find the ticket with matching tokenId
-    const ticket = result.ownedNfts?.find(
-      (nft: any) => nft.tokenId === tokenId
-    );
-
-    if (!ticket) {
-      return NextResponse.json(
-        { error: 'Ticket not found in wallet' },
-        { status: 404 }
-      );
+    // Handle IPFS URIs
+    if (metadataUri.startsWith('ipfs://')) {
+      fetchUrl = metadataUri.replace('ipfs://', 'https://ipfs.io/ipfs/');
     }
+
+    console.log('[Ticket API] Fetching metadata from:', fetchUrl);
+
+    const metadataResponse = await fetch(fetchUrl);
+
+    if (!metadataResponse.ok) {
+      console.error('[Ticket API] Metadata fetch error:', metadataResponse.status);
+      throw new Error(`Failed to fetch metadata from URI: ${metadataResponse.status}`);
+    }
+
+    const metadata = await metadataResponse.json();
+    console.log('[Ticket API] Fetched metadata:', metadata);
 
     // Return formatted metadata
-    const metadata = {
-      name: ticket.name || ticket.title || 'Competition Ticket',
-      description: ticket.description || '',
-      image: ticket.image?.cachedUrl || ticket.image?.originalUrl || ticket.image?.thumbnailUrl || ticket.image?.pngUrl || '',
-      balance: parseInt(ticket.balance || '0'),
-      tokenId: ticket.tokenId,
-    };
-
-    return NextResponse.json(metadata);
+    return NextResponse.json({
+      name: metadata.name || 'Competition Ticket',
+      description: metadata.description || '',
+      image: metadata.image || '',
+      attributes: metadata.attributes || [],
+    });
   } catch (error) {
-    console.error('Ticket metadata API error:', error);
+    console.error('[Ticket API] Error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch ticket metadata' },
+      { error: 'Failed to fetch ticket metadata', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

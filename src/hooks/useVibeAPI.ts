@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useReadTicketRendererGenerateTokenUri } from '@/generated';
+import { CONTRACT_ADDRESSES } from '@/lib/contractList';
+import type { Competition, TicketMetadata as GlobalTicketMetadata } from '@/lib/types';
 
 interface ContractInfo {
   success: boolean;
@@ -272,58 +275,67 @@ export function useCollectionRarityStats(contractAddress: string) {
   return { data, loading, error };
 }
 
-interface TicketMetadata {
-  name: string;
-  description: string;
-  image: string;
-  balance: number;
-  tokenId: string;
-}
-
+/**
+ * Main web hook to fetch ticket metadata from GeoChallenge ERC1155 contract
+ * Reads the actual token metadata URI and fetches the JSON
+ *
+ * @param competitionId - The competition ID (token ID)
+ * @param userAddress - The connected wallet address (to verify ownership)
+ * @returns Ticket metadata with loading/error states
+ */
 export function useTicketMetadata(
-  userAddress: string | undefined,
-  contractAddress: string | undefined,
-  tokenId: string | undefined
+  competitionId: bigint | undefined,
+  userAddress: string | undefined
 ) {
-  const [data, setData] = useState<TicketMetadata | null>(null);
+  const [metadata, setMetadata] = useState<GlobalTicketMetadata | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTicketFromWallet = async () => {
-      if (!userAddress || !contractAddress || !tokenId) {
+    const fetchMetadata = async () => {
+      if (!competitionId || !userAddress) {
+        console.log('[useTicketMetadata] Missing params:', { competitionId, userAddress });
         setLoading(false);
         return;
       }
 
       try {
         setLoading(true);
+        console.log('[useTicketMetadata] Fetching for competition:', competitionId.toString());
 
-        // Call our API route instead of Alchemy directly
-        const url = `/api/ticket/metadata?userAddress=${userAddress}&contractAddress=${contractAddress}&tokenId=${tokenId}`;
-
-        const response = await fetch(url);
+        // Fetch from API that calls GeoChallenge.uri(tokenId)
+        const response = await fetch(
+          `/api/ticket/metadata?competitionId=${competitionId}&userAddress=${userAddress}`
+        );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch ticket metadata');
+          const errorText = await response.text();
+          console.error('[useTicketMetadata] API error:', response.status, errorText);
+          throw new Error(`Failed to fetch ticket metadata: ${response.status}`);
         }
 
-        const metadata = await response.json();
+        const data = await response.json();
+        console.log('[useTicketMetadata] Success:', data);
 
-        setData(metadata);
+        setMetadata(data);
         setError(null);
       } catch (err) {
+        console.error('[useTicketMetadata] Error:', err);
         setError(err instanceof Error ? err.message : 'Unknown error');
-        setData(null);
+        setMetadata(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTicketFromWallet();
-  }, [userAddress, contractAddress, tokenId]);
+    fetchMetadata();
+  }, [competitionId, userAddress]);
 
-  return { data, loading, error };
+  return {
+    data: metadata,
+    loading,
+    error,
+  };
 }
 
 interface CollectionCard {

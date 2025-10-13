@@ -30,7 +30,9 @@
       "Bash(findstr:*)",
       "Bash(del \"D:\\Harry\\BasedNouns\\CodeProject\\cardcompetition-front\\src\\components\\FarcasterCompetitionCard.tsx\")",
       "Bash(del \"D:\\Harry\\BasedNouns\\CodeProject\\cardcompetition-front\\src\\components\\FarcasterCompetitionList.tsx\")",
-      "Bash(del \"D:\\Harry\\BasedNouns\\CodeProject\\cardcompetition-front\\src\\components\\MiniAppInit.tsx\")"
+      "Bash(del \"D:\\Harry\\BasedNouns\\CodeProject\\cardcompetition-front\\src\\components\\MiniAppInit.tsx\")",
+      "Bash(mkdir:*)",
+      "Bash(test -f \"src/app/api/ticket/metadata/route.ts\")"
     ],
     "deny": [],
     "ask": []
