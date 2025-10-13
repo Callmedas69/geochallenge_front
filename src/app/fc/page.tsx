@@ -41,13 +41,18 @@ export default function FarcasterHomePage() {
       <EventNotifications />
 
       {/* Header - Minimal */}
-      <div className="space-y-1">
-        <h1 className="text-lg font-bold tracking-tight">
-          Active Competitions
-        </h1>
-        <p className="text-xs text-muted-foreground">
-          Complete the sets, win prizes
-        </p>
+      <div className="space-y-1 min-h-screen flex items-center justify-center px-12">
+        <div>
+          <h1 className="text-6xl font-bold tracking-tighter uppercase flex flex-col leading-none">
+            <span>Compete</span>
+            <span>Collect</span>
+            <span>Conquer</span>
+          </h1>
+          <p className="text-xs text-muted-foreground">
+            Complete VibeMarket trading card sets, earn ETH prizes, and prove
+            your grind on Base.
+          </p>
+        </div>
       </div>
 
       {/* Main Content: Active Competitions Only - No Hero */}
