@@ -27,7 +27,7 @@ export function BuyTicketButton({
   collectionAddress,
   disabled = false,
 }: BuyTicketButtonProps) {
-  const { address } = useAccount()
+  const { address, isConnecting } = useAccount()
   const { buyTicket, isPending, isConfirming, isSuccess, error } = useBuyTicket()
   const { data: ticketBalance } = useUserTicketBalance(address, competitionId)
 
@@ -63,12 +63,24 @@ export function BuyTicketButton({
     )
   }
 
-  // Not connected
-  if (!address) {
+  // Connecting wallet (auto-connect in progress)
+  if (isConnecting || (!address && !error)) {
     return (
       <Button disabled className="w-full" size="lg">
-        Connect Wallet to Buy Ticket
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        Connecting Wallet...
       </Button>
+    )
+  }
+
+  // Not connected and auto-connect failed
+  if (!address) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>
+          Unable to connect wallet. Please ensure you're opening this in Farcaster app.
+        </AlertDescription>
+      </Alert>
     )
   }
 

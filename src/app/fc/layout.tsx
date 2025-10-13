@@ -46,8 +46,8 @@ export default function FarcasterLayout({
 
       {/* Minimal footer for miniApps */}
       <footer className="border-t py-4">
-        <div className="container px-3 text-center text-xs text-muted-foreground italic">
-          Powered by GeoChallenge
+        <div className="container px-3 text-center text-[10px] text-muted-foreground italic">
+          powered by GeoChallenge
         </div>
       </footer>
     </div>

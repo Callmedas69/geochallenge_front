@@ -9,9 +9,7 @@
 
 import { CompetitionList } from "@/components/farcaster";
 import { EventNotifications } from "@/components/EventNotifications";
-import { useEffect } from "react";
-import { initFarcasterSDK } from "@/lib/farcaster";
-import { useAccount, useConnect } from "wagmi";
+import { useAutoConnect } from "@/lib/farcaster";
 import localFont from "next/font/local";
 
 const spartanFont = localFont({
@@ -25,26 +23,8 @@ const spartanFont = localFont({
 });
 
 export default function FarcasterHomePage() {
-  const { isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
-
-  // Initialize SDK and auto-connect wallet
-  useEffect(() => {
-    // Initialize Farcaster SDK
-    initFarcasterSDK();
-
-    // Auto-connect wallet if not already connected
-    if (!isConnected && connectors.length > 0) {
-      // Find Farcaster connector
-      const farcasterConnector = connectors.find(
-        (c) => c.name === "Farcaster Mini App"
-      );
-
-      if (farcasterConnector) {
-        connect({ connector: farcasterConnector });
-      }
-    }
-  }, [isConnected, connect, connectors]);
+  // Auto-connect Farcaster wallet
+  useAutoConnect();
 
   return (
     <div className="container mx-auto px-3 py-4 space-y-4">
@@ -62,14 +42,15 @@ export default function FarcasterHomePage() {
             <span>Conquer</span>
           </h1>
           <p className="text-xs text-muted-foreground">
-            Complete VibeMarket trading card sets, earn ETH prizes, and prove
-            your grind on Base.
+            Complete your VibeMarket trading card sets, earn prize prizes, and
+            prove your grind on Base.
           </p>
         </div>
       </div>
 
       {/* Main Content: Active Competitions Only - No Hero */}
       <section>
+        <h1 className="font-bold text-sm mb-3">ACTIVE COMPETITION</h1>
         <CompetitionList />
       </section>
     </div>

@@ -68,6 +68,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { geoChallenge_implementation_ABI } from "@/abi";
 import { CONTRACT_ADDRESSES } from "@/lib/contractList";
+import { useAutoConnect } from "@/lib/farcaster";
 
 interface CompetitionDetailPageProps {
   params: Promise<{ id: string }>;
@@ -76,6 +77,9 @@ interface CompetitionDetailPageProps {
 export default function FarcasterCompetitionDetailPage({
   params,
 }: CompetitionDetailPageProps) {
+  // Auto-connect Farcaster wallet
+  useAutoConnect();
+
   const { id } = use(params);
   const competitionId = BigInt(id);
   const { address } = useAccount();
@@ -299,12 +303,13 @@ export default function FarcasterCompetitionDetailPage({
   };
 
   const stateInfo = getStateInfo(competition.state);
+  // Mobile-optimized: 3 decimals for better readability (consistent with cards)
   const prizePoolETH = parseFloat(formatEther(competition.prizePool)).toFixed(
-    5
+    3
   );
   const ticketPriceETH = parseFloat(
     formatEther(competition.ticketPrice)
-  ).toFixed(5);
+  ).toFixed(3);
   const deadlineDate = new Date(Number(competition.deadline) * 1000);
   const isExpired = deadlineDate < new Date();
   const hasTicket = !!(userTicketBalance && userTicketBalance > BigInt(0));
