@@ -148,10 +148,10 @@ export default function FarcasterCompetitionDetailPage({
     competition?.rarityTiers || []
   );
 
-  // Fetch ticket metadata
+  // Fetch ticket metadata (always fetch, not conditional on address)
   const { data: ticketMetadata, loading: loadingTicketMetadata } =
     useTicketMetadata(
-      address,
+      address || "0x0000000000000000000000000000000000000000", // Use zero address if not connected
       CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
       competitionId.toString()
     );
@@ -436,6 +436,111 @@ export default function FarcasterCompetitionDetailPage({
         </CardContent>
       </Card>
 
+      {/* Competition Ticket - Always Display */}
+      <Card>
+        <CardContent className="p-3">
+          {loadingTicketMetadata ? (
+            // Loading state
+            <Skeleton className="w-full aspect-[5/7] max-w-[200px] mx-auto" />
+          ) : ticketMetadata?.image ? (
+            // Ticket available
+            <div className="relative w-full aspect-[5/7] max-w-[200px] mx-auto">
+              <Image
+                src={ticketMetadata.image}
+                alt={ticketMetadata.name || "Competition Ticket"}
+                fill
+                sizes="200px"
+                className="object-cover rounded-lg"
+              />
+              {hasTicket ? (
+                // User owns ticket - show quantity badge
+                <Badge className="absolute top-2 right-2 bg-blue-600 text-white">
+                  x{userTicketBalance?.toString()}
+                </Badge>
+              ) : (
+                // User doesn't own ticket - show overlay
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
+                  <div className="text-center text-white">
+                    <Ticket className="h-8 w-8 mx-auto mb-2" />
+                    <p className="text-xs font-semibold">
+                      Buy Ticket to Participate
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            // Ticket metadata unavailable
+            <Alert>
+              <AlertDescription className="text-xs">No ticket</AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Actions - Fixed spacing at bottom */}
+      <div className="space-y-3 pb-4">
+        {/* Buy Ticket */}
+        {isActive && !hasTicket && !isExpired && (
+          <BuyTicketButton
+            competitionId={competitionId}
+            ticketPrice={competition.ticketPrice}
+            collectionAddress={competition.collectionAddress}
+            disabled={competition.emergencyPaused}
+          />
+        )}
+
+        {/* Deadline Passed Message */}
+        {isActive && !hasTicket && isExpired && (
+          <Alert className="border-amber-500 bg-amber-50">
+            <Clock className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-amber-800">
+              Competition deadline has passed. Tickets are no longer available.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Submit Proof */}
+        {address && hasTicket && progress?.isComplete && (
+          <SubmitWinnerProof
+            competitionId={competitionId}
+            hasEnded={!isActive && !isFinalized}
+            hasWinner={competition.winnerDeclared}
+          />
+        )}
+
+        {/* Claim Prize */}
+        {isWinner && (
+          <ClaimPrizeButton
+            competitionId={competitionId}
+            prizeAmount={calculatedPrizes.winnerPrize}
+            isWinner={isWinner}
+            isFinalized={isFinalized}
+          />
+        )}
+
+        {/* Claim Participant Prize */}
+        {hasParticipantPrize && (
+          <ClaimParticipantPrizeButton
+            competitionId={competitionId}
+            prizePerTicket={calculatedPrizes.participantPrize}
+            hasTicket={hasTicket}
+            isFinalized={isFinalized}
+            hasWinner={competition.winnerDeclared}
+          />
+        )}
+
+        {/* Claim Refund */}
+        {hasTicket && isCancelled && (
+          <ClaimRefundButton
+            competitionId={competitionId}
+            refundAmount={calculatedPrizes.refundAmount}
+            hasTicket={hasTicket}
+            isCancelled={isCancelled}
+          />
+        )}
+      </div>
+
       {/* Countdown - Prominent */}
       {timeRemaining && (
         <Card>
@@ -613,26 +718,6 @@ export default function FarcasterCompetitionDetailPage({
         </CardContent>
       </Card>
 
-      {/* Your Ticket */}
-      {hasTicket && ticketMetadata?.image && (
-        <Card>
-          <CardContent className="p-3">
-            <div className="relative w-full aspect-[5/7] max-w-[200px] mx-auto">
-              <Image
-                src={ticketMetadata.image}
-                alt={ticketMetadata.name}
-                fill
-                sizes="200px"
-                className="object-cover rounded-lg"
-              />
-              <Badge className="absolute top-2 right-2 bg-blue-600 text-white">
-                x{userTicketBalance?.toString()}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Progress */}
       {address && hasTicket && progress && (
         <Card>
@@ -685,59 +770,6 @@ export default function FarcasterCompetitionDetailPage({
           </CardContent>
         </Card>
       )}
-
-      {/* Actions - Fixed spacing at bottom */}
-      <div className="space-y-3 pb-4">
-        {/* Buy Ticket */}
-        {isActive && !hasTicket && (
-          <BuyTicketButton
-            competitionId={competitionId}
-            ticketPrice={competition.ticketPrice}
-            collectionAddress={competition.collectionAddress}
-            disabled={competition.emergencyPaused}
-          />
-        )}
-
-        {/* Submit Proof */}
-        {address && hasTicket && progress?.isComplete && (
-          <SubmitWinnerProof
-            competitionId={competitionId}
-            hasEnded={!isActive && !isFinalized}
-            hasWinner={competition.winnerDeclared}
-          />
-        )}
-
-        {/* Claim Prize */}
-        {isWinner && (
-          <ClaimPrizeButton
-            competitionId={competitionId}
-            prizeAmount={calculatedPrizes.winnerPrize}
-            isWinner={isWinner}
-            isFinalized={isFinalized}
-          />
-        )}
-
-        {/* Claim Participant Prize */}
-        {hasParticipantPrize && (
-          <ClaimParticipantPrizeButton
-            competitionId={competitionId}
-            prizePerTicket={calculatedPrizes.participantPrize}
-            hasTicket={hasTicket}
-            isFinalized={isFinalized}
-            hasWinner={competition.winnerDeclared}
-          />
-        )}
-
-        {/* Claim Refund */}
-        {hasTicket && isCancelled && (
-          <ClaimRefundButton
-            competitionId={competitionId}
-            refundAmount={calculatedPrizes.refundAmount}
-            hasTicket={hasTicket}
-            isCancelled={isCancelled}
-          />
-        )}
-      </div>
     </div>
   );
 }

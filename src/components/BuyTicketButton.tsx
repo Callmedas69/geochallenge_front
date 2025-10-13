@@ -29,14 +29,10 @@ export function BuyTicketButton({
 }: BuyTicketButtonProps) {
   const { address, isConnecting } = useAccount()
   const { buyTicket, isPending, isConfirming, isSuccess, error } = useBuyTicket()
-  const { data: ticketBalance } = useUserTicketBalance(address, competitionId)
+  const { data: ticketBalance, isLoading: checkingBalance } = useUserTicketBalance(address, competitionId)
 
-  const handleBuyTicket = async () => {
-    try {
-      await buyTicket(competitionId, ticketPrice)
-    } catch (err) {
-      console.error('Failed to buy ticket:', err)
-    }
+  const handleBuyTicket = () => {
+    buyTicket(competitionId, ticketPrice)
   }
 
   // Already owns ticket
@@ -63,8 +59,18 @@ export function BuyTicketButton({
     )
   }
 
+  // Checking ticket balance
+  if (checkingBalance) {
+    return (
+      <Button disabled className="w-full" size="lg">
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        Checking ticket status...
+      </Button>
+    )
+  }
+
   // Connecting wallet (auto-connect in progress)
-  if (isConnecting || (!address && !error)) {
+  if (isConnecting) {
     return (
       <Button disabled className="w-full" size="lg">
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -127,10 +133,12 @@ export function BuyTicketButton({
         </Alert>
       )}
 
-      {/* Info */}
-      <p className="text-xs text-muted-foreground text-center">
-        Required: Own NFT from {collectionAddress.slice(0, 6)}...{collectionAddress.slice(-4)}
-      </p>
+      {/* Info - Only show when button is ready */}
+      {!isPending && !isConfirming && !error && (
+        <p className="text-xs text-muted-foreground text-center">
+          Required: Own NFT from {collectionAddress.slice(0, 6)}...{collectionAddress.slice(-4)}
+        </p>
+      )}
     </div>
   )
 }

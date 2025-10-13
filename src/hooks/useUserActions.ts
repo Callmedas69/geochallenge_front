@@ -15,9 +15,16 @@ import { CONTRACT_ADDRESSES } from '@/lib/contractList'
  */
 export function useBuyTicket() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error } = useWriteContract()
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash
+  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const {
+    isLoading: isConfirming,
+    isSuccess,
+    error: receiptError
+  } = useWaitForTransactionReceipt({
+    hash,
+    query: {
+      enabled: !!hash,
+    }
   })
 
   const buyTicket = async (competitionId: bigint, ticketPrice: bigint) => {
@@ -39,7 +46,7 @@ export function useBuyTicket() {
     isPending,
     isConfirming,
     isSuccess,
-    error,
+    error: writeError || receiptError,
     hash,
   }
 }
@@ -50,9 +57,16 @@ export function useBuyTicket() {
  */
 export function useClaimPrize() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error } = useWriteContract()
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash
+  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const {
+    isLoading: isConfirming,
+    isSuccess,
+    error: receiptError
+  } = useWaitForTransactionReceipt({
+    hash,
+    query: {
+      enabled: !!hash,
+    }
   })
 
   const claimPrize = async (competitionId: bigint) => {
@@ -73,7 +87,7 @@ export function useClaimPrize() {
     isPending,
     isConfirming,
     isSuccess,
-    error,
+    error: writeError || receiptError,
     hash,
   }
 }
@@ -84,9 +98,16 @@ export function useClaimPrize() {
  */
 export function useClaimParticipantPrize() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error } = useWriteContract()
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash
+  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const {
+    isLoading: isConfirming,
+    isSuccess,
+    error: receiptError
+  } = useWaitForTransactionReceipt({
+    hash,
+    query: {
+      enabled: !!hash,
+    }
   })
 
   const claimParticipantPrize = async (competitionId: bigint) => {
@@ -107,7 +128,7 @@ export function useClaimParticipantPrize() {
     isPending,
     isConfirming,
     isSuccess,
-    error,
+    error: writeError || receiptError,
     hash,
   }
 }
@@ -118,9 +139,16 @@ export function useClaimParticipantPrize() {
  */
 export function useClaimRefund() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error } = useWriteContract()
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash
+  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const {
+    isLoading: isConfirming,
+    isSuccess,
+    error: receiptError
+  } = useWaitForTransactionReceipt({
+    hash,
+    query: {
+      enabled: !!hash,
+    }
   })
 
   const claimRefund = async (competitionId: bigint) => {
@@ -141,7 +169,7 @@ export function useClaimRefund() {
     isPending,
     isConfirming,
     isSuccess,
-    error,
+    error: writeError || receiptError,
     hash,
   }
 }
@@ -152,9 +180,16 @@ export function useClaimRefund() {
  */
 export function useWithdrawBalance() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error } = useWriteContract()
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash
+  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const {
+    isLoading: isConfirming,
+    isSuccess,
+    error: receiptError
+  } = useWaitForTransactionReceipt({
+    hash,
+    query: {
+      enabled: !!hash,
+    }
   })
 
   const withdrawBalance = async () => {
@@ -175,7 +210,7 @@ export function useWithdrawBalance() {
     isPending,
     isConfirming,
     isSuccess,
-    error,
+    error: writeError || receiptError,
     hash,
   }
 }
