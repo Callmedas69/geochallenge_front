@@ -7,6 +7,7 @@
 import { formatEther, formatUnits, parseEther } from 'viem'
 import type { Address } from 'viem'
 import { CompetitionState } from '@/lib/types'
+import { DECIMALS } from '@/lib/displayConfig'
 
 // ============================================================================
 // BigInt / ETH Formatters
@@ -14,10 +15,10 @@ import { CompetitionState } from '@/lib/types'
 
 /**
  * Format wei to ETH with specified decimal places
- * @example formatWeiToEth(1000000000000000000n) => "1.00"
- * @example formatWeiToEth(1500000000000000000n, 4) => "1.5000"
+ * @example formatWeiToEth(1000000000000000000n) => "1.0000" (uses DECIMALS.MAIN = 4)
+ * @example formatWeiToEth(1500000000000000000n, DECIMALS.FARCASTER) => "1.500"
  */
-export function formatWeiToEth(wei: bigint, decimals: number = 2): string {
+export function formatWeiToEth(wei: bigint, decimals: number = DECIMALS.MAIN): string {
   const eth = formatEther(wei)
   const num = parseFloat(eth)
   return num.toFixed(decimals)
@@ -25,9 +26,9 @@ export function formatWeiToEth(wei: bigint, decimals: number = 2): string {
 
 /**
  * Format wei to ETH with "ETH" suffix
- * @example formatEthWithSuffix(1000000000000000000n) => "1.00 ETH"
+ * @example formatEthWithSuffix(1000000000000000000n) => "1.0000 ETH" (uses DECIMALS.MAIN = 4)
  */
-export function formatEthWithSuffix(wei: bigint, decimals: number = 2): string {
+export function formatEthWithSuffix(wei: bigint, decimals: number = DECIMALS.MAIN): string {
   return `${formatWeiToEth(wei, decimals)} ETH`
 }
 

@@ -69,6 +69,7 @@ import Image from "next/image";
 import { geoChallenge_implementation_ABI } from "@/abi";
 import { CONTRACT_ADDRESSES } from "@/lib/contractList";
 import { useAutoConnect } from "@/lib/farcaster";
+import { DECIMALS } from "@/lib/displayConfig";
 
 interface CompetitionDetailPageProps {
   params: Promise<{ id: string }>;
@@ -148,10 +149,10 @@ export default function FarcasterCompetitionDetailPage({
     competition?.rarityTiers || []
   );
 
-  // Fetch ticket metadata (always fetch, not conditional on address)
+  // Fetch ticket metadata (only when user is connected)
   const { data: ticketMetadata, loading: loadingTicketMetadata } =
     useTicketMetadata(
-      address || "0x0000000000000000000000000000000000000000", // Use zero address if not connected
+      address, // Only fetch if user is connected
       CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
       competitionId.toString()
     );
@@ -303,13 +304,13 @@ export default function FarcasterCompetitionDetailPage({
   };
 
   const stateInfo = getStateInfo(competition.state);
-  // Mobile-optimized: 3 decimals for better readability (consistent with cards)
+  // Mobile-optimized: Use centralized decimal config (consistent with cards)
   const prizePoolETH = parseFloat(formatEther(competition.prizePool)).toFixed(
-    3
+    DECIMALS.FARCASTER
   );
   const ticketPriceETH = parseFloat(
     formatEther(competition.ticketPrice)
-  ).toFixed(3);
+  ).toFixed(DECIMALS.FARCASTER);
   const deadlineDate = new Date(Number(competition.deadline) * 1000);
   const isExpired = deadlineDate < new Date();
   const hasTicket = !!(userTicketBalance && userTicketBalance > BigInt(0));
@@ -436,47 +437,32 @@ export default function FarcasterCompetitionDetailPage({
         </CardContent>
       </Card>
 
-      {/* Competition Ticket - Always Display */}
-      <Card>
-        <CardContent className="p-3">
-          {loadingTicketMetadata ? (
-            // Loading state
-            <Skeleton className="w-full aspect-[5/7] max-w-[200px] mx-auto" />
-          ) : ticketMetadata?.image ? (
-            // Ticket available
-            <div className="relative w-full aspect-[5/7] max-w-[200px] mx-auto">
-              <Image
-                src={ticketMetadata.image}
-                alt={ticketMetadata.name || "Competition Ticket"}
-                fill
-                sizes="200px"
-                className="object-cover rounded-lg"
-              />
-              {hasTicket ? (
-                // User owns ticket - show quantity badge
+      {/* Competition Ticket - Show when user has ticket */}
+      {address && hasTicket && ticketMetadata?.image && (
+        <Card>
+          <CardHeader className="p-3 pb-2">
+            <CardTitle className="text-sm">Your Ticket</CardTitle>
+          </CardHeader>
+          <CardContent className="p-3">
+            {loadingTicketMetadata ? (
+              <Skeleton className="w-full aspect-[5/7] max-w-[200px] mx-auto" />
+            ) : (
+              <div className="relative w-full aspect-[5/7] max-w-[200px] mx-auto">
+                <Image
+                  src={ticketMetadata.image}
+                  alt={ticketMetadata.name || "Competition Ticket"}
+                  fill
+                  sizes="200px"
+                  className="object-cover rounded-lg"
+                />
                 <Badge className="absolute top-2 right-2 bg-blue-600 text-white">
                   x{userTicketBalance?.toString()}
                 </Badge>
-              ) : (
-                // User doesn't own ticket - show overlay
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
-                  <div className="text-center text-white">
-                    <Ticket className="h-8 w-8 mx-auto mb-2" />
-                    <p className="text-xs font-semibold">
-                      Buy Ticket to Participate
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            // Ticket metadata unavailable
-            <Alert>
-              <AlertDescription className="text-xs">No ticket</AlertDescription>
-            </Alert>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Actions - Fixed spacing at bottom */}
       <div className="space-y-3 pb-4">

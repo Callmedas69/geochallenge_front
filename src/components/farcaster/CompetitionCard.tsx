@@ -19,6 +19,7 @@ import { Trophy, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { geoChallenge_implementation_ABI } from "@/abi";
 import { CONTRACT_ADDRESSES } from "@/lib/contractList";
+import { DECIMALS } from "@/lib/displayConfig";
 import Image from "next/image";
 
 interface CompetitionCardProps {
@@ -92,13 +93,13 @@ export function CompetitionCard({
   };
 
   const stateInfo = getStateInfo(competition.state);
-  // Mobile-optimized: 3 decimals for better readability on small screens
+  // Mobile-optimized: Use centralized decimal config
   const prizePoolETH = parseFloat(formatEther(competition.prizePool)).toFixed(
-    3
+    DECIMALS.FARCASTER
   );
   const ticketPriceETH = parseFloat(
     formatEther(competition.ticketPrice)
-  ).toFixed(3);
+  ).toFixed(DECIMALS.FARCASTER);
 
   return (
     <Link href={`/fc/competition/${competitionId.toString()}`} className="block">
