@@ -14,10 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  useCompetitionCount,
-  useActiveCompetitions,
-} from "@/hooks/usePublicCompetitions";
+import { useActiveCompetitions } from "@/hooks/usePublicCompetitions";
 import { CompetitionCard } from "@/components/farcaster/CompetitionCard";
 
 /**
@@ -25,12 +22,11 @@ import { CompetitionCard } from "@/components/farcaster/CompetitionCard";
  * Single column, compact spacing, prioritized image loading
  */
 export function CompetitionList() {
-  const { data: totalComps, isLoading: loadingTotal } = useCompetitionCount();
   const { data: activeIds, isLoading: loadingActive } = useActiveCompetitions();
 
   const activeCompetitionIds = activeIds?.[0] || [];
 
-  if (loadingTotal || loadingActive) {
+  if (loadingActive) {
     return (
       <div className="space-y-3">
         {Array.from({ length: 4 }).map((_, i) => (

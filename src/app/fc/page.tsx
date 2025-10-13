@@ -12,6 +12,17 @@ import { EventNotifications } from "@/components/EventNotifications";
 import { useEffect } from "react";
 import { initFarcasterSDK } from "@/lib/farcaster";
 import { useAccount, useConnect } from "wagmi";
+import localFont from "next/font/local";
+
+const spartanFont = localFont({
+  src: [
+    {
+      path: "../../assets/LeagueSpartan-Bold.ttf",
+      style: "bold",
+    },
+  ],
+  display: "swap",
+});
 
 export default function FarcasterHomePage() {
   const { isConnected } = useAccount();
@@ -43,7 +54,9 @@ export default function FarcasterHomePage() {
       {/* Header - Minimal */}
       <div className="space-y-1 min-h-screen flex items-center justify-center px-12">
         <div>
-          <h1 className="text-6xl font-bold tracking-tighter uppercase flex flex-col leading-none">
+          <h1
+            className={`text-6xl font-bold tracking-tighter uppercase flex flex-col leading-none ${spartanFont.className}`}
+          >
             <span>Compete</span>
             <span>Collect</span>
             <span>Conquer</span>

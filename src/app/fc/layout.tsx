@@ -6,6 +6,17 @@
  */
 
 import type { Metadata } from "next";
+import localFont from "next/font/local";
+
+const spartanFont = localFont({
+  src: [
+    {
+      path: "../../assets/LeagueSpartan-Bold.ttf",
+      style: "bold",
+    },
+  ],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "GeoChallenge - Farcaster",
@@ -22,8 +33,10 @@ export default function FarcasterLayout({
       {/* Minimal header for miniApps - no navigation, no wallet connect UI */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-12 items-center px-3">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold">GEOCHALLENGE</span>
+          <div className={`flex items-center gap-2 ${spartanFont.className}`}>
+            <span className="text-xl font-extrabold tracking-tighter">
+              GEOCHALLENGE
+            </span>
           </div>
         </div>
       </header>
@@ -33,7 +46,7 @@ export default function FarcasterLayout({
 
       {/* Minimal footer for miniApps */}
       <footer className="border-t py-4">
-        <div className="container px-3 text-center text-xs text-muted-foreground">
+        <div className="container px-3 text-center text-xs text-muted-foreground italic">
           Powered by GeoChallenge
         </div>
       </footer>

@@ -92,16 +92,17 @@ export function CompetitionCard({
   };
 
   const stateInfo = getStateInfo(competition.state);
+  // Mobile-optimized: 3 decimals for better readability on small screens
   const prizePoolETH = parseFloat(formatEther(competition.prizePool)).toFixed(
-    4
+    3
   );
   const ticketPriceETH = parseFloat(
     formatEther(competition.ticketPrice)
-  ).toFixed(4);
+  ).toFixed(3);
 
   return (
-    <Link href={`/fc/competition/${competitionId.toString()}`}>
-      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+    <Link href={`/fc/competition/${competitionId.toString()}`} className="block">
+      <Card className="min-h-[140px] hover:shadow-lg transition-shadow cursor-pointer">
         <div className="flex gap-3 p-3">
           {/* LEFT: Compact Thumbnail - 100×140px */}
           <div className="w-[100px] flex-shrink-0">
