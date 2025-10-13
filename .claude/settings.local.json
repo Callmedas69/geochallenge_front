@@ -26,7 +26,11 @@
       "WebFetch(domain:docs.farcaster.xyz)",
       "WebFetch(domain:miniapps.farcaster.xyz)",
       "Bash(identify:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(findstr:*)",
+      "Bash(del \"D:\\Harry\\BasedNouns\\CodeProject\\cardcompetition-front\\src\\components\\FarcasterCompetitionCard.tsx\")",
+      "Bash(del \"D:\\Harry\\BasedNouns\\CodeProject\\cardcompetition-front\\src\\components\\FarcasterCompetitionList.tsx\")",
+      "Bash(del \"D:\\Harry\\BasedNouns\\CodeProject\\cardcompetition-front\\src\\components\\MiniAppInit.tsx\")"
     ],
     "deny": [],
     "ask": []

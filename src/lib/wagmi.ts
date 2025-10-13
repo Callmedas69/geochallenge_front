@@ -1,6 +1,13 @@
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
+import {
+  metaMaskWallet,
+  coinbaseWallet,
+  walletConnectWallet,
+  rainbowWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { base, baseSepolia } from 'wagmi/chains';
-import { http } from 'wagmi';
+import { createConfig, http } from 'wagmi';
+import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
@@ -8,9 +15,26 @@ if (!projectId) {
   throw new Error('NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID is required');
 }
 
-export const config = getDefaultConfig({
-  appName: 'Card Competition',
-  projectId,
+// Standard wallet connectors for web
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: 'Recommended',
+      wallets: [
+        metaMaskWallet,
+        coinbaseWallet,
+        walletConnectWallet,
+        rainbowWallet,
+      ],
+    },
+  ],
+  {
+    appName: 'GeoChallenge',
+    projectId,
+  }
+);
+
+export const config = createConfig({
   chains: [baseSepolia, base],
   transports: {
     [baseSepolia.id]: http(baseSepolia.rpcUrls.default.http[0], {
@@ -20,5 +44,9 @@ export const config = getDefaultConfig({
       batch: true,
     }),
   },
+  connectors: [
+    ...connectors,
+    farcasterMiniApp(), // Add Farcaster connector - auto-connects in Farcaster context
+  ],
   ssr: true,
 });

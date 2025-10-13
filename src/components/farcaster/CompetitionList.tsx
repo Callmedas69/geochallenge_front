@@ -1,5 +1,5 @@
 /**
- * @title FarcasterCompetitionList Component
+ * @title CompetitionList Component
  * @notice Active competitions list optimized for Farcaster miniApps
  * @dev KISS principle: Single column, tight spacing, fast loading
  * @dev Shows only active competitions (no tabs, no "all" view)
@@ -18,13 +18,13 @@ import {
   useCompetitionCount,
   useActiveCompetitions,
 } from "@/hooks/usePublicCompetitions";
-import { FarcasterCompetitionCard } from "@/components/FarcasterCompetitionCard";
+import { CompetitionCard } from "@/components/farcaster/CompetitionCard";
 
 /**
  * Active competitions list for Farcaster miniApps
  * Single column, compact spacing, prioritized image loading
  */
-export function FarcasterCompetitionList() {
+export function CompetitionList() {
   const { data: totalComps, isLoading: loadingTotal } = useCompetitionCount();
   const { data: activeIds, isLoading: loadingActive } = useActiveCompetitions();
 
@@ -65,7 +65,7 @@ export function FarcasterCompetitionList() {
   return (
     <div className="space-y-3">
       {activeCompetitionIds.map((id, index) => (
-        <FarcasterCompetitionCard
+        <CompetitionCard
           key={id.toString()}
           competitionId={id}
           priority={index < 3} // Prioritize first 3 images for faster LCP

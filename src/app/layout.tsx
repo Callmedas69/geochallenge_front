@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { League_Spartan, Sanchez } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/Footer";
 import { Toaster } from "sonner";
 
 const leagueSpartan = League_Spartan({
@@ -55,9 +53,7 @@ export default function RootLayout({
         className={`${leagueSpartan.variable} ${sanchez.variable} antialiased flex flex-col min-h-screen`}
       >
         <Providers>
-          <Header />
-          <main className="">{children}</main>
-          <Footer />
+          {children}
           <Toaster position="top-right" richColors />
         </Providers>
       </body>

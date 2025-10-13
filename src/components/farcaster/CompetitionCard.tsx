@@ -1,5 +1,5 @@
 /**
- * @title FarcasterCompetitionCard Component
+ * @title CompetitionCard Component (Farcaster)
  * @notice Minimal competition card optimized for Farcaster miniApps
  * @dev KISS principle: Compact layout, essential fields only, fast scanning
  * @dev Shows: thumbnail, title, prize, ticket price, tickets sold, countdown
@@ -21,7 +21,7 @@ import { geoChallenge_implementation_ABI } from "@/abi";
 import { CONTRACT_ADDRESSES } from "@/lib/contractList";
 import Image from "next/image";
 
-interface FarcasterCompetitionCardProps {
+interface CompetitionCardProps {
   competitionId: bigint;
   priority?: boolean; // For image loading optimization
 }
@@ -31,10 +31,10 @@ interface FarcasterCompetitionCardProps {
  * Height: ~140-150px (vs standard ~280px)
  * Width: Optimized for 375px viewport
  */
-export function FarcasterCompetitionCard({
+export function CompetitionCard({
   competitionId,
   priority = false,
-}: FarcasterCompetitionCardProps) {
+}: CompetitionCardProps) {
   const { data: competition, isLoading } = useCompetitionById(competitionId);
 
   // Fetch competition metadata (name only, no description)

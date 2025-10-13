@@ -7,30 +7,33 @@
 
 "use client";
 
-import { FarcasterCompetitionList } from "@/components/FarcasterCompetitionList";
+import { CompetitionList } from "@/components/farcaster";
 import { EventNotifications } from "@/components/EventNotifications";
-import { useEffect, useState } from "react";
-import { sdk } from "@farcaster/miniapp-sdk";
+import { useEffect } from "react";
+import { initFarcasterSDK } from "@/lib/farcaster";
+import { useAccount, useConnect } from "wagmi";
 
 export default function FarcasterHomePage() {
-  const [isReady, setIsReady] = useState(false);
+  const { isConnected } = useAccount();
+  const { connect, connectors } = useConnect();
 
-  // Call ready() once page content is loaded
+  // Initialize SDK and auto-connect wallet
   useEffect(() => {
-    // Small delay to ensure DOM is fully painted
-    const timer = setTimeout(async () => {
-      try {
-        await sdk.actions.ready();
-        setIsReady(true);
-        console.log("✅ Farcaster SDK: Ready call successful from /fc page");
-      } catch (error) {
-        console.warn("⚠️ Farcaster SDK: Not in miniApp context", error);
-        setIsReady(true); // Still show content if not in Farcaster
-      }
-    }, 100);
+    // Initialize Farcaster SDK
+    initFarcasterSDK();
 
-    return () => clearTimeout(timer);
-  }, []);
+    // Auto-connect wallet if not already connected
+    if (!isConnected && connectors.length > 0) {
+      // Find Farcaster connector
+      const farcasterConnector = connectors.find(
+        (c) => c.name === "Farcaster Mini App"
+      );
+
+      if (farcasterConnector) {
+        connect({ connector: farcasterConnector });
+      }
+    }
+  }, [isConnected, connect, connectors]);
 
   return (
     <div className="container mx-auto px-3 py-4 space-y-4">
@@ -49,7 +52,7 @@ export default function FarcasterHomePage() {
 
       {/* Main Content: Active Competitions Only - No Hero */}
       <section>
-        <FarcasterCompetitionList />
+        <CompetitionList />
       </section>
     </div>
   );
