@@ -45,7 +45,6 @@ export default function FarcasterBrowsePage() {
   if (isLoading) {
     return (
       <>
-        <FarcasterHeader />
         <div className="container mx-auto px-3 py-4 pb-20 space-y-4">
           <Skeleton className="h-8 w-1/2" />
           <Skeleton className="h-10 w-full" />

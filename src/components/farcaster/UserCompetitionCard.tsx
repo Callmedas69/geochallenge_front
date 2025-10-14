@@ -22,16 +22,20 @@ import { CONTRACT_ADDRESSES } from "@/lib/contractList";
 import {
   calculateWinnerPrize,
   calculateParticipantPrizeWithWinner,
+  calculateRefundAmount,
+  calculateEmergencyRefund,
 } from "@/lib/prizeCalculations";
-import { formatEther } from "viem";
-import { DECIMALS } from "@/lib/displayConfig";
+import { ClaimButton } from "./ClaimButton";
 
 interface UserCompetitionCardProps {
   competitionId: bigint;
   isActive?: boolean; // Hint to skip progress calc for completed
 }
 
-export function UserCompetitionCard({ competitionId, isActive = true }: UserCompetitionCardProps) {
+export function UserCompetitionCard({
+  competitionId,
+  isActive = true,
+}: UserCompetitionCardProps) {
   const { address } = useAccount();
   const { data: competition, isLoading } = useCompetitionById(competitionId);
 
@@ -67,7 +71,8 @@ export function UserCompetitionCard({ competitionId, isActive = true }: UserComp
 
   // Calculate progress percentage
   const progressPercent = useMemo(() => {
-    if (!progress || !progress.totalRequired || progress.totalRequired === 0) return 0;
+    if (!progress || !progress.totalRequired || progress.totalRequired === 0)
+      return 0;
     return Math.round((progress.totalOwned / progress.totalRequired) * 100);
   }, [progress]);
 
@@ -83,22 +88,45 @@ export function UserCompetitionCard({ competitionId, isActive = true }: UserComp
     return stateMap[state] || { label: "Unknown", color: "bg-gray-500" };
   };
 
-  // Calculate claimable prizes
+  // Calculate claimable prizes and refunds
   const calculatedPrizes = useMemo(() => {
-    if (!competition || competition.state !== 3) {
-      return { winnerPrize: 0n, participantPrize: 0n };
+    if (!competition) {
+      return { winnerPrize: 0n, participantPrize: 0n, refundAmount: 0n };
     }
 
-    const winnerPrize = competition.winnerDeclared
-      ? calculateWinnerPrize(competition.prizePool)
-      : 0n;
+    let winnerPrize = 0n;
+    let participantPrize = 0n;
+    let refundAmount = 0n;
 
-    const participantPrize =
-      competition.winnerDeclared && participantPrizePerTicket
-        ? participantPrizePerTicket
-        : 0n;
+    if (competition.state === 3) {
+      // Finalized state
+      if (competition.winnerDeclared) {
+        // Has winner
+        winnerPrize = calculateWinnerPrize(competition.prizePool);
+        participantPrize = participantPrizePerTicket || 0n;
+      } else {
+        // No winner - check for refund
+        const hasParticipantPrize =
+          participantPrizePerTicket && participantPrizePerTicket > 0n;
 
-    return { winnerPrize, participantPrize };
+        if (!hasParticipantPrize) {
+          // Cancelled - calculate refund
+          if (competition.emergencyPaused && competition.prizePool > 0n) {
+            refundAmount = calculateEmergencyRefund(
+              competition.prizePool,
+              competition.totalTickets
+            );
+          } else {
+            refundAmount = calculateRefundAmount(
+              competition.ticketPrice,
+              competition.treasuryPercent
+            );
+          }
+        }
+      }
+    }
+
+    return { winnerPrize, participantPrize, refundAmount };
   }, [competition, participantPrizePerTicket]);
 
   if (isLoading || !competition) {
@@ -109,15 +137,33 @@ export function UserCompetitionCard({ competitionId, isActive = true }: UserComp
   const isCompActive = competition.state === 1;
   const isFinalized = competition.state === 3;
   const isComplete = progress?.isComplete || false;
-  const competitionName = metadata?.[0] || `Competition #${competitionId.toString()}`;
+  const competitionName =
+    metadata?.[0] || `Competition #${competitionId.toString()}`;
 
   // Check if user is winner
-  const isWinner = address && competition.winner.toLowerCase() === address.toLowerCase();
+  const isWinner = Boolean(
+    address && competition.winner.toLowerCase() === address.toLowerCase()
+  );
 
   // Check claimable status
-  const canClaimWinner = isWinner && isFinalized && calculatedPrizes.winnerPrize > 0n;
-  const canClaimParticipant =
-    !isWinner && isFinalized && calculatedPrizes.participantPrize > 0n && competition.winnerDeclared;
+  const canClaimWinner = Boolean(
+    isWinner && isFinalized && calculatedPrizes.winnerPrize > 0n
+  );
+  const canClaimParticipant = Boolean(
+    !isWinner &&
+      isFinalized &&
+      calculatedPrizes.participantPrize > 0n &&
+      competition.winnerDeclared
+  );
+  const canClaimRefund = Boolean(
+    isFinalized && calculatedPrizes.refundAmount > 0n
+  );
+  const isCancelled = Boolean(
+    isFinalized &&
+      !competition.winnerDeclared &&
+      (participantPrizePerTicket === undefined ||
+        participantPrizePerTicket === 0n)
+  );
 
   return (
     <Card>
@@ -130,7 +176,9 @@ export function UserCompetitionCard({ competitionId, isActive = true }: UserComp
           >
             {competitionName}
           </Link>
-          <Badge className={`${stateInfo.color} text-white text-xs flex-shrink-0`}>
+          <Badge
+            className={`${stateInfo.color} text-white text-xs flex-shrink-0`}
+          >
             {stateInfo.label}
           </Badge>
         </div>
@@ -162,37 +210,56 @@ export function UserCompetitionCard({ competitionId, isActive = true }: UserComp
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex gap-2">
-          {/* Claim Winner Prize - Link to detail page */}
-          {canClaimWinner && (
-            <Button asChild className="flex-1 bg-yellow-600 hover:bg-yellow-700" size="sm">
-              <Link href={`/fc/competition/${competitionId.toString()}`}>
-                <Gift className="h-3 w-3 mr-1" />
-                <span className="text-xs">Claim {parseFloat(formatEther(calculatedPrizes.winnerPrize)).toFixed(DECIMALS.FARCASTER)}Ξ</span>
-              </Link>
-            </Button>
+        {/* Action Buttons - Smart visibility based on state */}
+        <div className="space-y-2">
+          {/* Finalized: Show relevant claim button */}
+          {isFinalized && (
+            <>
+              {/* Winner Prize - Only show for winners */}
+              {isWinner && (
+                <ClaimButton
+                  enabled={canClaimWinner}
+                  href={`/fc/competition/${competitionId.toString()}`}
+                  amount={calculatedPrizes.winnerPrize}
+                  label="Claim Winner Prize"
+                  disabledText="Winner Prize (Not finalized)"
+                  variant="winner"
+                />
+              )}
+
+              {/* Participant Prize - Only show for non-winners when winner exists */}
+              {!isWinner && competition.winnerDeclared && (
+                <ClaimButton
+                  enabled={canClaimParticipant}
+                  href={`/fc/competition/${competitionId.toString()}`}
+                  amount={calculatedPrizes.participantPrize}
+                  label="Claim Participant Prize"
+                  disabledText="Participant Prize (Not available)"
+                  variant="participant"
+                />
+              )}
+
+              {/* Refund - Only show when cancelled (no winner) */}
+              {!competition.winnerDeclared && isCancelled && (
+                <ClaimButton
+                  enabled={canClaimRefund}
+                  href={`/fc/competition/${competitionId.toString()}`}
+                  amount={calculatedPrizes.refundAmount}
+                  label="Claim Refund"
+                  disabledText="Refund (Already claimed)"
+                  variant="refund"
+                />
+              )}
+            </>
           )}
 
-          {/* Claim Participant Prize - Link to detail page */}
-          {canClaimParticipant && (
-            <Button asChild className="flex-1 bg-blue-600 hover:bg-blue-700" size="sm">
-              <Link href={`/fc/competition/${competitionId.toString()}`}>
-                <Gift className="h-3 w-3 mr-1" />
-                <span className="text-xs">Claim {parseFloat(formatEther(calculatedPrizes.participantPrize)).toFixed(DECIMALS.FARCASTER)}Ξ</span>
-              </Link>
-            </Button>
-          )}
-
-          {/* View Details - Always show if no claimable prizes */}
-          {!canClaimWinner && !canClaimParticipant && (
-            <Button variant="outline" size="sm" asChild className="flex-1">
-              <Link href={`/fc/competition/${competitionId.toString()}`}>
-                <span className="text-xs">View Details</span>
-                <ExternalLink className="h-3 w-3 ml-1" />
-              </Link>
-            </Button>
-          )}
+          {/* View Details - Always enabled */}
+          <Button variant="outline" size="sm" asChild className="w-full">
+            <Link href={`/fc/competition/${competitionId.toString()}`}>
+              <span className="text-xs">View Details</span>
+              <ExternalLink className="h-3 w-3 ml-1" />
+            </Link>
+          </Button>
         </div>
       </CardContent>
     </Card>

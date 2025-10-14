@@ -90,7 +90,6 @@ export default function FarcasterDashboardPage() {
   if (!isConnected || !address) {
     return (
       <>
-        <FarcasterHeader />
         <div className="container mx-auto px-3 py-4 pb-20">
           <Card>
             <CardHeader className="p-4">
@@ -112,7 +111,6 @@ export default function FarcasterDashboardPage() {
             </CardContent>
           </Card>
         </div>
-        <BottomNav />
       </>
     );
   }
@@ -121,7 +119,6 @@ export default function FarcasterDashboardPage() {
   if (isLoading) {
     return (
       <>
-        <FarcasterHeader />
         <div className="container mx-auto px-3 py-4 pb-20 space-y-4">
           <Skeleton className="h-8 w-1/2" />
           <div className="grid grid-cols-2 gap-3">
@@ -132,7 +129,6 @@ export default function FarcasterDashboardPage() {
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-32 w-full" />
         </div>
-        <BottomNav />
       </>
     );
   }
@@ -141,7 +137,6 @@ export default function FarcasterDashboardPage() {
   if (activeCompIds.length === 0 && completedCompIds.length === 0) {
     return (
       <>
-        <FarcasterHeader />
         <div className="container mx-auto px-3 py-4 pb-20 space-y-4">
           {/* Header */}
           <div className="space-y-1">
@@ -236,7 +231,6 @@ export default function FarcasterDashboardPage() {
   // Dashboard with competitions
   return (
     <>
-      <FarcasterHeader />
       <div className="container mx-auto px-3 py-4 pb-20 space-y-4">
         {/* Header */}
         <div className="space-y-1">
@@ -336,8 +330,6 @@ export default function FarcasterDashboardPage() {
           </TabsContent>
         </Tabs>
       </div>
-
-      <BottomNav />
     </>
   );
 }
