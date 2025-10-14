@@ -613,6 +613,14 @@ export default function FarcasterCompetitionDetailPage({
               </div>
             </div>
 
+            {/* Progress */}
+            <CompetitionProgress
+              progress={progress}
+              loading={loadingProgress}
+              address={address}
+              hasTicket={hasTicket}
+            />
+
             {/* Collection Art Gallery */}
             {collectionArt?.cards && collectionArt.cards.length > 0 && (
               <div className="pt-3 border-t">
@@ -673,14 +681,6 @@ export default function FarcasterCompetitionDetailPage({
           </div>
         </CardContent>
       </Card>
-
-      {/* Progress */}
-      <CompetitionProgress
-        progress={progress}
-        loading={loadingProgress}
-        address={address}
-        hasTicket={hasTicket}
-      />
 
       {/* Winner Info */}
       {competition.winnerDeclared && (

@@ -36,9 +36,7 @@ interface CompetitionTicketProps {
 export function CompetitionTicket({
   address,
   hasTicket,
-  userTicketBalance,
   competitionId,
-  debugMode = false,
 }: CompetitionTicketProps) {
   // Fetch ticket metadata from GeoChallenge contract (ERC1155 uri)
   const {
@@ -56,13 +54,13 @@ export function CompetitionTicket({
           <Skeleton className="w-full aspect-video max-w-[200px] mx-auto" />
         ) : ticketMetadata?.image ? (
           // Ticket found - display image with quantity badge
-          <div className="relative w-full aspect-video max-w-[200px] mx-auto">
+          <div className="relative w-full aspect-video">
             <Image
               src={ticketMetadata.image}
               alt={ticketMetadata.name || "Competition Ticket"}
               fill
-              sizes="200px"
-              className="object-cover rounded-lg"
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover"
             />
           </div>
         ) : (
