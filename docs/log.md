@@ -1,3 +1,6 @@
-Review on src\app\fc\competition\[id]\page.tsx,
-1. Focus on farcaster miniapps layout
-2. There were unused import, why this import not being used ?
+1. No need to show the tickets users / participant bought , since users will not care about it
+2. Just concern what users need to see on the dashboard
+3. Comply with CLAUDE.md
+4. Implememnt inlaine Claim button
+
+Proceed Priority 1

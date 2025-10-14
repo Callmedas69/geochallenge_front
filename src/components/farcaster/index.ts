@@ -8,3 +8,8 @@ export { CompetitionCard } from './CompetitionCard';
 export { CompetitionList } from './CompetitionList';
 export { CompetitionTicket } from './CompetitionTicket';
 export { CompetitionProgress } from './CompetitionProgress';
+export { BottomNav } from './BottomNav';
+export { FarcasterHeader } from './FarcasterHeader';
+export { HowItWorksDrawer } from './HowItWorksDrawer';
+export { DashboardQuickStats } from './DashboardQuickStats';
+export { UserCompetitionCard } from './UserCompetitionCard';
