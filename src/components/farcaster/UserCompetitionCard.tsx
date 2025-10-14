@@ -14,7 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { useCompetitionById } from "@/hooks/usePublicCompetitions";
 import { useProgressCalculator } from "@/hooks/useVibeAPI";
 import { useAccount, useReadContract } from "wagmi";
-import { CheckCircle, ExternalLink, Gift } from "lucide-react";
+import { CheckCircle, Gift } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import { geoChallenge_implementation_ABI } from "@/abi";
@@ -165,103 +165,96 @@ export function UserCompetitionCard({
         participantPrizePerTicket === 0n)
   );
 
+  const competitionUrl = `/fc/competition/${competitionId.toString()}`;
+
   return (
-    <Card>
-      <CardContent className="p-3 space-y-3">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-2">
-          <Link
-            href={`/fc/competition/${competitionId.toString()}`}
-            className="font-semibold text-sm hover:underline truncate flex-1"
-          >
-            {competitionName}
-          </Link>
-          <Badge
-            className={`${stateInfo.color} text-white text-xs flex-shrink-0`}
-          >
-            {stateInfo.label}
-          </Badge>
-        </div>
+    <Link href={competitionUrl} className="block">
+      <Card className="cursor-pointer transition-colors hover:bg-accent/50">
+        <CardContent className="p-3 space-y-3">
+          {/* Header */}
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="font-semibold text-sm truncate flex-1 uppercase">
+              {competitionName}
+            </h3>
+            <Badge
+              className={`${stateInfo.color} text-white text-xs flex-shrink-0`}
+            >
+              {stateInfo.label}
+            </Badge>
+          </div>
 
-        {/* Progress Bar - Only for Active Competitions */}
-        {isCompActive && !loadingProgress && progress && (
-          <div className="space-y-1">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">
-                {progress.totalOwned}/{progress.totalRequired} cards
-              </span>
-              <span className="font-semibold">{progressPercent}%</span>
-            </div>
-            <Progress value={progressPercent} className="h-2" />
-            {isComplete && (
-              <div className="flex items-center gap-1 text-green-600 text-xs mt-1">
-                <CheckCircle className="h-3 w-3" />
-                <span className="font-medium">Collection Complete!</span>
+          {/* Progress Bar - Only for Active Competitions */}
+          {isCompActive && !loadingProgress && progress && (
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">
+                  {progress.totalOwned}/{progress.totalRequired} cards
+                </span>
+                <span className="font-semibold">{progressPercent}%</span>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Winner Badge */}
-        {isWinner && (
-          <div className="flex items-center gap-1 text-yellow-600 text-xs bg-yellow-50 p-2 rounded">
-            <Gift className="h-3 w-3" />
-            <span className="font-medium">You won this competition!</span>
-          </div>
-        )}
-
-        {/* Action Buttons - Smart visibility based on state */}
-        <div className="space-y-2">
-          {/* Finalized: Show relevant claim button */}
-          {isFinalized && (
-            <>
-              {/* Winner Prize - Only show for winners */}
-              {isWinner && (
-                <ClaimButton
-                  enabled={canClaimWinner}
-                  href={`/fc/competition/${competitionId.toString()}`}
-                  amount={calculatedPrizes.winnerPrize}
-                  label="Claim Winner Prize"
-                  disabledText="Winner Prize (Not finalized)"
-                  variant="winner"
-                />
+              <Progress value={progressPercent} className="h-2" />
+              {isComplete && (
+                <div className="flex items-center gap-1 text-green-600 text-xs mt-1">
+                  <CheckCircle className="h-3 w-3" />
+                  <span className="font-medium">Collection Complete!</span>
+                </div>
               )}
-
-              {/* Participant Prize - Only show for non-winners when winner exists */}
-              {!isWinner && competition.winnerDeclared && (
-                <ClaimButton
-                  enabled={canClaimParticipant}
-                  href={`/fc/competition/${competitionId.toString()}`}
-                  amount={calculatedPrizes.participantPrize}
-                  label="Claim Participant Prize"
-                  disabledText="Participant Prize (Not available)"
-                  variant="participant"
-                />
-              )}
-
-              {/* Refund - Only show when cancelled (no winner) */}
-              {!competition.winnerDeclared && isCancelled && (
-                <ClaimButton
-                  enabled={canClaimRefund}
-                  href={`/fc/competition/${competitionId.toString()}`}
-                  amount={calculatedPrizes.refundAmount}
-                  label="Claim Refund"
-                  disabledText="Refund (Already claimed)"
-                  variant="refund"
-                />
-              )}
-            </>
+            </div>
           )}
 
-          {/* View Details - Always enabled */}
-          <Button variant="outline" size="sm" asChild className="w-10">
-            <Link href={`/fc/competition/${competitionId.toString()}`}>
-              <span className="text-xs">View Details</span>
-              <ExternalLink className="h-3 w-3 ml-1" />
-            </Link>
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          {/* Winner Badge */}
+          {isWinner && (
+            <div className="flex items-center gap-1 text-yellow-600 text-xs bg-yellow-50 p-2 rounded">
+              <Gift className="h-3 w-3" />
+              <span className="font-medium">You won this competition!</span>
+            </div>
+          )}
+
+          {/* Action Buttons - Smart visibility based on state */}
+          <div className="space-y-2">
+            {/* Finalized: Show relevant claim button */}
+            {isFinalized && (
+              <>
+                {/* Winner Prize - Only show for winners */}
+                {isWinner && (
+                  <ClaimButton
+                    enabled={canClaimWinner}
+                    href={`/fc/competition/${competitionId.toString()}`}
+                    amount={calculatedPrizes.winnerPrize}
+                    label="Claim Winner Prize"
+                    disabledText="Winner Prize (Not finalized)"
+                    variant="winner"
+                  />
+                )}
+
+                {/* Participant Prize - Only show for non-winners when winner exists */}
+                {!isWinner && competition.winnerDeclared && (
+                  <ClaimButton
+                    enabled={canClaimParticipant}
+                    href={`/fc/competition/${competitionId.toString()}`}
+                    amount={calculatedPrizes.participantPrize}
+                    label="Claim Participant Prize"
+                    disabledText="Participant Prize (Not available)"
+                    variant="participant"
+                  />
+                )}
+
+                {/* Refund - Only show when cancelled (no winner) */}
+                {!competition.winnerDeclared && isCancelled && (
+                  <ClaimButton
+                    enabled={canClaimRefund}
+                    href={`/fc/competition/${competitionId.toString()}`}
+                    amount={calculatedPrizes.refundAmount}
+                    label="Claim Refund"
+                    disabledText="Refund (Already claimed)"
+                    variant="refund"
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

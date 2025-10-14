@@ -35,12 +35,18 @@ export function ClaimButton({
 }: ClaimButtonProps) {
   const baseClasses = `w-full disabled:bg-muted disabled:text-muted-foreground ${VARIANT_STYLES[variant]}`;
 
+  // Prevent card navigation when clicking claim buttons
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
     <Button
       asChild={enabled}
       disabled={!enabled}
       className={baseClasses}
       size="sm"
+      onClick={handleClick}
     >
       {enabled ? (
         <Link href={href}>
