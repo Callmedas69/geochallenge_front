@@ -323,14 +323,6 @@ export default function FarcasterCompetitionDetailPage({
 
   return (
     <div className="container mx-auto px-3 py-4 space-y-4">
-      {/* Back Button */}
-      <Button variant="ghost" size="sm" asChild>
-        <Link href="/fc">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Link>
-      </Button>
-
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-start justify-between gap-2">

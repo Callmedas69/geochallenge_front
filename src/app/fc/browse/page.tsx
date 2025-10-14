@@ -8,13 +8,22 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAllCompetitions } from "@/hooks/useAllCompetitions";
-import { CompetitionCard, BottomNav, FarcasterHeader } from "@/components/farcaster";
+import {
+  CompetitionCard,
+  BottomNav,
+  FarcasterHeader,
+} from "@/components/farcaster";
 import { useAutoConnect } from "@/lib/farcaster";
 import { ArrowLeft, List } from "lucide-react";
 import Link from "next/link";
@@ -55,25 +64,13 @@ export default function FarcasterBrowsePage() {
             ))}
           </div>
         </div>
-        <BottomNav />
       </>
     );
   }
 
   return (
     <>
-      {/* Sticky Header with Info Icon */}
-      <FarcasterHeader />
-
       <div className="container mx-auto px-3 py-4 pb-20 space-y-4">
-        {/* Back Button */}
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/fc">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Home
-          </Link>
-        </Button>
-
         {/* Page Header */}
         <div className="space-y-2">
           <div className="flex items-center gap-2">
@@ -86,7 +83,10 @@ export default function FarcasterBrowsePage() {
         </div>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "active" | "all")}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as "active" | "all")}
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="active" className="text-sm">
               Active
@@ -111,9 +111,12 @@ export default function FarcasterBrowsePage() {
             {activeCompetitions.length === 0 ? (
               <Card>
                 <CardHeader className="p-4">
-                  <CardTitle className="text-base">No Active Competitions</CardTitle>
+                  <CardTitle className="text-base">
+                    No Active Competitions
+                  </CardTitle>
                   <CardDescription className="text-sm">
-                    There are no active competitions at the moment. Check back soon!
+                    There are no active competitions at the moment. Check back
+                    soon!
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -151,9 +154,6 @@ export default function FarcasterBrowsePage() {
           </TabsContent>
         </Tabs>
       </div>
-
-      {/* Fixed Bottom Navigation */}
-      <BottomNav />
     </>
   );
 }

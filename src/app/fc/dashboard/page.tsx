@@ -16,9 +16,21 @@ import {
   DashboardQuickStats,
   UserCompetitionCard,
 } from "@/components/farcaster";
-import { useUserDashboardData, useUserCompetitionIds } from "@/hooks/useUserDashboard";
-import { useClaimableBalance, useCompetitionCount } from "@/hooks/usePublicCompetitions";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  useUserDashboardData,
+  useUserCompetitionIds,
+} from "@/hooks/useUserDashboard";
+import {
+  useClaimableBalance,
+  useCompetitionCount,
+} from "@/hooks/usePublicCompetitions";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,7 +60,7 @@ export default function FarcasterDashboardPage() {
   const { data: userCompIds } = useUserCompetitionIds(address);
 
   // DEBUG: Log dashboard data
-  console.log('🔍 Dashboard Debug:', {
+  console.log("🔍 Dashboard Debug:", {
     address,
     dashboardData,
     userCompIds,
@@ -59,7 +71,10 @@ export default function FarcasterDashboardPage() {
   // Separate active and completed competition IDs
   // FALLBACK: If QueryManager returns empty but UserTracking has data, use that
   const activeCompIds = useMemo(() => {
-    if (dashboardData?.activeCompIds && dashboardData.activeCompIds.length > 0) {
+    if (
+      dashboardData?.activeCompIds &&
+      dashboardData.activeCompIds.length > 0
+    ) {
       return dashboardData.activeCompIds;
     }
     // Fallback: return all user competition IDs (will filter by state in card)
@@ -170,20 +185,40 @@ export default function FarcasterDashboardPage() {
                   🔍 Debug Info (click to expand)
                 </summary>
                 <div className="space-y-2">
-                  <p><strong>Wallet:</strong> {address}</p>
-                  <p><strong>QueryManager activeCompIds:</strong> {dashboardData?.activeCompIds?.length || 0}</p>
-                  <p><strong>QueryManager claimableCompIds:</strong> {dashboardData?.claimableCompIds?.length || 0}</p>
-                  <p><strong>UserTracking compIds:</strong> {userCompIds?.length || 0}</p>
-                  <p><strong>Using fallback:</strong> {(dashboardData?.activeCompIds?.length || 0) === 0 && (userCompIds?.length || 0) > 0 ? 'YES' : 'NO'}</p>
+                  <p>
+                    <strong>Wallet:</strong> {address}
+                  </p>
+                  <p>
+                    <strong>QueryManager activeCompIds:</strong>{" "}
+                    {dashboardData?.activeCompIds?.length || 0}
+                  </p>
+                  <p>
+                    <strong>QueryManager claimableCompIds:</strong>{" "}
+                    {dashboardData?.claimableCompIds?.length || 0}
+                  </p>
+                  <p>
+                    <strong>UserTracking compIds:</strong>{" "}
+                    {userCompIds?.length || 0}
+                  </p>
+                  <p>
+                    <strong>Using fallback:</strong>{" "}
+                    {(dashboardData?.activeCompIds?.length || 0) === 0 &&
+                    (userCompIds?.length || 0) > 0
+                      ? "YES"
+                      : "NO"}
+                  </p>
                   <pre className="whitespace-pre-wrap overflow-auto max-h-48 bg-background p-2 rounded mt-2">
-                    {JSON.stringify({
-                      dashboardData,
-                      userCompIds,
-                      activeCompIds,
-                      completedCompIds,
-                    }, (key, value) =>
-                      typeof value === 'bigint' ? value.toString() : value
-                    , 2)}
+                    {JSON.stringify(
+                      {
+                        dashboardData,
+                        userCompIds,
+                        activeCompIds,
+                        completedCompIds,
+                      },
+                      (key, value) =>
+                        typeof value === "bigint" ? value.toString() : value,
+                      2
+                    )}
                   </pre>
                 </div>
               </details>
@@ -194,7 +229,6 @@ export default function FarcasterDashboardPage() {
             </CardContent>
           </Card>
         </div>
-        <BottomNav />
       </>
     );
   }
@@ -223,13 +257,17 @@ export default function FarcasterDashboardPage() {
           <Alert className="border-green-500 bg-green-50">
             <Wallet className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-xs text-green-800">
-              You have ETH ready to withdraw! Go to the main website to withdraw your balance.
+              You have ETH ready to withdraw! Go to the main website to withdraw
+              your balance.
             </AlertDescription>
           </Alert>
         )}
 
         {/* Competition Tabs */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "active" | "completed")}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as "active" | "completed")}
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="active" className="text-sm">
               Active
@@ -254,7 +292,9 @@ export default function FarcasterDashboardPage() {
             {activeCompIds.length === 0 ? (
               <Card>
                 <CardHeader className="p-4">
-                  <CardTitle className="text-base">No Active Competitions</CardTitle>
+                  <CardTitle className="text-base">
+                    No Active Competitions
+                  </CardTitle>
                   <CardDescription className="text-sm">
                     You don't have any active competitions
                   </CardDescription>
@@ -276,7 +316,9 @@ export default function FarcasterDashboardPage() {
             {completedCompIds.length === 0 ? (
               <Card>
                 <CardHeader className="p-4">
-                  <CardTitle className="text-base">No Completed Competitions</CardTitle>
+                  <CardTitle className="text-base">
+                    No Completed Competitions
+                  </CardTitle>
                   <CardDescription className="text-sm">
                     You don't have any completed competitions yet
                   </CardDescription>

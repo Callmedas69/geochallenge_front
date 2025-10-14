@@ -32,15 +32,12 @@ export default function FarcasterHomePage() {
 
   return (
     <>
-      {/* Sticky Header with Info Icon */}
-      <FarcasterHeader />
-
       <div className="container mx-auto px-3 py-4 pb-20 space-y-4">
         {/* Global event notifications - compact */}
         <EventNotifications />
 
         {/* Header - Minimal */}
-        <div className="space-y-1 min-h-screen flex items-center justify-center px-12">
+        <div className="space-y-1 min-h-[calc(100vh-60px)] flex items-center justify-center px-12">
           <div>
             <h1
               className={`text-6xl font-bold tracking-tighter uppercase flex flex-col leading-none ${spartanFont.className}`}
