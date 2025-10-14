@@ -68,7 +68,7 @@ export function UserCompetitionCard({ competitionId, isActive = true }: UserComp
   // Calculate progress percentage
   const progressPercent = useMemo(() => {
     if (!progress || !progress.totalRequired || progress.totalRequired === 0) return 0;
-    return Math.round((progress.totalCollected / progress.totalRequired) * 100);
+    return Math.round((progress.totalOwned / progress.totalRequired) * 100);
   }, [progress]);
 
   // State mapping
@@ -140,7 +140,7 @@ export function UserCompetitionCard({ competitionId, isActive = true }: UserComp
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">
-                {progress.totalCollected}/{progress.totalRequired} cards
+                {progress.totalOwned}/{progress.totalRequired} cards
               </span>
               <span className="font-semibold">{progressPercent}%</span>
             </div>
