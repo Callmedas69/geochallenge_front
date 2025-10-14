@@ -254,7 +254,7 @@ export function UserCompetitionCard({
           )}
 
           {/* View Details - Always enabled */}
-          <Button variant="outline" size="sm" asChild className="w-full">
+          <Button variant="outline" size="sm" asChild className="w-10">
             <Link href={`/fc/competition/${competitionId.toString()}`}>
               <span className="text-xs">View Details</span>
               <ExternalLink className="h-3 w-3 ml-1" />
