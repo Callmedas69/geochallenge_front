@@ -1,6 +1,8 @@
-1. No need to show the tickets users / participant bought , since users will not care about it
-2. Just concern what users need to see on the dashboard
-3. Comply with CLAUDE.md
-4. Implememnt inlaine Claim button
-
-Proceed Priority 1
+frameEvent {event: 'eip6963:announceProvider', info: {…}}event: "eip6963:announceProvider"info: icon: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIGZpbGw9Im5vbmUiPjxyZWN0IHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiByeD0iNTYiIGZpbGw9IiM3QzY1QzEiPjwvcmVjdD48cGF0aCBkPSJNMTgzLjI5NiA3MS42OEgyMTEuOTY4TDIwNy44NzIgOTQuMjA4SDIwMC43MDRWMTgwLjIyNEwyMDEuMDIgMTgwLjIzMkMyMDQuMjY2IDE4MC4zOTYgMjA2Ljg0OCAxODMuMDgxIDIwNi44NDggMTg2LjM2OFYxOTEuNDg4TDIwNy4xNjQgMTkxLjQ5NkMyMTAuNDEgMTkxLjY2IDIxMi45OTIgMTk0LjM0NSAyMTIuOTkyIDE5Ny42MzJWMjAyLjc1MkgxNTUuNjQ4VjE5Ny42MzJDMTU1LjY0OCAxOTQuMzQ1IDE1OC4yMjkgMTkxLjY2IDE2MS40NzYgMTkxLjQ5NkwxNjEuNzkyIDE5MS40ODhWMTg2LjM2OEMxNjEuNzkyIDE4My4wODEgMTY0LjM3MyAxODAuMzk2IDE2Ny42MiAxODAuMjMyTDE2Ny45MzYgMTgwLjIyNFYxMzguMjRDMTY3LjkzNiAxMTYuMTg0IDE1MC4wNTYgOTguMzA0IDEyOCA5OC4zMDRDMTA1Ljk0NCA5OC4zMDQgODguMDYzOCAxMTYuMTg0IDg4LjA2MzggMTM4LjI0VjE4MC4yMjRMODguMzc5OCAxODAuMjMyQzkxLjYyNjIgMTgwLjM5NiA5NC4yMDc4IDE4My4wODEgOTQuMjA3OCAxODYuMzY4VjE5MS40ODhMOTQuNTIzOCAxOTEuNDk2Qzk3Ljc3MDIgMTkxLjY2IDEwMC4zNTIgMTk0LjM0NSAxMDAuMzUyIDE5Ny42MzJWMjAyLjc1Mkg0My4wMDc4VjE5Ny42MzJDNDMuMDA3OCAxOTQuMzQ1IDQ1LjU4OTQgMTkxLjY2IDQ4LjgzNTggMTkxLjQ5Nkw0OS4xNTE4IDE5MS40ODhWMTg2LjM2OEM0OS4xNTE4IDE4My4wODEgNTEuNzMzNCAxODAuMzk2IDU0Ljk3OTggMTgwLjIzMkw1NS4yOTU4IDE4MC4yMjRWOTQuMjA4SDQ4LjEyNzhMNDQuMDMxOCA3MS42OEg3Mi43MDM4VjU0LjI3MkgxODMuMjk2VjcxLjY4WiIgZmlsbD0id2hpdGUiPjwvcGF0aD48L3N2Zz4K"name: "Farcaster"rdns: "xyz.farcaster.MiniAppWallet"uuid: "44fc6fff-b22e-4f1e-975e-86373196a0c4"[[Prototype]]: Object[[Prototype]]: Object
+index-D-ujJ4xs.js:378 [miniapp-host] eth provider req:  {id: 0, method: 'eth_accounts', jsonrpc: '2.0'}id: 0jsonrpc: "2.0"method: "eth_accounts"[[Prototype]]: Object
+index-D-ujJ4xs.js:378 [miniapp-host] eth provider res:  {result: Array(1), id: 0, jsonrpc: '2.0'}id: 0jsonrpc: "2.0"result: Array(1)0: "0xdc41d6da6bb2d02b19316b2bfff0cbb42606484d"length: 1[[Prototype]]: Array(0)[[Prototype]]: Object
+index-D-ujJ4xs.js:378 [miniapp-host] eth provider req:  {id: 1, method: 'eth_requestAccounts', jsonrpc: '2.0'}id: 1jsonrpc: "2.0"method: "eth_requestAccounts"[[Prototype]]: Object
+index-D-ujJ4xs.js:378 [miniapp-host] eth provider res:  {result: Array(1), id: 1, jsonrpc: '2.0'}id: 1jsonrpc: "2.0"result: ['0xdc41d6da6bb2d02b19316b2bfff0cbb42606484d'][[Prototype]]: Object
+index-D-ujJ4xs.js:378 [miniapp-host] eth provider req:  {id: 2, method: 'eth_chainId', jsonrpc: '2.0'}id: 2jsonrpc: "2.0"method: "eth_chainId"[[Prototype]]: Object
+index-D-ujJ4xs.js:378 [miniapp-host] eth provider res:  {result: '0x14a34', id: 2, jsonrpc: '2.0'}id: 2jsonrpc: "2.0"result: "0x14a34"[[Prototype]]: Object
+1759-020db6bce09ddc93.js:1 ✅ Farcaster SDK: Ready

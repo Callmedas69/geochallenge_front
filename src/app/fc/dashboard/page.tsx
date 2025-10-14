@@ -16,8 +16,8 @@ import {
   DashboardQuickStats,
   UserCompetitionCard,
 } from "@/components/farcaster";
-import { useUserDashboardData } from "@/hooks/useUserDashboard";
-import { useClaimableBalance } from "@/hooks/usePublicCompetitions";
+import { useUserDashboardData, useUserCompetitionIds } from "@/hooks/useUserDashboard";
+import { useClaimableBalance, useCompetitionCount } from "@/hooks/usePublicCompetitions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -39,15 +39,32 @@ export default function FarcasterDashboardPage() {
     data: dashboardData,
     isLoading,
     refetch,
+    error: dashboardError,
   } = useUserDashboardData(address);
 
   const { data: balance } = useClaimableBalance(address);
 
+  // FALLBACK: Try getting competition IDs from UserTracking directly
+  const { data: userCompIds } = useUserCompetitionIds(address);
+
+  // DEBUG: Log dashboard data
+  console.log('🔍 Dashboard Debug:', {
+    address,
+    dashboardData,
+    userCompIds,
+    isLoading,
+    error: dashboardError,
+  });
+
   // Separate active and completed competition IDs
-  const activeCompIds = useMemo(
-    () => dashboardData?.activeCompIds || [],
-    [dashboardData]
-  );
+  // FALLBACK: If QueryManager returns empty but UserTracking has data, use that
+  const activeCompIds = useMemo(() => {
+    if (dashboardData?.activeCompIds && dashboardData.activeCompIds.length > 0) {
+      return dashboardData.activeCompIds;
+    }
+    // Fallback: return all user competition IDs (will filter by state in card)
+    return userCompIds || [];
+  }, [dashboardData, userCompIds]);
 
   const completedCompIds = useMemo(
     () => dashboardData?.claimableCompIds || [],
@@ -125,9 +142,18 @@ export default function FarcasterDashboardPage() {
             claimableBalance={balance}
           />
 
+          {/* Debug Info */}
+          {dashboardError && (
+            <Alert variant="destructive">
+              <AlertDescription className="text-xs">
+                Error loading dashboard: {dashboardError.message}
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Empty State */}
           <Card className="mt-8">
-            <CardContent className="p-8 text-center">
+            <CardContent className="p-8 text-center space-y-4">
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
                   <List className="h-8 w-8 text-muted-foreground" />
@@ -137,6 +163,31 @@ export default function FarcasterDashboardPage() {
               <p className="text-sm text-muted-foreground mb-4">
                 You haven't joined any competitions yet
               </p>
+
+              {/* Debug info for troubleshooting */}
+              <details className="text-left bg-muted p-3 rounded text-xs">
+                <summary className="cursor-pointer font-semibold mb-2">
+                  🔍 Debug Info (click to expand)
+                </summary>
+                <div className="space-y-2">
+                  <p><strong>Wallet:</strong> {address}</p>
+                  <p><strong>QueryManager activeCompIds:</strong> {dashboardData?.activeCompIds?.length || 0}</p>
+                  <p><strong>QueryManager claimableCompIds:</strong> {dashboardData?.claimableCompIds?.length || 0}</p>
+                  <p><strong>UserTracking compIds:</strong> {userCompIds?.length || 0}</p>
+                  <p><strong>Using fallback:</strong> {(dashboardData?.activeCompIds?.length || 0) === 0 && (userCompIds?.length || 0) > 0 ? 'YES' : 'NO'}</p>
+                  <pre className="whitespace-pre-wrap overflow-auto max-h-48 bg-background p-2 rounded mt-2">
+                    {JSON.stringify({
+                      dashboardData,
+                      userCompIds,
+                      activeCompIds,
+                      completedCompIds,
+                    }, (key, value) =>
+                      typeof value === 'bigint' ? value.toString() : value
+                    , 2)}
+                  </pre>
+                </div>
+              </details>
+
               <Button asChild>
                 <Link href="/fc/browse">Browse Competitions</Link>
               </Button>

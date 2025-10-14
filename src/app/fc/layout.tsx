@@ -5,6 +5,7 @@
  * @dev Inherits providers from root layout but with miniApp-specific optimizations
  */
 
+import { BottomNav } from "@/components/farcaster";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 
@@ -31,6 +32,7 @@ export default function FarcasterLayout({
   return (
     <div className="min-h-screen bg-background">
       <main className="pb-16">{children}</main>
+      <BottomNav />
     </div>
   );
 }

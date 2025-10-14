@@ -7,7 +7,11 @@
 
 "use client";
 
-import { CompetitionList, BottomNav, FarcasterHeader } from "@/components/farcaster";
+import {
+  CompetitionList,
+  BottomNav,
+  FarcasterHeader,
+} from "@/components/farcaster";
 import { EventNotifications } from "@/components/EventNotifications";
 import { useAutoConnect } from "@/lib/farcaster";
 import localFont from "next/font/local";
@@ -58,9 +62,6 @@ export default function FarcasterHomePage() {
           <CompetitionList />
         </section>
       </div>
-
-      {/* Fixed Bottom Navigation */}
-      <BottomNav />
     </>
   );
 }
