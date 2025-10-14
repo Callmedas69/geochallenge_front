@@ -48,44 +48,42 @@ export function CompetitionTicket({
   } = useTicketMetadata(competitionId, address);
 
   return (
-    <Card>
-      <CardContent className="p-3 space-y-2">
-        {/* Ticket Display Logic */}
-        {address && hasTicket ? (
-          loadingTicketMetadata ? (
-            // Loading state
-            <Skeleton className="w-full aspect-video max-w-[200px] mx-auto" />
-          ) : ticketMetadata?.image ? (
-            // Ticket found - display image with quantity badge
-            <div className="relative w-full aspect-video max-w-[200px] mx-auto">
-              <Image
-                src={ticketMetadata.image}
-                alt={ticketMetadata.name || "Competition Ticket"}
-                fill
-                sizes="200px"
-                className="object-cover rounded-lg"
-              />
-            </div>
-          ) : (
-            // Ticket metadata not found from TicketRenderer
-            <Alert variant="destructive">
-              <AlertDescription className="text-xs">
-                Failed to load ticket metadata from contract.
-                {ticketMetadataError && ` Error: ${ticketMetadataError}`}
-              </AlertDescription>
-            </Alert>
-          )
+    <div>
+      {/* Ticket Display Logic */}
+      {address && hasTicket ? (
+        loadingTicketMetadata ? (
+          // Loading state
+          <Skeleton className="w-full aspect-video max-w-[200px] mx-auto" />
+        ) : ticketMetadata?.image ? (
+          // Ticket found - display image with quantity badge
+          <div className="relative w-full aspect-video max-w-[200px] mx-auto">
+            <Image
+              src={ticketMetadata.image}
+              alt={ticketMetadata.name || "Competition Ticket"}
+              fill
+              sizes="200px"
+              className="object-cover rounded-lg"
+            />
+          </div>
         ) : (
-          // User doesn't have ticket or not connected
-          <Alert>
+          // Ticket metadata not found from TicketRenderer
+          <Alert variant="destructive">
             <AlertDescription className="text-xs">
-              {!address
-                ? "Connect wallet to view your ticket"
-                : "Purchase a ticket to participate"}
+              Failed to load ticket metadata from contract.
+              {ticketMetadataError && ` Error: ${ticketMetadataError}`}
             </AlertDescription>
           </Alert>
-        )}
-      </CardContent>
-    </Card>
+        )
+      ) : (
+        // User doesn't have ticket or not connected
+        <Alert>
+          <AlertDescription className="text-xs">
+            {!address
+              ? "Connect wallet to view your ticket"
+              : "Purchase a ticket to participate"}
+          </AlertDescription>
+        </Alert>
+      )}
+    </div>
   );
 }

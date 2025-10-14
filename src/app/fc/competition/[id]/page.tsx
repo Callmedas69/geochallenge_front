@@ -20,10 +20,7 @@ import {
 } from "@/components/ClaimButtons";
 import { SubmitWinnerProof } from "@/components/SubmitWinnerProof";
 import { CollectionArtGallery } from "@/components/CollectionArtGallery";
-import {
-  CompetitionTicket,
-  CompetitionProgress,
-} from "@/components/farcaster";
+import { CompetitionTicket, CompetitionProgress } from "@/components/farcaster";
 import { getRarityName, getRarityColor } from "@/lib/types";
 import {
   calculateWinnerPrize,
@@ -51,12 +48,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Progress } from "@/components/ui/progress";
 import { formatEther } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 import {
   Trophy,
-  Calendar,
   DollarSign,
   Clock,
   AlertTriangle,
@@ -64,7 +59,6 @@ import {
   Package,
   Ticket,
   TrendingUp,
-  CheckCircle2,
   ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
@@ -438,7 +432,6 @@ export default function FarcasterCompetitionDetailPage({
         hasTicket={hasTicket}
         userTicketBalance={userTicketBalance}
         competitionId={competitionId}
-        debugMode={true}
       />
 
       {/* Actions - Fixed spacing at bottom */}

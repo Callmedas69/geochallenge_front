@@ -7,12 +7,7 @@
 
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -54,9 +49,6 @@ export function CompetitionProgress({
 
   return (
     <Card>
-      <CardHeader className="p-3 pb-2">
-        <CardTitle className="text-sm">Your Progress</CardTitle>
-      </CardHeader>
       <CardContent className="p-3 space-y-2">
         {loading ? (
           <Skeleton className="h-16 w-full" />
@@ -65,7 +57,7 @@ export function CompetitionProgress({
             {/* Progress Bar */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="font-medium">Overall</span>
+                <span className="font-medium">Overall Progress</span>
                 <span
                   className={`font-bold ${
                     progress.percentage === 100
