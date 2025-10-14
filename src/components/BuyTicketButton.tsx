@@ -4,21 +4,21 @@
  * @dev KISS principle: Clear states, professional UX, proper error handling
  */
 
-'use client'
+"use client";
 
-import { useBuyTicket } from '@/hooks/useUserActions'
-import { useUserTicketBalance } from '@/hooks/usePublicCompetitions'
-import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { formatEther } from 'viem'
-import { useAccount } from 'wagmi'
-import { CheckCircle, Loader2, Ticket } from 'lucide-react'
+import { useBuyTicket } from "@/hooks/useUserActions";
+import { useUserTicketBalance } from "@/hooks/usePublicCompetitions";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { formatEther } from "viem";
+import { useAccount } from "wagmi";
+import { CheckCircle, Loader2, Ticket } from "lucide-react";
 
 interface BuyTicketButtonProps {
-  competitionId: bigint
-  ticketPrice: bigint
-  collectionAddress: string
-  disabled?: boolean
+  competitionId: bigint;
+  ticketPrice: bigint;
+  collectionAddress: string;
+  disabled?: boolean;
 }
 
 export function BuyTicketButton({
@@ -27,13 +27,15 @@ export function BuyTicketButton({
   collectionAddress,
   disabled = false,
 }: BuyTicketButtonProps) {
-  const { address, isConnecting } = useAccount()
-  const { buyTicket, isPending, isConfirming, isSuccess, error } = useBuyTicket()
-  const { data: ticketBalance, isLoading: checkingBalance } = useUserTicketBalance(address, competitionId)
+  const { address, isConnecting } = useAccount();
+  const { buyTicket, isPending, isConfirming, isSuccess, error } =
+    useBuyTicket();
+  const { data: ticketBalance, isLoading: checkingBalance } =
+    useUserTicketBalance(address, competitionId);
 
   const handleBuyTicket = () => {
-    buyTicket(competitionId, ticketPrice)
-  }
+    buyTicket(competitionId, ticketPrice);
+  };
 
   // Already owns ticket
   if (ticketBalance && ticketBalance > BigInt(0)) {
@@ -44,7 +46,7 @@ export function BuyTicketButton({
           You already own a ticket for this competition
         </AlertDescription>
       </Alert>
-    )
+    );
   }
 
   // Success state
@@ -56,7 +58,7 @@ export function BuyTicketButton({
           ✅ Ticket purchased successfully!
         </AlertDescription>
       </Alert>
-    )
+    );
   }
 
   // Checking ticket balance
@@ -66,7 +68,7 @@ export function BuyTicketButton({
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         Checking ticket status...
       </Button>
-    )
+    );
   }
 
   // Connecting wallet (auto-connect in progress)
@@ -76,18 +78,16 @@ export function BuyTicketButton({
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         Connecting Wallet...
       </Button>
-    )
+    );
   }
 
   // Not connected and auto-connect failed
   if (!address) {
     return (
       <Alert variant="destructive">
-        <AlertDescription>
-          Unable to connect wallet. Please ensure you're opening this in Farcaster app.
-        </AlertDescription>
+        <AlertDescription>Connect your wallet please</AlertDescription>
       </Alert>
-    )
+    );
   }
 
   return (
@@ -122,13 +122,13 @@ export function BuyTicketButton({
       {error && (
         <Alert variant="destructive">
           <AlertDescription>
-            {error.message.includes('Already owns ticket')
-              ? 'You already own a ticket for this competition'
-              : error.message.includes('Not eligible')
-              ? `You must own an NFT from ${collectionAddress.slice(0, 6)}...${collectionAddress.slice(-4)}`
-              : error.message.includes('Competition not active')
-              ? 'This competition is not currently active'
-              : 'Failed to purchase ticket. Please try again.'}
+            {error.message.includes("Already owns ticket")
+              ? "You already own a ticket for this competition"
+              : error.message.includes("Not eligible")
+                ? `You must own an NFT from ${collectionAddress.slice(0, 6)}...${collectionAddress.slice(-4)}`
+                : error.message.includes("Competition not active")
+                  ? "This competition is not currently active"
+                  : "Failed to purchase ticket. Please try again."}
           </AlertDescription>
         </Alert>
       )}
@@ -136,9 +136,10 @@ export function BuyTicketButton({
       {/* Info - Only show when button is ready */}
       {!isPending && !isConfirming && !error && (
         <p className="text-xs text-muted-foreground text-center">
-          Required: Own NFT from {collectionAddress.slice(0, 6)}...{collectionAddress.slice(-4)}
+          Required: Own NFT from {collectionAddress.slice(0, 6)}...
+          {collectionAddress.slice(-4)}
         </p>
       )}
     </div>
-  )
+  );
 }

@@ -49,53 +49,15 @@ export function CompetitionTicket({
 
   return (
     <Card>
-      <CardHeader className="p-3 pb-2">
-        <CardTitle className="text-sm">
-          {debugMode ? "Ticket Debug Info" : "Your Ticket"}
-        </CardTitle>
-      </CardHeader>
       <CardContent className="p-3 space-y-2">
-        {/* Debug Panel - Only show when debugMode is true */}
-        {debugMode && (
-          <div className="text-xs space-y-1 font-mono bg-muted p-2 rounded">
-            <div>
-              address:{" "}
-              {address
-                ? `${address.slice(0, 6)}...${address.slice(-4)}`
-                : "NOT CONNECTED"}
-            </div>
-            <div>hasTicket: {hasTicket ? "TRUE" : "FALSE"}</div>
-            <div>
-              userTicketBalance: {userTicketBalance?.toString() || "NONE"}
-            </div>
-            <div>
-              loadingTicketMetadata: {loadingTicketMetadata ? "TRUE" : "FALSE"}
-            </div>
-            <div>
-              ticketMetadata exists: {ticketMetadata ? "TRUE" : "FALSE"}
-            </div>
-            <div>
-              ticketMetadata.image: {ticketMetadata?.image ? "EXISTS" : "NONE"}
-            </div>
-            <div>ticketMetadataError: {ticketMetadataError || "NONE"}</div>
-            <div>competitionId: {competitionId.toString()}</div>
-            <div>
-              userAddress:{" "}
-              {address
-                ? `${address.slice(0, 6)}...${address.slice(-4)}`
-                : "NOT CONNECTED"}
-            </div>
-          </div>
-        )}
-
         {/* Ticket Display Logic */}
         {address && hasTicket ? (
           loadingTicketMetadata ? (
             // Loading state
-            <Skeleton className="w-full aspect-[5/7] max-w-[200px] mx-auto" />
+            <Skeleton className="w-full aspect-video max-w-[200px] mx-auto" />
           ) : ticketMetadata?.image ? (
             // Ticket found - display image with quantity badge
-            <div className="relative w-full aspect-[5/7] max-w-[200px] mx-auto">
+            <div className="relative w-full aspect-video max-w-[200px] mx-auto">
               <Image
                 src={ticketMetadata.image}
                 alt={ticketMetadata.name || "Competition Ticket"}
