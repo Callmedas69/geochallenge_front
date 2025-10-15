@@ -215,7 +215,7 @@ export async function GET(
         name: "League Spartan",
         data: spartanFontResult,
         style: "normal" as const,
-        weight: 700,
+        weight: 700 as const,
       });
     }
     if (barriecitoFontResult) {
@@ -223,7 +223,7 @@ export async function GET(
         name: "Barriecito",
         data: barriecitoFontResult,
         style: "normal" as const,
-        weight: 700,
+        weight: 700 as const,
       });
     }
 
