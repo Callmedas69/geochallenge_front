@@ -31,7 +31,7 @@ function fetchWithTimeout(
 // --- Chain Client (Base Sepolia) ---
 const publicClient = createPublicClient({
   chain: baseSepolia,
-  transport: http(),
+  transport: http(process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC),
 });
 
 // --- Vibe API ---
