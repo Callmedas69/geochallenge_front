@@ -14,6 +14,20 @@ import { baseSepolia } from "viem/chains";
 
 export const runtime = "edge";
 
+// --- Timeout helper ---
+function fetchWithTimeout(
+  url: string | Request,
+  options: RequestInit = {},
+  timeout = 8000
+): Promise<Response> {
+  return Promise.race([
+    fetch(url, options),
+    new Promise<Response>((_, reject) =>
+      setTimeout(() => reject(new Error("Fetch timeout")), timeout)
+    ),
+  ]);
+}
+
 // --- Chain Client (Base Sepolia) ---
 const publicClient = createPublicClient({
   chain: baseSepolia,
@@ -65,12 +79,19 @@ function formatRelativeDeadline(deadline: bigint): string {
   return "Ending soon";
 }
 
-// --- Convert image to base64 ---
+// --- Convert image to base64 (with timeout) ---
 async function fetchImageAsBase64(imageUrl: string): Promise<string | null> {
   try {
-    const res = await fetch(imageUrl);
+    const res = await fetchWithTimeout(imageUrl, {}, 5000); // 5s timeout
     if (!res.ok) return null;
     const buffer = await res.arrayBuffer();
+
+    // Check size limit (2MB max for Edge runtime)
+    if (buffer.byteLength > 2 * 1024 * 1024) {
+      console.warn("Image too large, skipping base64");
+      return null;
+    }
+
     const base64 = Buffer.from(buffer).toString("base64");
     const type = res.headers.get("content-type") || "image/png";
     return `data:${type};base64,${base64}`;
@@ -80,14 +101,18 @@ async function fetchImageAsBase64(imageUrl: string): Promise<string | null> {
   }
 }
 
-// --- Fetch collection data from Vibe API ---
+// --- Fetch collection data from Vibe API (with timeout) ---
 async function fetchCollectionData(collectionAddress: string) {
   try {
     const url = `${VIBE_API_BASE}/contractAddress/${collectionAddress}?chainId=8453`;
-    const res = await fetch(url, {
-      method: "GET",
-      headers: { "API-KEY": VIBE_API_KEY },
-    });
+    const res = await fetchWithTimeout(
+      url,
+      {
+        method: "GET",
+        headers: { "API-KEY": VIBE_API_KEY },
+      },
+      6000 // 6s timeout for API
+    );
 
     if (!res.ok) {
       console.warn(`Vibe API error: ${res.status}`);
@@ -121,19 +146,29 @@ export async function GET(
     const { id } = await params;
     const competitionId = BigInt(id);
 
-    // --- Load fonts ---
-    const fontUrl = new URL("/fonts/LeagueSpartan-Bold.ttf", request.url);
-    const spartanFontData = await fetch(fontUrl).then((res) =>
-      res.arrayBuffer()
-    );
+    // --- Validate URL length (Farcaster requirement: ≤1024 chars) ---
+    const currentUrl = request.url;
+    if (currentUrl.length > 1024) {
+      console.error(
+        `URL exceeds Farcaster limit: ${currentUrl.length} chars (max 1024)`
+      );
+    }
 
-    const barriecitoUrl = new URL("/fonts/Barriecito-Regular.ttf", request.url);
-    const barriecitoFontData = await fetch(barriecitoUrl).then((res) =>
-      res.arrayBuffer()
-    );
+    // --- Production-safe font URLs ---
+    const baseUrl =
+      process.env.NEXT_PUBLIC_URL || "https://challenge.geoart.studio";
+    const spartanFontUrl = `${baseUrl}/fonts/LeagueSpartan-Bold.ttf`;
+    const barriecitoFontUrl = `${baseUrl}/fonts/Barriecito-Regular.ttf`;
 
-    // --- Fetch competition data ---
-    const [competition, metadata] = await Promise.all([
+    // --- Load all data in parallel (fonts + blockchain) ---
+    const [spartanFontData, barriecitoFontData, competition, metadata] =
+      await Promise.all([
+        fetchWithTimeout(spartanFontUrl, {}, 5000).then((res) =>
+          res.arrayBuffer()
+        ),
+        fetchWithTimeout(barriecitoFontUrl, {}, 5000).then((res) =>
+          res.arrayBuffer()
+        ),
       publicClient.readContract({
         address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
         abi: geoChallenge_implementation_ABI,
@@ -422,8 +457,10 @@ export async function GET(
           },
         ],
         headers: {
+          // Cache for 1 hour, stale-while-revalidate for 24 hours
+          // Overrides Vercel's 1-year default for dynamic images
           "Cache-Control":
-            "public, s-maxage=3600, stale-while-revalidate=86400",
+            "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
         },
       }
     );
@@ -431,6 +468,7 @@ export async function GET(
     console.error("OG generation error:", error);
     const { id } = await params;
 
+    // ERROR FALLBACK: Use short cache to prevent stuck images (per Farcaster docs)
     return new ImageResponse(
       (
         <div
@@ -468,7 +506,14 @@ export async function GET(
           </div>
         </div>
       ),
-      { width: 1200, height: 800 }
+      {
+        width: 1200,
+        height: 800,
+        headers: {
+          // Short cache for error images to prevent CDN lock-in
+          "Cache-Control": "public, max-age=60, s-maxage=60",
+        },
+      }
     );
   }
 }
