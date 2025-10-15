@@ -35,7 +35,8 @@
       "Bash(test -f \"src/app/api/ticket/metadata/route.ts\")",
       "Bash(mv:*)",
       "Bash(test -d .next)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/api/farcaster/competition/5/og)"
     ],
     "deny": [],
     "ask": []

@@ -209,21 +209,26 @@ export async function GET(
         : `${prizePoolFloat.toFixed(4)} ETH and growing`;
 
     // --- Build fonts array (only include successfully loaded fonts) ---
-    const fonts = [];
+    const fonts: Array<{
+      name: string;
+      data: ArrayBuffer;
+      style: 'normal' | 'italic';
+      weight: 400 | 700;
+    }> = [];
     if (spartanFontResult) {
       fonts.push({
         name: "League Spartan",
         data: spartanFontResult,
-        style: "normal" as const,
-        weight: 700 as const,
+        style: "normal",
+        weight: 700,
       });
     }
     if (barriecitoFontResult) {
       fonts.push({
         name: "Barriecito",
         data: barriecitoFontResult,
-        style: "normal" as const,
-        weight: 700 as const,
+        style: "normal",
+        weight: 700,
       });
     }
 
@@ -311,7 +316,7 @@ export async function GET(
                 style={{
                   fontSize: "64px",
                   fontWeight: 900,
-                  display: "block",
+                  display: "flex",
                   marginRight: "0",
                 }}
               >
@@ -330,7 +335,7 @@ export async function GET(
                     fontSize: "28px",
                     fontWeight: 800,
                     letterSpacing: "-0.05em",
-                    display: "block",
+                    display: "flex",
                   }}
                 >
                   GEOCHALLENGE
@@ -340,7 +345,7 @@ export async function GET(
                     fontSize: "16px",
                     fontStyle: "italic",
                     color: GEO_COLORS.mutedText,
-                    display: "block",
+                    display: "flex",
                   }}
                 >
                   powered by GeoArt
@@ -375,7 +380,7 @@ export async function GET(
                   textTransform: "uppercase",
                   letterSpacing: "0.1em",
                   color: GEO_COLORS.mutedText,
-                  display: "block",
+                  display: "flex",
                   lineHeight: 1,
                 }}
               >
@@ -388,7 +393,7 @@ export async function GET(
                   fontFamily: "Barriecito, system-ui",
                   fontWeight: 900,
                   lineHeight: 1,
-                  display: "block",
+                  display: "flex",
                 }}
               >
                 {collectionName}
@@ -399,7 +404,7 @@ export async function GET(
                 style={{
                   fontSize: "22px",
                   color: GEO_COLORS.mutedText,
-                  display: "block",
+                  display: "flex",
                   marginTop: "4px",
                   letterSpacing: "-0.01em",
                   lineHeight: 1.3,
@@ -502,7 +507,7 @@ export async function GET(
               fontSize: "48px",
               fontWeight: "bold",
               marginBottom: "16px",
-              display: "block",
+              display: "flex",
             }}
           >
             Competition #{id}
@@ -513,7 +518,7 @@ export async function GET(
               color: GEO_COLORS.mutedText,
               textTransform: "uppercase",
               letterSpacing: "0.1em",
-              display: "block",
+              display: "flex",
             }}
           >
             GEOCHALLENGE
