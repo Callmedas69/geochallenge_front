@@ -161,14 +161,21 @@ export async function GET(
     const barriecitoFontUrl = `${baseUrl}/fonts/Barriecito-Regular.ttf`;
 
     // --- Load all data in parallel (fonts + blockchain) ---
-    const [spartanFontData, barriecitoFontData, competition, metadata] =
+    // Fonts are OPTIONAL - will use system fonts if loading fails
+    const [spartanFontResult, barriecitoFontResult, competition, metadata] =
       await Promise.all([
-        fetchWithTimeout(spartanFontUrl, {}, 5000).then((res) =>
-          res.arrayBuffer()
-        ),
-        fetchWithTimeout(barriecitoFontUrl, {}, 5000).then((res) =>
-          res.arrayBuffer()
-        ),
+        fetchWithTimeout(spartanFontUrl, {}, 5000)
+          .then((res) => res.arrayBuffer())
+          .catch((err) => {
+            console.warn("Failed to load Spartan font:", err.message);
+            return null; // Graceful degradation
+          }),
+        fetchWithTimeout(barriecitoFontUrl, {}, 5000)
+          .then((res) => res.arrayBuffer())
+          .catch((err) => {
+            console.warn("Failed to load Barriecito font:", err.message);
+            return null; // Graceful degradation
+          }),
       publicClient.readContract({
         address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
         abi: geoChallenge_implementation_ABI,
@@ -200,6 +207,25 @@ export async function GET(
       prizePoolFloat === 0
         ? "Free Entry - Prize pool growing"
         : `${prizePoolFloat.toFixed(4)} ETH and growing`;
+
+    // --- Build fonts array (only include successfully loaded fonts) ---
+    const fonts = [];
+    if (spartanFontResult) {
+      fonts.push({
+        name: "League Spartan",
+        data: spartanFontResult,
+        style: "normal" as const,
+        weight: 700,
+      });
+    }
+    if (barriecitoFontResult) {
+      fonts.push({
+        name: "Barriecito",
+        data: barriecitoFontResult,
+        style: "normal" as const,
+        weight: 700,
+      });
+    }
 
     // --- Generate OG Image ---
     return new ImageResponse(
@@ -442,20 +468,8 @@ export async function GET(
       {
         width: 1200,
         height: 800,
-        fonts: [
-          {
-            name: "League Spartan",
-            data: spartanFontData,
-            style: "normal",
-            weight: 700,
-          },
-          {
-            name: "Barriecito",
-            data: barriecitoFontData,
-            style: "normal",
-            weight: 700,
-          },
-        ],
+        // Use dynamic fonts array - falls back to system fonts if empty
+        fonts: fonts.length > 0 ? fonts : undefined,
         headers: {
           // Cache for 1 hour, stale-while-revalidate for 24 hours
           // Overrides Vercel's 1-year default for dynamic images
