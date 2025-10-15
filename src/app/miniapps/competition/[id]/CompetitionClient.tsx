@@ -7,7 +7,7 @@
 
 "use client";
 
-import { use, useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import {
   useCompetitionById,
   useUserTicketBalance,
@@ -67,18 +67,18 @@ import { geoChallenge_implementation_ABI } from "@/abi";
 import { CONTRACT_ADDRESSES } from "@/lib/contractList";
 import { useAutoConnect } from "@/lib/farcaster";
 import { DECIMALS } from "@/lib/displayConfig";
+import { ShareButton } from "@/components/farcaster/ShareButton";
 
 interface CompetitionDetailPageProps {
-  params: Promise<{ id: string }>;
+  id: string;
 }
 
-export default function FarcasterCompetitionDetailPage({
-  params,
+export function FarcasterCompetitionDetailPage({
+  id,
 }: CompetitionDetailPageProps) {
   // Auto-connect Farcaster wallet
   useAutoConnect();
 
-  const { id } = use(params);
   const competitionId = BigInt(id);
   const { address } = useAccount();
 
@@ -269,7 +269,7 @@ export default function FarcasterCompetitionDetailPage({
           </CardHeader>
           <CardContent>
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/fc">
+              <Link href="/miniapps">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Competitions
               </Link>
@@ -487,6 +487,16 @@ export default function FarcasterCompetitionDetailPage({
             isCancelled={isCancelled}
           />
         )}
+
+        {/* Share Competition */}
+        <ShareButton
+          type="competition"
+          competitionId={id}
+          collectionName={collectionInfo?.contractInfo?.nftName || metadata?.[0]}
+          variant="outline"
+          size="default"
+          className="w-full"
+        />
       </div>
 
       {/* Countdown - Prominent */}

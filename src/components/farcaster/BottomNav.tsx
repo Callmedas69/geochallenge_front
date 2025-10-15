@@ -2,7 +2,7 @@
  * @title BottomNav Component (Farcaster)
  * @notice Fixed bottom navigation for Farcaster miniApp
  * @dev KISS principle: Icon-only, 3 items, thumb-friendly
- * @dev Routes: Home (/fc) | Browse (/fc/browse) | Dashboard (/fc/dashboard)
+ * @dev Routes: Home (/miniapps) | Browse (/miniapps/browse) | Dashboard (/miniapps/dashboard)
  */
 
 "use client";
@@ -21,22 +21,22 @@ export function BottomNav() {
 
   const navItems = [
     {
-      href: "/fc",
+      href: "/miniapps",
       icon: Home,
       label: "Home",
-      isActive: pathname === "/fc",
+      isActive: pathname === "/miniapps",
     },
     {
-      href: "/fc/browse",
+      href: "/miniapps/browse",
       icon: List,
       label: "Browse",
-      isActive: pathname === "/fc/browse",
+      isActive: pathname === "/miniapps/browse",
     },
     {
-      href: "/fc/dashboard",
+      href: "/miniapps/dashboard",
       icon: User,
       label: "Dashboard",
-      isActive: pathname === "/fc/dashboard",
+      isActive: pathname === "/miniapps/dashboard",
     },
   ];
 

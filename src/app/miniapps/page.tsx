@@ -2,18 +2,15 @@
  * @title Farcaster MiniApp Homepage
  * @notice Minimal homepage optimized for Farcaster frames
  * @dev KISS principle: No hero section, just active competitions
- * @dev Route: /fc (Farcaster-specific route)
+ * @dev Route: /miniapps (Farcaster-specific route)
  */
 
 "use client";
 
-import {
-  CompetitionList,
-  BottomNav,
-  FarcasterHeader,
-} from "@/components/farcaster";
+import { CompetitionList } from "@/components/farcaster";
 import { EventNotifications } from "@/components/EventNotifications";
 import { useAutoConnect } from "@/lib/farcaster";
+import { ShareButton } from "@/components/farcaster/ShareButton";
 import localFont from "next/font/local";
 
 const spartanFont = localFont({
@@ -46,10 +43,16 @@ export default function FarcasterHomePage() {
               <span>Collect</span>
               <span>Conquer</span>
             </h1>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mb-6">
               Complete your VibeMarket trading card sets, earn prize prizes, and
               prove your grind on Base.
             </p>
+            <ShareButton
+              type="platform"
+              variant="default"
+              size="lg"
+              className="mt-4"
+            />
           </div>
         </div>
 

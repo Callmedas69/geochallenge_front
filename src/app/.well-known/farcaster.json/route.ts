@@ -13,7 +13,7 @@ export async function GET() {
     miniapp: {
       version: "1",
       name: "GeoChallenge",
-      homeUrl: `${URL}/fc`,
+      homeUrl: `${URL}/miniapps`,
       iconUrl: `${URL}/icon-512.png`,
       splashImageUrl: `${URL}/splash.png`,
       splashBackgroundColor: "#ffffff",

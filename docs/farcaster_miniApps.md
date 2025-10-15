@@ -5360,7 +5360,7 @@ const app = new Hono<{ Bindings: Cloudflare.Env }>()
 async function resolveUser(fid: number) {
   const primaryAddress = await (async () => {
     const res = await fetch(
-      `https://api.farcaster.xyz/fc/primary-address?fid=${fid}&protocol=ethereum`,
+      `https://api.farcaster.xyz/miniapps/primary-address?fid=${fid}&protocol=ethereum`,
     )
     if (res.ok) {
       const { result } = await res.json<{

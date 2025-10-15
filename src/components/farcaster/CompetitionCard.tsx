@@ -102,7 +102,7 @@ export function CompetitionCard({
   ).toFixed(DECIMALS.FARCASTER);
 
   return (
-    <Link href={`/fc/competition/${competitionId.toString()}`} className="block">
+    <Link href={`/miniapps/competition/${competitionId.toString()}`} className="block">
       <Card className="min-h-[140px] hover:shadow-lg transition-shadow cursor-pointer">
         <div className="flex gap-3 p-3">
           {/* LEFT: Compact Thumbnail - 100×140px */}

@@ -32,7 +32,10 @@
       "Bash(del \"D:\\Harry\\BasedNouns\\CodeProject\\cardcompetition-front\\src\\components\\FarcasterCompetitionList.tsx\")",
       "Bash(del \"D:\\Harry\\BasedNouns\\CodeProject\\cardcompetition-front\\src\\components\\MiniAppInit.tsx\")",
       "Bash(mkdir:*)",
-      "Bash(test -f \"src/app/api/ticket/metadata/route.ts\")"
+      "Bash(test -f \"src/app/api/ticket/metadata/route.ts\")",
+      "Bash(mv:*)",
+      "Bash(test -d .next)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []

@@ -54,7 +54,7 @@ export function CompetitionTicket({
           <Skeleton className="w-full aspect-video max-w-[200px] mx-auto" />
         ) : ticketMetadata?.image ? (
           // Ticket found - display image with quantity badge
-          <div className="relative w-full aspect-video mx-3">
+          <div className="relative w-full aspect-video flex items-center px-3 overflow-hidden justify-center">
             <Image
               src={ticketMetadata.image}
               alt={ticketMetadata.name || "Competition Ticket"}

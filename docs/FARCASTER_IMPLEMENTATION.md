@@ -15,9 +15,9 @@ Reorganize all Farcaster-related code into dedicated folders for better maintain
 ## 📊 Current State Analysis
 
 ### Existing Farcaster Files:
-1. ✅ `src/app/fc/page.tsx` - Homepage (route - stays in place)
-2. ✅ `src/app/fc/layout.tsx` - Dedicated layout (route - stays in place)
-3. ✅ `src/app/fc/competition/[id]/page.tsx` - Detail page (route - stays in place)
+1. ✅ `src/app/miniapps/page.tsx` - Homepage (route - stays in place)
+2. ✅ `src/app/miniapps/layout.tsx` - Dedicated layout (route - stays in place)
+3. ✅ `src/app/miniapps/competition/[id]/page.tsx` - Detail page (route - stays in place)
 4. ✅ `src/app/.well-known/farcaster.json/route.ts` - Manifest API (stays in place)
 5. ❌ `src/components/FarcasterCompetitionCard.tsx` - **MOVE to components/farcaster/**
 6. ❌ `src/components/FarcasterCompetitionList.tsx` - **MOVE to components/farcaster/**
@@ -123,7 +123,7 @@ export async function initFarcasterSDK(): Promise<boolean> {
 
 export function isFarcasterContext(): boolean {
   // Check if running in Farcaster miniApp
-  return typeof window !== 'undefined' && window.location.pathname.startsWith('/fc');
+  return typeof window !== 'undefined' && window.location.pathname.startsWith('/miniapps');
 }
 
 // Additional SDK helper functions...
@@ -138,14 +138,14 @@ export function isFarcasterContext(): boolean {
 
 export const FARCASTER_CONFIG = {
   VERSION: '1',
-  HOME_URL: '/fc',
+  HOME_URL: '/miniapps',
   MANIFEST_PATH: '/.well-known/farcaster.json',
   SDK_READY_DELAY: 100, // ms
 } as const;
 
 export const FARCASTER_ROUTES = {
-  HOME: '/fc',
-  COMPETITION: (id: string) => `/fc/competition/${id}`,
+  HOME: '/miniapps',
+  COMPETITION: (id: string) => `/miniapps/competition/${id}`,
 } as const;
 ```
 
@@ -186,7 +186,7 @@ export * from './miniapp';
 ### **Phase 5: Update All Imports**
 
 #### Step 1: Update Farcaster Homepage
-- [ ] Update `src/app/fc/page.tsx`:
+- [ ] Update `src/app/miniapps/page.tsx`:
 ```typescript
 // OLD:
 import { FarcasterCompetitionList } from "@/components/FarcasterCompetitionList";
@@ -198,7 +198,7 @@ import { initFarcasterSDK, FARCASTER_CONFIG } from "@/lib/farcaster";
 ```
 
 #### Step 2: Update Detail Page
-- [ ] Update `src/app/fc/competition/[id]/page.tsx`:
+- [ ] Update `src/app/miniapps/competition/[id]/page.tsx`:
 ```typescript
 // Update any Farcaster-specific imports
 import { FARCASTER_ROUTES } from "@/lib/farcaster";
@@ -211,13 +211,13 @@ import { FARCASTER_ROUTES } from "@/lib/farcaster";
 - import { MiniAppInit } from "@/components/MiniAppInit";
 - <MiniAppInit />
 
-// SDK initialization now handled in /fc/page.tsx only
+// SDK initialization now handled in /miniapps/page.tsx only
 ```
 
 #### Step 4: Delete Old Files
 - [ ] Delete `src/components/FarcasterCompetitionCard.tsx`
 - [ ] Delete `src/components/FarcasterCompetitionList.tsx`
-- [ ] Delete `src/components/MiniAppInit.tsx` (no longer needed - SDK init moved to /fc/page.tsx)
+- [ ] Delete `src/components/MiniAppInit.tsx` (no longer needed - SDK init moved to /miniapps/page.tsx)
 
 ### **Phase 6: Update Documentation**
 
@@ -228,7 +228,7 @@ import { FARCASTER_ROUTES } from "@/lib/farcaster";
 #### Critical: Review Manifest Settings
 - [ ] Check `src/app/.well-known/farcaster.json/route.ts`:
   - [ ] Set `noindex: false` for production (currently `true` - prevents Farcaster search indexing)
-  - [ ] Verify `homeUrl` points to `/fc` route
+  - [ ] Verify `homeUrl` points to `/miniapps` route
   - [ ] Verify all image URLs are correct (icon, splash, screenshots)
 
 **From Farcaster docs:** Apps with `noindex: true` will not appear in Farcaster search/discovery
@@ -497,7 +497,7 @@ import type { FarcasterContext, FarcasterSDKStatus } from '@/types/farcaster';
 - [ ] Phase 4: Create types (1 file + 1 index) - **SKIP per KISS** (only if needed later)
 - [ ] Phase 5: Update all imports (2+ files, delete old files)
   - [ ] **IMPORTANT:** Remove `<MiniAppInit />` from `src/app/providers.tsx`
-  - [ ] Delete `src/components/MiniAppInit.tsx` (SDK init moved to /fc/page.tsx)
+  - [ ] Delete `src/components/MiniAppInit.tsx` (SDK init moved to /miniapps/page.tsx)
 - [ ] Phase 6: Update documentation (2 files)
   - [ ] **IMPORTANT:** Review manifest `noindex` setting (set to `false` for production)
   - [ ] Document Base chain gas benefits

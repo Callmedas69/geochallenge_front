@@ -34,13 +34,13 @@ export function FarcasterHeader() {
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container mx-auto px-3 py-3 flex items-center justify-between">
           {/* Logo/Title */}
-          <div>
+          <div className="leading-none">
             <h1
               className={`text-xl font-bold tracking-tight uppercase ${spartanFont.className} leading-none m-0 p-0`}
             >
               GeoChallenge
             </h1>
-            <span className="text-[10px] text-black/20 italic leading-none m-0 p-0">
+            <span className="text-[10px] text-black/20 italic leading-none -mt-1 block">
               powered by GeoArt
             </span>
           </div>

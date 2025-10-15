@@ -2,7 +2,7 @@
  * @title Farcaster Dashboard Page
  * @notice User dashboard for Farcaster miniApp
  * @dev KISS principle: Mobile-optimized, shows only user's competitions
- * @dev Route: /fc/dashboard (Farcaster-specific dashboard route)
+ * @dev Route: /miniapps/dashboard (Farcaster-specific dashboard route)
  */
 
 "use client";
@@ -219,7 +219,7 @@ export default function FarcasterDashboardPage() {
               </details>
 
               <Button asChild>
-                <Link href="/fc/browse">Browse Competitions</Link>
+                <Link href="/miniapps/browse">Browse Competitions</Link>
               </Button>
             </CardContent>
           </Card>

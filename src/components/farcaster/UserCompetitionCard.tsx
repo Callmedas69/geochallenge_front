@@ -165,7 +165,7 @@ export function UserCompetitionCard({
         participantPrizePerTicket === 0n)
   );
 
-  const competitionUrl = `/fc/competition/${competitionId.toString()}`;
+  const competitionUrl = `/miniapps/competition/${competitionId.toString()}`;
 
   return (
     <Link href={competitionUrl} className="block">
@@ -219,7 +219,7 @@ export function UserCompetitionCard({
                 {isWinner && (
                   <ClaimButton
                     enabled={canClaimWinner}
-                    href={`/fc/competition/${competitionId.toString()}`}
+                    href={`/miniapps/competition/${competitionId.toString()}`}
                     amount={calculatedPrizes.winnerPrize}
                     label="Claim Winner Prize"
                     disabledText="Winner Prize (Not finalized)"
@@ -231,7 +231,7 @@ export function UserCompetitionCard({
                 {!isWinner && competition.winnerDeclared && (
                   <ClaimButton
                     enabled={canClaimParticipant}
-                    href={`/fc/competition/${competitionId.toString()}`}
+                    href={`/miniapps/competition/${competitionId.toString()}`}
                     amount={calculatedPrizes.participantPrize}
                     label="Claim Participant Prize"
                     disabledText="Participant Prize (Not available)"
@@ -243,7 +243,7 @@ export function UserCompetitionCard({
                 {!competition.winnerDeclared && isCancelled && (
                   <ClaimButton
                     enabled={canClaimRefund}
-                    href={`/fc/competition/${competitionId.toString()}`}
+                    href={`/miniapps/competition/${competitionId.toString()}`}
                     amount={calculatedPrizes.refundAmount}
                     label="Claim Refund"
                     disabledText="Refund (Already claimed)"

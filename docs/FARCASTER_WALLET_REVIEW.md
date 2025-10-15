@@ -12,20 +12,20 @@
 ### **Issue 1: Missing Auto-Connect on Detail Page** ✅ FIXED
 
 **Problem:**
-- Auto-connect only existed in `/fc/page.tsx` (homepage)
-- Users opening `/fc/competition/[id]` directly (deep links) had NO auto-connect
+- Auto-connect only existed in `/miniapps/page.tsx` (homepage)
+- Users opening `/miniapps/competition/[id]` directly (deep links) had NO auto-connect
 - Result: Wallet never connected, buttons stayed disabled, users stuck
 
 **Solution:**
 - Created reusable `useAutoConnect()` hook
-- Added to BOTH `/fc/page.tsx` AND `/fc/competition/[id]/page.tsx`
+- Added to BOTH `/miniapps/page.tsx` AND `/miniapps/competition/[id]/page.tsx`
 - Now works from any entry point
 
 **Files Changed:**
 - ✅ Created `src/lib/farcaster/useAutoConnect.ts` (new reusable hook)
 - ✅ Updated `src/lib/farcaster/index.ts` (added to barrel export)
-- ✅ Updated `src/app/fc/page.tsx` (uses new hook)
-- ✅ Updated `src/app/fc/competition/[id]/page.tsx` (added auto-connect)
+- ✅ Updated `src/app/miniapps/page.tsx` (uses new hook)
+- ✅ Updated `src/app/miniapps/competition/[id]/page.tsx` (added auto-connect)
 
 ---
 
@@ -67,7 +67,7 @@
 - Mobile-optimized display across all pages
 
 **Files Changed:**
-- ✅ Updated `src/app/fc/competition/[id]/page.tsx` (5→3 decimals)
+- ✅ Updated `src/app/miniapps/competition/[id]/page.tsx` (5→3 decimals)
 - ✅ Already fixed `src/components/farcaster/CompetitionCard.tsx` (3 decimals)
 
 ---
@@ -135,8 +135,8 @@ default
 
 ### **Auto-Connect** ✅
 - [x] Created `useAutoConnect()` hook
-- [x] Added to `/fc/page.tsx` (homepage)
-- [x] Added to `/fc/competition/[id]/page.tsx` (detail page)
+- [x] Added to `/miniapps/page.tsx` (homepage)
+- [x] Added to `/miniapps/competition/[id]/page.tsx` (detail page)
 - [x] SDK initialization in auto-connect (100ms delay)
 - [x] Finds Farcaster connector by name
 - [x] Calls `connect()` if not already connected
@@ -176,7 +176,7 @@ default
 
 **Test 1: Homepage Entry**
 1. Open Farcaster app
-2. Navigate to `/fc`
+2. Navigate to `/miniapps`
 3. **Expected:**
    - Brief "Connecting Wallet..." message
    - Wallet auto-connects within 500ms
@@ -184,7 +184,7 @@ default
 
 **Test 2: Deep Link Entry**
 1. Open Farcaster app
-2. Click link directly to `/fc/competition/1`
+2. Click link directly to `/miniapps/competition/1`
 3. **Expected:**
    - Brief "Connecting Wallet..." message
    - Wallet auto-connects within 500ms
@@ -192,7 +192,7 @@ default
 
 **Test 3: Connection Failure**
 1. Open in regular browser (not Farcaster)
-2. Navigate to `/fc`
+2. Navigate to `/miniapps`
 3. **Expected:**
    - "Connecting Wallet..." appears briefly
    - Changes to error: "Unable to connect wallet..."
@@ -203,7 +203,7 @@ default
 ### **Test Buy Ticket Flow**
 
 **Test 1: Successful Purchase**
-1. Open `/fc/competition/1` in Farcaster
+1. Open `/miniapps/competition/1` in Farcaster
 2. Wait for auto-connect
 3. Click "Buy Ticket - 0.001 ETH"
 4. **Expected:**

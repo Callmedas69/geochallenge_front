@@ -13,3 +13,4 @@ export { FarcasterHeader } from './FarcasterHeader';
 export { HowItWorksDrawer } from './HowItWorksDrawer';
 export { DashboardQuickStats } from './DashboardQuickStats';
 export { UserCompetitionCard } from './UserCompetitionCard';
+export { ShareButton } from './ShareButton';

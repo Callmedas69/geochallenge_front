@@ -2,7 +2,7 @@
  * @title Farcaster Browse Page
  * @notice Browse all competitions with filtering (Active/All tabs) for Farcaster miniApps
  * @dev KISS principle: Mobile-optimized tabbed interface for competition browsing
- * @dev Route: /fc/browse (Farcaster-specific browse route)
+ * @dev Route: /miniapps/browse (Farcaster-specific browse route)
  */
 
 "use client";

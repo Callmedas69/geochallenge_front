@@ -31,7 +31,7 @@ export async function initFarcasterSDK(): Promise<boolean> {
 
 export function isFarcasterContext(): boolean {
   // Check if running in Farcaster miniApp
-  return typeof window !== 'undefined' && window.location.pathname.startsWith('/fc');
+  return typeof window !== 'undefined' && window.location.pathname.startsWith('/miniapps');
 }
 
 // Additional SDK helper functions...

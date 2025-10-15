@@ -10,7 +10,7 @@ Farcaster-optimized components for displaying competitions in constrained mobile
 
 ```
 src/
-├── app/fc/                          # Farcaster-specific routes
+├── app/miniapps/                          # Farcaster-specific routes
 │   ├── layout.tsx                   # Dedicated Farcaster layout
 │   ├── page.tsx                     # Farcaster homepage
 │   └── competition/[id]/page.tsx    # Competition detail page
@@ -112,19 +112,19 @@ import { FARCASTER_CONFIG, FARCASTER_ROUTES } from '@/lib/farcaster';
 
 // Configuration
 FARCASTER_CONFIG.VERSION          // '1'
-FARCASTER_CONFIG.HOME_URL          // '/fc'
+FARCASTER_CONFIG.HOME_URL          // '/miniapps'
 FARCASTER_CONFIG.MANIFEST_PATH     // '/.well-known/farcaster.json'
 FARCASTER_CONFIG.SDK_READY_DELAY   // 100ms
 
 // Routes
-FARCASTER_ROUTES.HOME                    // '/fc'
-FARCASTER_ROUTES.COMPETITION('1')       // '/fc/competition/1'
+FARCASTER_ROUTES.HOME                    // '/miniapps'
+FARCASTER_ROUTES.COMPETITION('1')       // '/miniapps/competition/1'
 ```
 
 ---
 
 ### 4. **Farcaster Homepage**
-**Location**: `src/app/fc/page.tsx`
+**Location**: `src/app/miniapps/page.tsx`
 
 **Purpose**: Minimal homepage for Farcaster frames
 
@@ -134,7 +134,7 @@ FARCASTER_ROUTES.COMPETITION('1')       // '/fc/competition/1'
 - **Tight Container**: `px-3 py-4` (vs `px-4 py-8`)
 - **Tight Spacing**: `space-y-4` (vs `space-y-8`)
 
-**Route**: `/fc`
+**Route**: `/miniapps`
 
 ---
 
@@ -265,12 +265,12 @@ import { FARCASTER_CONFIG } from '@/lib/farcaster/config';
 
 Route structure:
 ```
-src/app/fc/page.tsx         # Farcaster homepage
-src/app/fc/layout.tsx       # Farcaster layout
-src/app/fc/competition/[id]/page.tsx  # Detail page
+src/app/miniapps/page.tsx         # Farcaster homepage
+src/app/miniapps/layout.tsx       # Farcaster layout
+src/app/miniapps/competition/[id]/page.tsx  # Detail page
 ```
 
-Route URL: `https://yourdomain.com/fc`
+Route URL: `https://yourdomain.com/miniapps`
 
 Use this URL in Farcaster frames.
 
@@ -300,7 +300,7 @@ miniapp: {
 
 **⚠️ Production Checklist**:
 - [ ] Set `noindex: false` before launching
-- [ ] Verify `homeUrl` points to `/fc` route
+- [ ] Verify `homeUrl` points to `/miniapps` route
 - [ ] Verify all image URLs are accessible (icon, splash, screenshots, og)
 - [ ] Test manifest endpoint: `/.well-known/farcaster.json`
 
@@ -390,7 +390,7 @@ miniapp: {
 2. `config.ts` - Configuration constants and routes
 3. `index.ts` - Barrel export
 
-**Routes** (`src/app/fc/`):
+**Routes** (`src/app/miniapps/`):
 1. `page.tsx` - Minimal homepage
 2. `layout.tsx` - Dedicated layout
 3. `competition/[id]/page.tsx` - Detail page
