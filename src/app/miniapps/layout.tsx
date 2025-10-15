@@ -29,12 +29,13 @@ export const metadata: Metadata = {
     images: [FARCASTER_SHARING.platformOgUrl],
   },
   other: {
-    // Primary metadata for Farcaster MiniApps
+    // Primary metadata for Farcaster MiniApps (modern)
     "fc:miniapp": JSON.stringify(
       createFarcasterEmbed({
         imageUrl: FARCASTER_SHARING.platformOgUrl,
         buttonTitle: FARCASTER_SHARING.platformButtonText,
         actionUrl: FARCASTER_SHARING.homeUrl,
+        legacy: false, // Use 'launch_miniapp' for modern clients
       })
     ),
     // Backward compatibility with older Farcaster clients
@@ -43,6 +44,7 @@ export const metadata: Metadata = {
         imageUrl: FARCASTER_SHARING.platformOgUrl,
         buttonTitle: FARCASTER_SHARING.platformButtonText,
         actionUrl: FARCASTER_SHARING.homeUrl,
+        legacy: true, // Use 'launch_frame' for old clients
       })
     ),
   },

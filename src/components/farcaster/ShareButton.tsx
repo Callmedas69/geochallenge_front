@@ -40,16 +40,15 @@ export function ShareButton({
       }
       shareUrl = FARCASTER_SHARING.competitionUrl(competitionId);
       shareText = collectionName
-        ? `Check out the ${collectionName} competition on GeoChallenge! 🎴`
-        : `Join this competition on GeoChallenge! 🎴`;
+        ? `Check out the ${collectionName} competition on GeoChallenge! 🎴\n\n${shareUrl}`
+        : `Join this competition on GeoChallenge! 🎴\n\n${shareUrl}`;
       shareTitle = collectionName
         ? `${collectionName} - GeoChallenge`
         : `Competition #${competitionId} - GeoChallenge`;
     } else {
       // Platform share
       shareUrl = FARCASTER_SHARING.homeUrl;
-      shareText =
-        "Join me on GeoChallenge! Complete trading card sets and win prizes on Base 🎴";
+      shareText = `Join me on GeoChallenge! Complete trading card sets and win prizes on Base 🎴\n\n${shareUrl}`;
       shareTitle = "GeoChallenge - Trading Card Competitions";
     }
 

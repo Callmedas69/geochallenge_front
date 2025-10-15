@@ -60,7 +60,7 @@ export function CompetitionTicket({
               alt={ticketMetadata.name || "Competition Ticket"}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover"
+              className="object-contain"
             />
           </div>
         ) : (

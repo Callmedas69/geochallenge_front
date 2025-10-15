@@ -172,7 +172,7 @@ export async function GET(
         <div
           style={{
             width: "1200px",
-            height: "630px",
+            height: "800px",
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
@@ -181,7 +181,7 @@ export async function GET(
             color: GEO_COLORS.foreground,
             fontFamily: "League Spartan, sans-serif",
             position: "relative",
-            padding: "30px 40px",
+            padding: "40px 60px",
           }}
         >
           {/* LEFT SIDE — Image + Logo */}
@@ -406,7 +406,7 @@ export async function GET(
       ),
       {
         width: 1200,
-        height: 630,
+        height: 800,
         fonts: [
           {
             name: "League Spartan",

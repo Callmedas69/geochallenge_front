@@ -21,11 +21,19 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { id } = await params;
 
-  // Create Farcaster embed with dynamic OG image
-  const embed = createFarcasterEmbed({
+  // Create Farcaster embeds with dynamic OG image
+  const modernEmbed = createFarcasterEmbed({
     imageUrl: FARCASTER_SHARING.competitionOgApi(id),
     buttonTitle: FARCASTER_SHARING.competitionButtonText,
     actionUrl: FARCASTER_SHARING.competitionUrl(id),
+    legacy: false, // Use 'launch_miniapp' for modern clients
+  });
+
+  const legacyEmbed = createFarcasterEmbed({
+    imageUrl: FARCASTER_SHARING.competitionOgApi(id),
+    buttonTitle: FARCASTER_SHARING.competitionButtonText,
+    actionUrl: FARCASTER_SHARING.competitionUrl(id),
+    legacy: true, // Use 'launch_frame' for old clients
   });
 
   return {
@@ -37,8 +45,8 @@ export async function generateMetadata({
       images: [FARCASTER_SHARING.competitionOgApi(id)],
     },
     other: {
-      "fc:miniapp": JSON.stringify(embed),
-      "fc:frame": JSON.stringify(embed),
+      "fc:miniapp": JSON.stringify(modernEmbed),
+      "fc:frame": JSON.stringify(legacyEmbed),
     },
   };
 }

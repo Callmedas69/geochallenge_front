@@ -6,8 +6,23 @@
  */
 
 import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi'
+import { useSendCalls, useCallsStatus } from 'wagmi/experimental'
 import { geoChallenge_implementation_ABI } from '@/abi'
 import { CONTRACT_ADDRESSES } from '@/lib/contractList'
+import { sdk } from '@farcaster/miniapp-sdk'
+import type { BatchCall } from '@/lib/farcaster'
+
+/**
+ * Ensure SDK is ready before transaction
+ * Prevents issues in Farcaster miniApp context
+ */
+async function ensureSDKReady(): Promise<void> {
+  try {
+    await sdk.actions.ready()
+  } catch {
+    // Not in Farcaster context, continue normally
+  }
+}
 
 /**
  * Buy ticket for a competition
@@ -31,6 +46,9 @@ export function useBuyTicket() {
     if (!address) {
       throw new Error('Please connect your wallet')
     }
+
+    // Ensure SDK is ready in Farcaster context
+    await ensureSDKReady()
 
     return writeContract({
       address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
@@ -74,6 +92,9 @@ export function useClaimPrize() {
       throw new Error('Please connect your wallet')
     }
 
+    // Ensure SDK is ready in Farcaster context
+    await ensureSDKReady()
+
     return writeContract({
       address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
@@ -114,6 +135,9 @@ export function useClaimParticipantPrize() {
     if (!address) {
       throw new Error('Please connect your wallet')
     }
+
+    // Ensure SDK is ready in Farcaster context
+    await ensureSDKReady()
 
     return writeContract({
       address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
@@ -156,6 +180,9 @@ export function useClaimRefund() {
       throw new Error('Please connect your wallet')
     }
 
+    // Ensure SDK is ready in Farcaster context
+    await ensureSDKReady()
+
     return writeContract({
       address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
@@ -197,6 +224,9 @@ export function useWithdrawBalance() {
       throw new Error('Please connect your wallet')
     }
 
+    // Ensure SDK is ready in Farcaster context
+    await ensureSDKReady()
+
     return writeContract({
       address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
@@ -212,5 +242,61 @@ export function useWithdrawBalance() {
     isSuccess,
     error: writeError || receiptError,
     hash,
+  }
+}
+
+/**
+ * Batch multiple transactions into one confirmation (EIP-5792)
+ * @notice Only works in Farcaster wallet (supporting wallet_sendCalls)
+ * @dev Perfect for "approve + buy" or other multi-step operations
+ *
+ * @example
+ * ```tsx
+ * const { sendBatchCalls } = useBatchTransactions();
+ *
+ * // Approve token + Buy ticket in ONE confirmation
+ * await sendBatchCalls([
+ *   { to: tokenContract, data: approveData },
+ *   { to: competitionContract, data: buyTicketData, value: ticketPrice }
+ * ]);
+ * ```
+ */
+export function useBatchTransactions() {
+  const { address } = useAccount()
+  const { sendCalls, data: callData, isPending, error: sendError } = useSendCalls()
+
+  // Extract the actual ID from the call data
+  const callId = callData?.id as `0x${string}` | undefined
+
+  const {
+    status,
+    data: callsData,
+    error: statusError
+  } = useCallsStatus({
+    id: callId!,
+    query: {
+      enabled: !!callId,
+    }
+  })
+
+  const sendBatchCalls = async (calls: BatchCall[]) => {
+    if (!address) {
+      throw new Error('Please connect your wallet')
+    }
+
+    // Ensure SDK is ready in Farcaster context
+    await ensureSDKReady()
+
+    return sendCalls({ calls })
+  }
+
+  return {
+    sendBatchCalls,
+    isPending,
+    isConfirming: status === 'pending',
+    isSuccess: status === 'success',
+    error: sendError || statusError,
+    id: callId,
+    callsData,
   }
 }

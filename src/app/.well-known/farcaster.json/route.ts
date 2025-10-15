@@ -17,6 +17,7 @@ export async function GET() {
       iconUrl: `${URL}/icon-512.png`,
       splashImageUrl: `${URL}/splash.png`,
       splashBackgroundColor: "#ffffff",
+      castShareUrl: `${URL}/miniapps/share`,
       // webhookUrl: `${URL}/api/webhook`,
       subtitle: "Collect. Compete. Conquer.",
       description:

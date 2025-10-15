@@ -4,7 +4,7 @@
  * @dev Use this in any Farcaster page that needs wallet connection
  */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAccount, useConnect } from 'wagmi';
 import { initFarcasterSDK } from './sdk';
 
@@ -22,23 +22,31 @@ import { initFarcasterSDK } from './sdk';
  * ```
  */
 export function useAutoConnect() {
-  const { isConnected } = useAccount();
+  const { isConnected, connector } = useAccount();
   const { connect, connectors } = useConnect();
+  const [hasAttemptedConnect, setHasAttemptedConnect] = useState(false);
 
   useEffect(() => {
     // Initialize Farcaster SDK
     initFarcasterSDK();
 
-    // Auto-connect wallet if not already connected
-    if (!isConnected && connectors.length > 0) {
-      // Find Farcaster connector
-      const farcasterConnector = connectors.find(
-        (c) => c.name === "Farcaster Mini App"
-      );
+    // Find Farcaster connector
+    const farcasterConnector = connectors.find(
+      (c) => c.name === "Farcaster Mini App"
+    );
 
-      if (farcasterConnector) {
-        connect({ connector: farcasterConnector });
-      }
+    if (!farcasterConnector || hasAttemptedConnect) {
+      return;
     }
-  }, [isConnected, connect, connectors]);
+
+    // Connect to Farcaster if:
+    // 1. Not connected at all
+    // 2. OR connected but not via Farcaster (e.g. web session)
+    const shouldConnect = !isConnected || connector?.name !== "Farcaster Mini App";
+
+    if (shouldConnect) {
+      connect({ connector: farcasterConnector });
+      setHasAttemptedConnect(true);
+    }
+  }, [isConnected, connector, connect, connectors, hasAttemptedConnect]);
 }

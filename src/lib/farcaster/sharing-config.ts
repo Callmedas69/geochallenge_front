@@ -31,20 +31,26 @@ export const FARCASTER_SHARING = {
 /**
  * Helper to create Farcaster embed metadata
  * @param config Image URL, button title, and action URL
+ * @param config.legacy If true, uses 'launch_frame' for backward compatibility. Default false (uses 'launch_miniapp')
  * @returns Farcaster embed object (for fc:miniapp meta tag)
  */
 export function createFarcasterEmbed(config: {
   imageUrl: string;
   buttonTitle: string;
   actionUrl: string;
+  legacy?: boolean;
 }) {
+  const actionType: "launch_frame" | "launch_miniapp" = config.legacy
+    ? "launch_frame"
+    : "launch_miniapp";
+
   return {
     version: "1",
     imageUrl: config.imageUrl,
     button: {
       title: config.buttonTitle,
       action: {
-        type: "launch_frame" as const,
+        type: actionType,
         name: FARCASTER_SHARING.appName,
         url: config.actionUrl,
         splashImageUrl: FARCASTER_SHARING.iconUrl,

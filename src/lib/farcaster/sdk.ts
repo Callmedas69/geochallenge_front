@@ -1,7 +1,10 @@
 /**
  * Farcaster SDK initialization and utilities
  */
-import { sdk } from '@farcaster/miniapp-sdk';
+import { sdk as farcasterSDK } from '@farcaster/miniapp-sdk';
+
+// Re-export SDK for use in components
+export { sdk } from '@farcaster/miniapp-sdk';
 
 /**
  * CRITICAL: SDK ready delay
@@ -18,7 +21,7 @@ export async function initFarcasterSDK(): Promise<boolean> {
   return new Promise((resolve) => {
     setTimeout(async () => {
       try {
-        await sdk.actions.ready();
+        await farcasterSDK.actions.ready();
         console.log('✅ Farcaster SDK: Ready');
         resolve(true);
       } catch (error) {
