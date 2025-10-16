@@ -16,7 +16,7 @@ import {
   ClaimablePrizesAlertMobile,
 } from "@/components/farcaster";
 import { WithdrawBalance } from "@/components/WithdrawBalance";
-import { useUserDashboardData } from "@/hooks/useUserDashboard";
+import { useUserDashboardData, useUserCompetitionIds } from "@/hooks/useUserDashboard";
 import {
   useClaimableBalance,
   useCompetitionCount,
@@ -53,6 +53,9 @@ export default function FarcasterDashboardPage() {
 
   const { data: balance, error: balanceError } = useClaimableBalance(address);
 
+  // Get all competition IDs for permanent history record
+  const { data: allCompetitionIds } = useUserCompetitionIds(address);
+
   // DEBUG: Log dashboard data
   console.log("🔍 Dashboard Debug:", {
     address,
@@ -68,10 +71,14 @@ export default function FarcasterDashboardPage() {
     [dashboardData]
   );
 
-  const completedCompIds = useMemo(
-    () => dashboardData?.claimableCompIds || [],
-    [dashboardData]
-  );
+  // Calculate completed competitions (permanent record, not just claimable)
+  const completedCompIds = useMemo(() => {
+    if (!allCompetitionIds || !dashboardData?.activeCompIds) return []
+
+    // Filter out active competitions to get completed ones
+    const activeSet = new Set(dashboardData.activeCompIds.map(id => id.toString()))
+    return allCompetitionIds.filter(id => !activeSet.has(id.toString()))
+  }, [allCompetitionIds, dashboardData?.activeCompIds]);
 
   // Not connected state
   if (!isConnected || !address) {
@@ -268,7 +275,7 @@ export default function FarcasterDashboardPage() {
 
         {/* Claimable Prizes Alert */}
         <ClaimablePrizesAlertMobile
-          claimableCompIds={completedCompIds}
+          claimableCompIds={dashboardData?.claimableCompIds}
           isLoading={isLoading}
         />
 

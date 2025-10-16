@@ -6,9 +6,10 @@
 
 'use client'
 
+import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 import { useClaimableBalance } from '@/hooks/usePublicCompetitions'
-import { useUserDashboardData } from '@/hooks/useUserDashboard'
+import { useUserDashboardData, useUserCompetitionIds } from '@/hooks/useUserDashboard'
 import { WithdrawBalance } from '@/components/WithdrawBalance'
 import { UserStatsCards } from '@/components/dashboard/UserStatsCards'
 import { ClaimablePrizesAlert } from '@/components/dashboard/ClaimablePrizesAlert'
@@ -33,6 +34,18 @@ export function UserDashboard() {
     refetch
   } = useUserDashboardData(address)
   const { data: balance, error: balanceError } = useClaimableBalance(address)
+
+  // Get all competition IDs for participation history (permanent record)
+  const { data: allCompetitionIds } = useUserCompetitionIds(address)
+
+  // Calculate completed competitions (exclude active ones)
+  const completedCompIds = useMemo(() => {
+    if (!allCompetitionIds || !dashboardData?.activeCompIds) return []
+
+    // Filter out active competitions to get completed ones
+    const activeSet = new Set(dashboardData.activeCompIds.map(id => id.toString()))
+    return allCompetitionIds.filter(id => !activeSet.has(id.toString()))
+  }, [allCompetitionIds, dashboardData?.activeCompIds])
 
   if (!isConnected || !address) {
     return (
@@ -232,7 +245,7 @@ export function UserDashboard() {
 
       {/* Participation History */}
       <ParticipationHistoryTable
-        completedCompIds={dashboardData?.claimableCompIds}
+        completedCompIds={completedCompIds}
         isLoading={isDashboardLoading}
       />
 

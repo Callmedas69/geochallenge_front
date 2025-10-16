@@ -6,6 +6,9 @@
 
 'use client'
 
+import { useReadContracts } from 'wagmi'
+import { CONTRACT_ADDRESSES } from '@/lib/contractList'
+import { geoChallenge_implementation_ABI } from '@/abi/geoChallenge_implementation_ABI'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
@@ -19,6 +22,34 @@ interface ParticipationHistoryTableProps {
 }
 
 export function ParticipationHistoryTable({ completedCompIds, isLoading }: ParticipationHistoryTableProps) {
+  // Batch fetch all competition metadata in ONE RPC call
+  const { data: metadataResultsRaw } = useReadContracts({
+    contracts: completedCompIds?.map(id => ({
+      address: CONTRACT_ADDRESSES.GeoChallenge,
+      abi: geoChallenge_implementation_ABI,
+      functionName: 'getCompetitionMetadata',
+      args: [id],
+    })) || [],
+    query: {
+      enabled: !!completedCompIds && completedCompIds.length > 0,
+      staleTime: Infinity, // Names never change
+    }
+  })
+
+  // Extract names from results with fallback (cast to any to avoid TS complexity)
+  const metadataResults = metadataResultsRaw as any
+  const competitionNames: string[] = []
+  if (metadataResults && completedCompIds) {
+    for (let i = 0; i < completedCompIds.length; i++) {
+      const result = metadataResults[i]
+      if (result?.status === 'success' && result?.result) {
+        competitionNames.push(result.result[0])
+      } else {
+        competitionNames.push(`Competition #${completedCompIds[i]?.toString() || 'Unknown'}`)
+      }
+    }
+  }
+
   if (isLoading) {
     return (
       <Card>
@@ -82,9 +113,11 @@ export function ParticipationHistoryTable({ completedCompIds, isLoading }: Parti
             </TableRow>
           </TableHeader>
           <TableBody>
-            {completedCompIds.map((compId) => (
+            {completedCompIds.map((compId, index) => (
               <TableRow key={compId.toString()}>
-                <TableCell className="font-medium">Competition #{compId.toString()}</TableCell>
+                <TableCell className="font-medium">
+                  {competitionNames[index] || `Competition #${compId.toString()}`}
+                </TableCell>
                 <TableCell>
                   <Badge variant="secondary" className="bg-gray-500 text-white">
                     Finalized

@@ -12,7 +12,7 @@ import { CustomConnectButton } from "@/components/CustomConnectButton";
 import { useAccount } from "wagmi";
 import { Badge } from "@/components/ui/badge";
 import { useCardCompetitionOwner } from "@/hooks/useContracts";
-import { Crown, Home, List } from "lucide-react";
+import { Crown, Home, List, User2 } from "lucide-react";
 import { useState, useEffect } from "react";
 
 // ============================================================================
@@ -29,6 +29,11 @@ const NAV_ITEMS = [
     href: "/browse",
     label: "Browse",
     icon: List,
+  },
+  {
+    href: "/dashboard",
+    label: "My Dashboard",
+    icon: User2,
   },
 ];
 
