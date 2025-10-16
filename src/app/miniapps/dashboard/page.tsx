@@ -11,15 +11,10 @@ import { useState, useMemo } from "react";
 import { useAccount } from "wagmi";
 import { useAutoConnect } from "@/lib/farcaster";
 import {
-  FarcasterHeader,
-  BottomNav,
   DashboardQuickStats,
   UserCompetitionCard,
 } from "@/components/farcaster";
-import {
-  useUserDashboardData,
-  useUserCompetitionIds,
-} from "@/hooks/useUserDashboard";
+import { useUserDashboardData } from "@/hooks/useUserDashboard";
 import {
   useClaimableBalance,
   useCompetitionCount,
@@ -36,7 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Wallet, List } from "lucide-react";
+import { Wallet, List, RefreshCw, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function FarcasterDashboardPage() {
@@ -54,32 +49,22 @@ export default function FarcasterDashboardPage() {
     error: dashboardError,
   } = useUserDashboardData(address);
 
-  const { data: balance } = useClaimableBalance(address);
-
-  // FALLBACK: Try getting competition IDs from UserTracking directly
-  const { data: userCompIds } = useUserCompetitionIds(address);
+  const { data: balance, error: balanceError } = useClaimableBalance(address);
 
   // DEBUG: Log dashboard data
   console.log("🔍 Dashboard Debug:", {
     address,
     dashboardData,
-    userCompIds,
     isLoading,
     error: dashboardError,
+    balanceError,
   });
 
-  // Separate active and completed competition IDs
-  // FALLBACK: If QueryManager returns empty but UserTracking has data, use that
-  const activeCompIds = useMemo(() => {
-    if (
-      dashboardData?.activeCompIds &&
-      dashboardData.activeCompIds.length > 0
-    ) {
-      return dashboardData.activeCompIds;
-    }
-    // Fallback: return all user competition IDs (will filter by state in card)
-    return userCompIds || [];
-  }, [dashboardData, userCompIds]);
+  // Extract competition IDs from QueryManager
+  const activeCompIds = useMemo(
+    () => dashboardData?.activeCompIds || [],
+    [dashboardData]
+  );
 
   const completedCompIds = useMemo(
     () => dashboardData?.claimableCompIds || [],
@@ -133,6 +118,37 @@ export default function FarcasterDashboardPage() {
     );
   }
 
+  // Error state
+  if (dashboardError) {
+    return (
+      <>
+        <div className="container mx-auto px-3 py-4 pb-20 space-y-4">
+          <div className="space-y-1">
+            <h1 className="text-lg font-bold">My Dashboard</h1>
+            <p className="text-xs text-muted-foreground">
+              {address.slice(0, 10)}...{address.slice(-8)}
+            </p>
+          </div>
+
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="text-xs">
+              <strong>Failed to load dashboard data</strong>
+              <p className="mt-1">
+                {dashboardError.message || "Network error. Please try again."}
+              </p>
+            </AlertDescription>
+          </Alert>
+
+          <Button onClick={() => refetch()} variant="outline" className="w-full">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Retry
+          </Button>
+        </div>
+      </>
+    );
+  }
+
   // Empty state - no tickets
   if (activeCompIds.length === 0 && completedCompIds.length === 0) {
     return (
@@ -151,15 +167,6 @@ export default function FarcasterDashboardPage() {
             stats={dashboardData?.stats}
             claimableBalance={balance}
           />
-
-          {/* Debug Info */}
-          {dashboardError && (
-            <Alert variant="destructive">
-              <AlertDescription className="text-xs">
-                Error loading dashboard: {dashboardError.message}
-              </AlertDescription>
-            </Alert>
-          )}
 
           {/* Empty State */}
           <Card className="mt-8">
@@ -184,34 +191,29 @@ export default function FarcasterDashboardPage() {
                     <strong>Wallet:</strong> {address}
                   </p>
                   <p>
-                    <strong>QueryManager activeCompIds:</strong>{" "}
+                    <strong>Active Competitions:</strong>{" "}
                     {dashboardData?.activeCompIds?.length || 0}
                   </p>
                   <p>
-                    <strong>QueryManager claimableCompIds:</strong>{" "}
+                    <strong>Claimable Competitions:</strong>{" "}
                     {dashboardData?.claimableCompIds?.length || 0}
                   </p>
                   <p>
-                    <strong>UserTracking compIds:</strong>{" "}
-                    {userCompIds?.length || 0}
-                  </p>
-                  <p>
-                    <strong>Using fallback:</strong>{" "}
-                    {(dashboardData?.activeCompIds?.length || 0) === 0 &&
-                    (userCompIds?.length || 0) > 0
-                      ? "YES"
-                      : "NO"}
+                    <strong>Total Joined:</strong>{" "}
+                    {dashboardData?.stats?.totalCompetitionsJoined?.toString() || "0"}
                   </p>
                   <pre className="whitespace-pre-wrap overflow-auto max-h-48 bg-background p-2 rounded mt-2">
                     {JSON.stringify(
                       {
-                        dashboardData,
-                        userCompIds,
-                        activeCompIds,
-                        completedCompIds,
+                        activeCompIds: activeCompIds.map(id => id.toString()),
+                        completedCompIds: completedCompIds.map(id => id.toString()),
+                        stats: dashboardData?.stats ? {
+                          totalJoined: dashboardData.stats.totalCompetitionsJoined?.toString(),
+                          totalWon: dashboardData.stats.competitionsWon?.toString(),
+                          prizesWon: dashboardData.stats.totalPrizesWon?.toString(),
+                        } : null,
                       },
-                      (key, value) =>
-                        typeof value === "bigint" ? value.toString() : value,
+                      null,
                       2
                     )}
                   </pre>
@@ -232,12 +234,22 @@ export default function FarcasterDashboardPage() {
   return (
     <>
       <div className="container mx-auto px-3 py-4 pb-20 space-y-4">
-        {/* Header */}
-        <div className="space-y-1">
-          <h1 className="text-lg font-bold">My Dashboard</h1>
-          <p className="text-xs text-muted-foreground">
-            {address.slice(0, 10)}...{address.slice(-8)}
-          </p>
+        {/* Header with Refresh */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h1 className="text-lg font-bold">My Dashboard</h1>
+            <p className="text-xs text-muted-foreground">
+              {address.slice(0, 10)}...{address.slice(-8)}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isLoading}
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
         </div>
 
         {/* Stats */}
@@ -246,8 +258,18 @@ export default function FarcasterDashboardPage() {
           claimableBalance={balance}
         />
 
+        {/* Balance Error Alert */}
+        {balanceError && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="text-xs">
+              Failed to load balance: {balanceError.message}
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Claimable Balance Alert */}
-        {balance && balance > BigInt(0) && (
+        {!balanceError && balance && balance > BigInt(0) && (
           <Alert className="border-green-500 bg-green-50">
             <Wallet className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-xs text-green-800">

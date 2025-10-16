@@ -176,19 +176,19 @@ export async function GET(
             console.warn("Failed to load Barriecito font:", err.message);
             return null; // Graceful degradation
           }),
-      publicClient.readContract({
-        address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
-        abi: geoChallenge_implementation_ABI,
-        functionName: "getCompetition",
-        args: [competitionId],
-      }),
-      publicClient.readContract({
-        address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
-        abi: geoChallenge_implementation_ABI,
-        functionName: "getCompetitionMetadata",
-        args: [competitionId],
-      }),
-    ]);
+        publicClient.readContract({
+          address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+          abi: geoChallenge_implementation_ABI,
+          functionName: "getCompetition",
+          args: [competitionId],
+        }),
+        publicClient.readContract({
+          address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+          abi: geoChallenge_implementation_ABI,
+          functionName: "getCompetitionMetadata",
+          args: [competitionId],
+        }),
+      ]);
 
     // --- Fetch collection info ---
     const collectionData = await fetchCollectionData(
@@ -212,7 +212,7 @@ export async function GET(
     const fonts: Array<{
       name: string;
       data: ArrayBuffer;
-      style: 'normal' | 'italic';
+      style: "normal" | "italic";
       weight: 400 | 700;
     }> = [];
     if (spartanFontResult) {
@@ -273,8 +273,8 @@ export async function GET(
                 <img
                   src={packImage}
                   alt="pack"
-                  width={300}
-                  height={405}
+                  width={400}
+                  height={540}
                   style={{
                     borderRadius: "12px",
                     transform: "rotate(-3deg)",
@@ -285,8 +285,8 @@ export async function GET(
                 <div
                   style={{
                     display: "flex",
-                    width: "340px",
-                    height: "460px",
+                    width: "400px",
+                    height: "540px",
                     backgroundColor: "#f1f5f9",
                     color: GEO_COLORS.mutedText,
                     fontSize: "72px",
@@ -376,7 +376,7 @@ export async function GET(
             >
               <div
                 style={{
-                  fontSize: "18px",
+                  fontSize: "16px",
                   textTransform: "uppercase",
                   letterSpacing: "0.1em",
                   color: GEO_COLORS.mutedText,
@@ -389,7 +389,7 @@ export async function GET(
 
               <div
                 style={{
-                  fontSize: "72px",
+                  fontSize: "76px",
                   fontFamily: "Barriecito, system-ui",
                   fontWeight: 900,
                   lineHeight: 1,

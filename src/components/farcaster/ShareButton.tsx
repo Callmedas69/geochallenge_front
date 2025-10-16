@@ -1,7 +1,7 @@
 /**
  * @title ShareButton Component
  * @notice Flexible share button for Farcaster sharing (competition or platform)
- * @dev Uses native share API on mobile, Warpcast composer fallback on desktop
+ * @dev Uses SDK composeCast in miniApp, native share on mobile, browser fallback
  */
 
 "use client";
@@ -9,6 +9,7 @@
 import { Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FARCASTER_SHARING } from "@/lib/farcaster/sharing-config";
+import { sdk, isFarcasterContext } from "@/lib/farcaster/sdk";
 
 interface ShareButtonProps {
   type: "competition" | "platform";
@@ -52,7 +53,25 @@ export function ShareButton({
       shareTitle = "GeoChallenge - Trading Card Competitions";
     }
 
-    // Try native share first (mobile)
+    // Priority 1: Use Farcaster SDK composeCast if in MiniApp (direct, no browser)
+    if (isFarcasterContext()) {
+      try {
+        const result = await sdk.actions.composeCast({
+          text: shareText,
+          embeds: [shareUrl],
+        });
+
+        if (result?.cast) {
+          console.log("✅ Cast created:", result.cast.hash);
+        }
+        return;
+      } catch (err) {
+        console.log("SDK composeCast unavailable, falling back...");
+        // Fall through to next method
+      }
+    }
+
+    // Priority 2: Try native share (mobile)
     if (navigator.share) {
       try {
         await navigator.share({
@@ -67,7 +86,7 @@ export function ShareButton({
       }
     }
 
-    // Fallback: Open Warpcast composer with pre-filled content
+    // Priority 3: Fallback to browser (only for non-Farcaster contexts)
     const warpcastUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(
       shareText
     )}&embeds[]=${encodeURIComponent(shareUrl)}`;
