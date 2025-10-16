@@ -13,6 +13,7 @@ import { useAutoConnect } from "@/lib/farcaster";
 import {
   DashboardQuickStats,
   UserCompetitionCard,
+  ClaimablePrizesAlertMobile,
 } from "@/components/farcaster";
 import { useUserDashboardData } from "@/hooks/useUserDashboard";
 import {
@@ -278,6 +279,12 @@ export default function FarcasterDashboardPage() {
             </AlertDescription>
           </Alert>
         )}
+
+        {/* Claimable Prizes Alert */}
+        <ClaimablePrizesAlertMobile
+          claimableCompIds={completedCompIds}
+          isLoading={isLoading}
+        />
 
         {/* Competition Tabs */}
         <Tabs

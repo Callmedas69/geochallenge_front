@@ -4,22 +4,31 @@
  * @dev KISS principle - simple list of active competitions with links
  */
 
-'use client'
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Ticket, Clock, TrendingUp, ExternalLink } from 'lucide-react'
-import { formatEther } from 'viem'
-import Link from 'next/link'
-import type { Competition } from '@/lib/types'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Ticket, Clock, TrendingUp, ExternalLink } from "lucide-react";
+import { formatEther } from "viem";
+import Link from "next/link";
+import type { Competition } from "@/lib/types";
 
 interface ActiveCompetitionsSectionProps {
-  activeCompIds: readonly bigint[] | undefined
-  isLoading?: boolean
+  activeCompIds: readonly bigint[] | undefined;
+  isLoading?: boolean;
 }
 
-export function ActiveCompetitionsSection({ activeCompIds, isLoading }: ActiveCompetitionsSectionProps) {
+export function ActiveCompetitionsSection({
+  activeCompIds,
+  isLoading,
+}: ActiveCompetitionsSectionProps) {
   if (isLoading) {
     return (
       <Card>
@@ -39,7 +48,7 @@ export function ActiveCompetitionsSection({ activeCompIds, isLoading }: ActiveCo
           ))}
         </CardContent>
       </Card>
-    )
+    );
   }
 
   // Show empty state if no active competitions
@@ -51,12 +60,16 @@ export function ActiveCompetitionsSection({ activeCompIds, isLoading }: ActiveCo
             <Ticket className="h-5 w-5" />
             Active Competitions
           </CardTitle>
-          <CardDescription>You are not participating in any active competitions</CardDescription>
+          <CardDescription>
+            You are not participating in any active competitions
+          </CardDescription>
         </CardHeader>
         <CardContent className="py-8 text-center text-muted-foreground">
           <Ticket className="h-12 w-12 mx-auto mb-3 opacity-50" />
           <p>No active competitions</p>
-          <p className="text-xs mt-1">Buy tickets for competitions to participate and win prizes</p>
+          <p className="text-xs mt-1">
+            Buy tickets for competitions to participate and win prizes
+          </p>
           <Link href="/competition">
             <Button variant="outline" className="mt-4">
               Browse Competitions
@@ -64,7 +77,7 @@ export function ActiveCompetitionsSection({ activeCompIds, isLoading }: ActiveCo
           </Link>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -76,7 +89,7 @@ export function ActiveCompetitionsSection({ activeCompIds, isLoading }: ActiveCo
         </CardTitle>
         <CardDescription>
           You are participating in {activeCompIds.length} active competition
-          {activeCompIds.length !== 1 ? 's' : ''}
+          {activeCompIds.length !== 1 ? "s" : ""}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -88,7 +101,9 @@ export function ActiveCompetitionsSection({ activeCompIds, isLoading }: ActiveCo
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <h3 className="font-semibold text-lg">Competition #{compId.toString()}</h3>
+                  <h3 className="font-semibold text-lg">
+                    Competition #{compId.toString()}
+                  </h3>
                   <Badge variant="default" className="bg-blue-500">
                     Active
                   </Badge>
@@ -101,15 +116,15 @@ export function ActiveCompetitionsSection({ activeCompIds, isLoading }: ActiveCo
                 </div>
               </div>
               <Link href={`/competition/${compId}`}>
-                <Button size="sm" variant="outline">
+                <span className="flex !text-black underline">
                   View Details
                   <ExternalLink className="h-3 w-3 ml-1" />
-                </Button>
+                </span>
               </Link>
             </div>
           </div>
         ))}
       </CardContent>
     </Card>
-  )
+  );
 }

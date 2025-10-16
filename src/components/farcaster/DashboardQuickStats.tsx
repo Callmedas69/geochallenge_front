@@ -57,7 +57,7 @@ export function DashboardQuickStats({
         <CardContent className="p-3">
           <div className="flex items-center gap-2 mb-1">
             <Wallet className="h-4 w-4 text-green-500" />
-            <span className="text-xs text-muted-foreground">Balance</span>
+            <span className="text-xs text-muted-foreground">Claimable Balance</span>
           </div>
           <div className="text-lg font-bold">{balanceETH} Ξ</div>
         </CardContent>
@@ -68,7 +68,7 @@ export function DashboardQuickStats({
         <CardContent className="p-3">
           <div className="flex items-center gap-2 mb-1">
             <Ticket className="h-4 w-4 text-blue-500" />
-            <span className="text-xs text-muted-foreground">Joined</span>
+            <span className="text-xs text-muted-foreground">Participated</span>
           </div>
           <div className="text-lg font-bold">{totalJoined}</div>
         </CardContent>
@@ -90,7 +90,7 @@ export function DashboardQuickStats({
         <CardContent className="p-3">
           <div className="flex items-center gap-2 mb-1">
             <Trophy className="h-4 w-4 text-yellow-500" />
-            <span className="text-xs text-muted-foreground">Earned</span>
+            <span className="text-xs text-muted-foreground">Total Prizes</span>
           </div>
           <div className="text-lg font-bold">{totalPrizesETH} Ξ</div>
         </CardContent>

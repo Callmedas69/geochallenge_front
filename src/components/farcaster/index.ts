@@ -14,3 +14,4 @@ export { HowItWorksDrawer } from './HowItWorksDrawer';
 export { DashboardQuickStats } from './DashboardQuickStats';
 export { UserCompetitionCard } from './UserCompetitionCard';
 export { ShareButton } from './ShareButton';
+export { ClaimablePrizesAlertMobile } from './ClaimablePrizesAlertMobile';
