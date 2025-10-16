@@ -15,6 +15,7 @@ import {
   UserCompetitionCard,
   ClaimablePrizesAlertMobile,
 } from "@/components/farcaster";
+import { WithdrawBalance } from "@/components/WithdrawBalance";
 import { useUserDashboardData } from "@/hooks/useUserDashboard";
 import {
   useClaimableBalance,
@@ -169,8 +170,11 @@ export default function FarcasterDashboardPage() {
             claimableBalance={balance}
           />
 
+          {/* Withdraw Balance - Mobile Optimized */}
+          <WithdrawBalance />
+
           {/* Empty State */}
-          <Card className="mt-8">
+          <Card className="mt-4">
             <CardContent className="p-8 text-center space-y-4">
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
@@ -259,26 +263,8 @@ export default function FarcasterDashboardPage() {
           claimableBalance={balance}
         />
 
-        {/* Balance Error Alert */}
-        {balanceError && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription className="text-xs">
-              Failed to load balance: {balanceError.message}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Claimable Balance Alert */}
-        {!balanceError && balance && balance > BigInt(0) && (
-          <Alert className="border-green-500 bg-green-50">
-            <Wallet className="h-4 w-4 text-green-600" />
-            <AlertDescription className="text-xs text-green-800">
-              You have ETH ready to withdraw! Go to the main website to withdraw
-              your balance.
-            </AlertDescription>
-          </Alert>
-        )}
+        {/* Withdraw Balance - Mobile Optimized */}
+        <WithdrawBalance />
 
         {/* Claimable Prizes Alert */}
         <ClaimablePrizesAlertMobile
