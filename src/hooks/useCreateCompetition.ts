@@ -7,12 +7,13 @@
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { parseGwei, decodeEventLog } from 'viem'
 import { geoChallenge_implementation_ABI } from '@/abi'
-import { CONTRACT_ADDRESSES } from '@/lib/contractList'
+import { useContractAddresses } from '@/hooks/useNetworkConfig'
 import type { CreateCompetitionParams } from '@/lib/types'
 import { parseAndLogError } from '@/lib/errors'
 import { useMemo } from 'react'
 
 export function useCreateCompetition() {
+  const addresses = useContractAddresses()
   const {
     data: hash,
     writeContract,
@@ -70,7 +71,7 @@ export function useCreateCompetition() {
       }
 
       writeContract({
-        address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+        address: addresses.GeoChallenge,
         abi: geoChallenge_implementation_ABI,
         functionName: 'createCompetition',
         args: [tuple] as const,

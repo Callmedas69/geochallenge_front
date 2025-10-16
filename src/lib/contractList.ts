@@ -65,27 +65,27 @@ export const CONTRACT_ADDRESSES = {
     // ============================================================
     // MAIN CONTRACT - ALWAYS USE THIS FOR INTERACTIONS
     // ============================================================
-    GeoChallenge: "", // TODO: Deploy to mainnet
+    GeoChallenge: "0x0000000000000000000000000000000000000000", // TODO: Deploy to mainnet
 
     // ============================================================
     // IMPLEMENTATION (Reference Only - DO NOT USE DIRECTLY)
     // ============================================================
-    GeoChallengeImplementation: "",
+    GeoChallengeImplementation: "0x0000000000000000000000000000000000000000",
 
     // ============================================================
     // MODULES
     // ============================================================
-    TicketRenderer: "",
-    ProofValidator: "",
-    PrizeManager: "",
-    PrizeCalculationManager: "",
-    CompetitionLifecycleManager: "",
-    AdminValidationManager: "",
-    BoosterBoxManager: "",
-    CompetitionManager: "",
-    MetadataManager: "",
-    UserTracking: "",
-    QueryManager: "",
+    TicketRenderer: "0x0000000000000000000000000000000000000000",
+    ProofValidator: "0x0000000000000000000000000000000000000000",
+    PrizeManager: "0x0000000000000000000000000000000000000000",
+    PrizeCalculationManager: "0x0000000000000000000000000000000000000000",
+    CompetitionLifecycleManager: "0x0000000000000000000000000000000000000000",
+    AdminValidationManager: "0x0000000000000000000000000000000000000000",
+    BoosterBoxManager: "0x0000000000000000000000000000000000000000",
+    CompetitionManager: "0x0000000000000000000000000000000000000000",
+    MetadataManager: "0x0000000000000000000000000000000000000000",
+    UserTracking: "0x0000000000000000000000000000000000000000",
+    QueryManager: "0x0000000000000000000000000000000000000000",
   },
 } as const;
 

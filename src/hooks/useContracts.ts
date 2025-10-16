@@ -6,15 +6,16 @@
 
 import { useReadContract, useReadContracts } from 'wagmi'
 import { geoChallenge_implementation_ABI } from '@/abi'
-import { CONTRACT_ADDRESSES } from '@/lib/contractList'
+import { useContractAddresses } from '@/hooks/useNetworkConfig'
 import type { Address } from 'viem'
 
 /**
  * Get the contract owner address
  */
 export function useCardCompetitionOwner() {
+  const addresses = useContractAddresses()
   return useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: addresses.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: 'owner',
   })
@@ -24,8 +25,9 @@ export function useCardCompetitionOwner() {
  * Get the claimable balance for an address
  */
 export function useClaimableBalance(userAddress?: Address) {
+  const addresses = useContractAddresses()
   return useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: addresses.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: 'getClaimableBalance',
     args: userAddress ? [userAddress] : undefined,
@@ -39,8 +41,9 @@ export function useClaimableBalance(userAddress?: Address) {
  * Get all module addresses (for Advanced Settings)
  */
 export function useModuleAddresses() {
+  const addresses = useContractAddresses()
   const contractConfig = {
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: addresses.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
   }
 

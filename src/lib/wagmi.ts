@@ -5,9 +5,9 @@ import {
   walletConnectWallet,
   rainbowWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { base, baseSepolia } from 'wagmi/chains';
 import { createConfig, http } from 'wagmi';
 import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
+import { getSupportedChains, SUPPORTED_NETWORKS } from './networkConfig';
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
@@ -34,13 +34,14 @@ const connectors = connectorsForWallets(
   }
 );
 
+// Dynamic network configuration - supports both Base Mainnet and Base Sepolia
 export const config = createConfig({
-  chains: [baseSepolia, base],
+  chains: getSupportedChains(),
   transports: {
-    [baseSepolia.id]: http(baseSepolia.rpcUrls.default.http[0], {
+    [SUPPORTED_NETWORKS.mainnet.id]: http(SUPPORTED_NETWORKS.mainnet.rpcUrl, {
       batch: true, // Enable batch requests for better performance
     }),
-    [base.id]: http(base.rpcUrls.default.http[0], {
+    [SUPPORTED_NETWORKS.testnet.id]: http(SUPPORTED_NETWORKS.testnet.rpcUrl, {
       batch: true,
     }),
   },

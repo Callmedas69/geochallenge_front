@@ -6,6 +6,7 @@
 
 import { Header } from "@/components/header";
 import { Footer } from "@/components/Footer";
+import { NetworkSwitcher } from "@/components/NetworkSwitcher";
 
 export default function MainLayout({
   children,
@@ -15,7 +16,10 @@ export default function MainLayout({
   return (
     <>
       <Header />
-      <main className="">{children}</main>
+      <main className="">
+        <NetworkSwitcher />
+        {children}
+      </main>
       <Footer />
     </>
   );

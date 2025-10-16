@@ -8,7 +8,7 @@
 import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi'
 import { useSendCalls, useCallsStatus } from 'wagmi/experimental'
 import { geoChallenge_implementation_ABI } from '@/abi'
-import { CONTRACT_ADDRESSES } from '@/lib/contractList'
+import { useContractAddresses } from '@/hooks/useNetworkConfig'
 import { sdk } from '@farcaster/miniapp-sdk'
 import type { BatchCall } from '@/lib/farcaster'
 
@@ -30,6 +30,7 @@ async function ensureSDKReady(): Promise<void> {
  */
 export function useBuyTicket() {
   const { address } = useAccount()
+  const addresses = useContractAddresses()
   const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
   const {
     isLoading: isConfirming,
@@ -51,7 +52,7 @@ export function useBuyTicket() {
     await ensureSDKReady()
 
     return writeContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+      address: addresses.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'buyTicket',
       args: [competitionId],
@@ -75,6 +76,7 @@ export function useBuyTicket() {
  */
 export function useClaimPrize() {
   const { address } = useAccount()
+  const addresses = useContractAddresses()
   const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
   const {
     isLoading: isConfirming,
@@ -96,7 +98,7 @@ export function useClaimPrize() {
     await ensureSDKReady()
 
     return writeContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+      address: addresses.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'claimPrize',
       args: [competitionId],
@@ -119,6 +121,7 @@ export function useClaimPrize() {
  */
 export function useClaimParticipantPrize() {
   const { address } = useAccount()
+  const addresses = useContractAddresses()
   const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
   const {
     isLoading: isConfirming,
@@ -140,7 +143,7 @@ export function useClaimParticipantPrize() {
     await ensureSDKReady()
 
     return writeContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+      address: addresses.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'claimParticipantPrize',
       args: [competitionId],
@@ -163,6 +166,7 @@ export function useClaimParticipantPrize() {
  */
 export function useClaimRefund() {
   const { address } = useAccount()
+  const addresses = useContractAddresses()
   const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
   const {
     isLoading: isConfirming,
@@ -184,7 +188,7 @@ export function useClaimRefund() {
     await ensureSDKReady()
 
     return writeContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+      address: addresses.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'claimRefund',
       args: [competitionId],
@@ -207,6 +211,7 @@ export function useClaimRefund() {
  */
 export function useWithdrawBalance() {
   const { address } = useAccount()
+  const addresses = useContractAddresses()
   const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
   const {
     isLoading: isConfirming,
@@ -228,7 +233,7 @@ export function useWithdrawBalance() {
     await ensureSDKReady()
 
     return writeContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+      address: addresses.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'withdrawBalance',
       args: [],

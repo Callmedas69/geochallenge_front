@@ -6,7 +6,7 @@
 
 import { useReadContract } from 'wagmi'
 import type { Address } from 'viem'
-import { CONTRACT_ADDRESSES } from '@/lib/contractList'
+import { useContractAddresses } from '@/hooks/useNetworkConfig'
 import { queryManager_ABI } from '@/abi/queryManager_ABI'
 import { userTracking_ABI } from '@/abi/userTracking_ABI'
 import { geoChallenge_implementation_ABI } from '@/abi/geoChallenge_implementation_ABI'
@@ -28,8 +28,9 @@ import type {
  * Returns: { stats, activeCompIds, claimableCompIds, totalCompetitions }
  */
 export function useUserDashboardData(userAddress: Address | undefined) {
+  const addresses = useContractAddresses()
   const result = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.QueryManager,
+    address: addresses.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getUserDashboardData',
     args: userAddress ? [userAddress] : undefined,
@@ -63,8 +64,9 @@ export function useUserDashboardData(userAddress: Address | undefined) {
  * Returns: { competitionIds, competitions }
  */
 export function useUserCompetitions(userAddress: Address | undefined) {
+  const addresses = useContractAddresses()
   const result = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.QueryManager,
+    address: addresses.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getUserCompetitions',
     args: userAddress ? [userAddress] : undefined,
@@ -93,8 +95,9 @@ export function useUserCompetitions(userAddress: Address | undefined) {
  * Returns: { activeIds, activeComps }
  */
 export function useUserActiveCompetitions(userAddress: Address | undefined) {
+  const addresses = useContractAddresses()
   const result = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.QueryManager,
+    address: addresses.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getUserActiveCompetitions',
     args: userAddress ? [userAddress] : undefined,
@@ -124,8 +127,9 @@ export function useUserActiveCompetitions(userAddress: Address | undefined) {
  * Returns: { completedIds, completedComps }
  */
 export function useUserCompletedCompetitions(userAddress: Address | undefined) {
+  const addresses = useContractAddresses()
   const result = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.QueryManager,
+    address: addresses.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getUserCompletedCompetitions',
     args: userAddress ? [userAddress] : undefined,
@@ -158,8 +162,9 @@ export function useUserCompletedCompetitions(userAddress: Address | undefined) {
  * Returns: { totalCompetitionsJoined, totalPrizesWon, competitionsWon }
  */
 export function useUserStats(userAddress: Address | undefined) {
+  const addresses = useContractAddresses()
   return useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.UserTracking,
+    address: addresses.UserTracking,
     abi: userTracking_ABI,
     functionName: 'getUserStats',
     args: userAddress ? [userAddress] : undefined,
@@ -177,8 +182,9 @@ export function useUserStats(userAddress: Address | undefined) {
  * Returns: uint256[]
  */
 export function useUserCompetitionIds(userAddress: Address | undefined) {
+  const addresses = useContractAddresses()
   return useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.UserTracking,
+    address: addresses.UserTracking,
     abi: userTracking_ABI,
     functionName: 'getUserCompetitionIds',
     args: userAddress ? [userAddress] : undefined,
@@ -203,8 +209,9 @@ export function useHasClaimedParticipantPrize(
   competitionId: bigint | undefined,
   userAddress: Address | undefined
 ) {
+  const addresses = useContractAddresses()
   return useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: addresses.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: 'participantPrizeClaimed',
     args: competitionId && userAddress ? [competitionId, userAddress] : undefined,
@@ -220,8 +227,9 @@ export function useHasClaimedParticipantPrize(
  * Returns: boolean
  */
 export function useHasClaimedWinnerPrize(competitionId: bigint | undefined) {
+  const addresses = useContractAddresses()
   return useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: addresses.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: 'winnerPrizeClaimed',
     args: competitionId ? [competitionId] : undefined,
