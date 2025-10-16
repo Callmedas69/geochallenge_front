@@ -34,14 +34,14 @@ async function diagnose() {
 
   try {
     const competition = await client.readContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'getCompetition',
       args: [competitionId],
     })
 
     const metadata = await client.readContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'getCompetitionMetadata',
       args: [competitionId],

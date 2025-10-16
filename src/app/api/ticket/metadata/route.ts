@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     // Call uri() function on GeoChallenge contract (ERC1155 standard)
     const metadataUri = await client.readContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge as `0x${string}`,
+      address: CONTRACT_ADDRESSES.GeoChallenge as `0x${string}`,
       abi: geoChallenge_implementation_ABI,
       functionName: 'uri',
       args: [BigInt(competitionId)],

@@ -24,9 +24,9 @@ async function diagnose() {
 
   console.log('📋 CONTRACT ADDRESSES:')
   console.log('───────────────────────────────────────────────────────────')
-  console.log(`  GeoChallenge Proxy: ${CONTRACT_ADDRESSES.baseSepolia.GeoChallenge}`)
-  console.log(`  UserTracking:       ${CONTRACT_ADDRESSES.baseSepolia.UserTracking}`)
-  console.log(`  QueryManager:       ${CONTRACT_ADDRESSES.baseSepolia.QueryManager}`)
+  console.log(`  GeoChallenge Proxy: ${CONTRACT_ADDRESSES.GeoChallenge}`)
+  console.log(`  UserTracking:       ${CONTRACT_ADDRESSES.UserTracking}`)
+  console.log(`  QueryManager:       ${CONTRACT_ADDRESSES.QueryManager}`)
   console.log()
 
   try {
@@ -35,15 +35,15 @@ async function diagnose() {
     console.log('───────────────────────────────────────────────────────────')
 
     const userTrackingFromContract = await client.readContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge as `0x${string}`,
+      address: CONTRACT_ADDRESSES.GeoChallenge as `0x${string}`,
       abi: geoChallenge_implementation_ABI,
       functionName: 'userTracking',
     })
 
     console.log(`  UserTracking address in GeoChallenge: ${userTrackingFromContract}`)
-    console.log(`  Expected UserTracking address:        ${CONTRACT_ADDRESSES.baseSepolia.UserTracking}`)
+    console.log(`  Expected UserTracking address:        ${CONTRACT_ADDRESSES.UserTracking}`)
 
-    const isConnected = userTrackingFromContract.toLowerCase() === CONTRACT_ADDRESSES.baseSepolia.UserTracking.toLowerCase()
+    const isConnected = userTrackingFromContract.toLowerCase() === CONTRACT_ADDRESSES.UserTracking.toLowerCase()
     console.log(`  Status: ${isConnected ? '✅ CONNECTED' : '❌ MISMATCH'}`)
 
     if (!isConnected) {
@@ -58,15 +58,15 @@ async function diagnose() {
 
     try {
       const queryManagerUserTracking = await client.readContract({
-        address: CONTRACT_ADDRESSES.baseSepolia.QueryManager as `0x${string}`,
+        address: CONTRACT_ADDRESSES.QueryManager as `0x${string}`,
         abi: queryManager_ABI,
         functionName: 'userTracking',
       })
 
       console.log(`  UserTracking address in QueryManager: ${queryManagerUserTracking}`)
-      console.log(`  Expected UserTracking address:        ${CONTRACT_ADDRESSES.baseSepolia.UserTracking}`)
+      console.log(`  Expected UserTracking address:        ${CONTRACT_ADDRESSES.UserTracking}`)
 
-      const qmConnected = queryManagerUserTracking.toLowerCase() === CONTRACT_ADDRESSES.baseSepolia.UserTracking.toLowerCase()
+      const qmConnected = queryManagerUserTracking.toLowerCase() === CONTRACT_ADDRESSES.UserTracking.toLowerCase()
       console.log(`  Status: ${qmConnected ? '✅ CONNECTED' : '❌ MISMATCH'}`)
 
       if (!qmConnected) {
@@ -85,7 +85,7 @@ async function diagnose() {
     console.log(`  User: ${USER_WALLET}`)
 
     const userStats = await client.readContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.UserTracking as `0x${string}`,
+      address: CONTRACT_ADDRESSES.UserTracking as `0x${string}`,
       abi: userTracking_ABI,
       functionName: 'getUserStats',
       args: [USER_WALLET as `0x${string}`],
@@ -101,7 +101,7 @@ async function diagnose() {
     console.log('───────────────────────────────────────────────────────────')
 
     const userCompIds = await client.readContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.UserTracking as `0x${string}`,
+      address: CONTRACT_ADDRESSES.UserTracking as `0x${string}`,
       abi: userTracking_ABI,
       functionName: 'getUserCompetitionIds',
       args: [USER_WALLET as `0x${string}`],
@@ -123,7 +123,7 @@ async function diagnose() {
     console.log('───────────────────────────────────────────────────────────')
 
     const dashboardData = await client.readContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.QueryManager as `0x${string}`,
+      address: CONTRACT_ADDRESSES.QueryManager as `0x${string}`,
       abi: queryManager_ABI,
       functionName: 'getUserDashboardData',
       args: [USER_WALLET as `0x${string}`],
@@ -167,7 +167,7 @@ async function diagnose() {
     console.log('───────────────────────────────────────────────────────────')
 
     const balance = await client.readContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge as `0x${string}`,
+      address: CONTRACT_ADDRESSES.GeoChallenge as `0x${string}`,
       abi: geoChallenge_implementation_ABI,
       functionName: 'getClaimableBalance',
       args: [USER_WALLET as `0x${string}`],

@@ -1,10 +1,11 @@
 /**
  * @title GeoChallenge Contract Addresses
- * @dev Complete list of deployed contracts
- * @notice All contracts deployed using modular architecture following KISS principles
- * @notice Deployed: 2025-10-02 (CRITICAL: Fresh deployment on 2025-10-08 due to storage corruption)
- * @notice Network: Base Sepolia (Testnet)
- * @notice Architecture: UUPS Upgradeable Proxy with 11 Modules
+ * @dev Environment-based contract addresses (KISS principle)
+ * @notice NEXT_PUBLIC_NETWORK environment variable determines which network to use
+ *
+ * DEPLOYMENT:
+ * - testnet.app.com: NEXT_PUBLIC_NETWORK=sepolia (Base Sepolia)
+ * - mainnet.app.com: NEXT_PUBLIC_NETWORK=mainnet (Base Mainnet)
  *
  * IMPORTANT NOTES:
  * - Always interact with the Proxy address (GeoChallenge), never the Implementation
@@ -16,15 +17,18 @@
  * - Monitoring functions → Use QueryManager
  */
 
-// Network configurations
-export const NETWORKS = {
-  baseSepolia: {
+// Determine network from environment (defaults to sepolia for development)
+const NETWORK = process.env.NEXT_PUBLIC_NETWORK || 'sepolia';
+
+// Network configurations by environment
+const NETWORKS = {
+  sepolia: {
     chainId: 84532,
     name: "Base Sepolia",
     rpcUrl: "https://sepolia.base.org",
     blockExplorer: "https://sepolia.basescan.org",
   },
-  baseMainnet: {
+  mainnet: {
     chainId: 8453,
     name: "Base",
     rpcUrl: "https://mainnet.base.org",
@@ -32,62 +36,67 @@ export const NETWORKS = {
   },
 } as const;
 
-// Contract addresses by network
-export const CONTRACT_ADDRESSES = {
-  baseSepolia: {
-    // ============================================================
-    // MAIN CONTRACT - ALWAYS USE THIS FOR INTERACTIONS
-    // ============================================================
-    // UUPS Proxy - All user interactions go through this address
-    GeoChallenge: "0xf920e5E886780587B6D09B804baa227155Ef2AB3",
+// Testnet addresses (Base Sepolia)
+const SEPOLIA_ADDRESSES = {
+  // ============================================================
+  // MAIN CONTRACT - ALWAYS USE THIS FOR INTERACTIONS
+  // ============================================================
+  GeoChallenge: "0xf920e5E886780587B6D09B804baa227155Ef2AB3" as `0x${string}`,
 
-    // ============================================================
-    // IMPLEMENTATION (Reference Only - DO NOT USE DIRECTLY)
-    // ============================================================
-    GeoChallengeImplementation: "0x42FB17d4d6C7df6eFf6644c06518499182b1283d",
+  // ============================================================
+  // IMPLEMENTATION (Reference Only - DO NOT USE DIRECTLY)
+  // ============================================================
+  GeoChallengeImplementation: "0x42FB17d4d6C7df6eFf6644c06518499182b1283d" as `0x${string}`,
 
-    // ============================================================
-    // MODULES - Use directly for functions not in proxy
-    // ============================================================
-    TicketRenderer: "0x4775455330F35846B7207d8ca105f26e6e32AFc0",
-    ProofValidator: "0xC5f057bB183A9eB152FD18718F0531B645a1F05a", // getDomainSeparator, etc.
-    PrizeManager: "0x5625Ba13E7d22c7bDC3cdc320D7E3AF37f9baDDA",
-    PrizeCalculationManager: "0x98f6eBCfDCE228D69CFA68D109b0b18C3f0230c6",
-    CompetitionLifecycleManager: "0xd3DBFb420cD4ed26a1808Bc3229879433d63c952",
-    AdminValidationManager: "0xa1E964E0f130B5F51AA149CC58EA9f1339cAb68E",
-    BoosterBoxManager: "0x4d62a3fB291D84B1d7de8AB18bA9f8ca2c014E59",
-    CompetitionManager: "0x09F1ad0f3c27612fbf90eeE995Dde514586D3bE1",
-    MetadataManager: "0x021Ba7c806bD8A8bCC3b673aBf1aDdeF1a1e3029",
-    UserTracking: "0x5Bbea1E018503B05e1964aBc7525E1660Db0412f", // Phase 2: User participation & stats
-    QueryManager: "0x01582eFB9105E9fC87b30cC40A8CFe0110999D07", // Phase 2: getUserDashboardData, etc.
-  },
-  baseMainnet: {
-    // ============================================================
-    // MAIN CONTRACT - ALWAYS USE THIS FOR INTERACTIONS
-    // ============================================================
-    GeoChallenge: "0x0000000000000000000000000000000000000000", // TODO: Deploy to mainnet
-
-    // ============================================================
-    // IMPLEMENTATION (Reference Only - DO NOT USE DIRECTLY)
-    // ============================================================
-    GeoChallengeImplementation: "0x0000000000000000000000000000000000000000",
-
-    // ============================================================
-    // MODULES
-    // ============================================================
-    TicketRenderer: "0x0000000000000000000000000000000000000000",
-    ProofValidator: "0x0000000000000000000000000000000000000000",
-    PrizeManager: "0x0000000000000000000000000000000000000000",
-    PrizeCalculationManager: "0x0000000000000000000000000000000000000000",
-    CompetitionLifecycleManager: "0x0000000000000000000000000000000000000000",
-    AdminValidationManager: "0x0000000000000000000000000000000000000000",
-    BoosterBoxManager: "0x0000000000000000000000000000000000000000",
-    CompetitionManager: "0x0000000000000000000000000000000000000000",
-    MetadataManager: "0x0000000000000000000000000000000000000000",
-    UserTracking: "0x0000000000000000000000000000000000000000",
-    QueryManager: "0x0000000000000000000000000000000000000000",
-  },
+  // ============================================================
+  // MODULES - Use directly for functions not in proxy
+  // ============================================================
+  TicketRenderer: "0x4775455330F35846B7207d8ca105f26e6e32AFc0" as `0x${string}`,
+  ProofValidator: "0xC5f057bB183A9eB152FD18718F0531B645a1F05a" as `0x${string}`,
+  PrizeManager: "0x5625Ba13E7d22c7bDC3cdc320D7E3AF37f9baDDA" as `0x${string}`,
+  PrizeCalculationManager: "0x98f6eBCfDCE228D69CFA68D109b0b18C3f0230c6" as `0x${string}`,
+  CompetitionLifecycleManager: "0xd3DBFb420cD4ed26a1808Bc3229879433d63c952" as `0x${string}`,
+  AdminValidationManager: "0xa1E964E0f130B5F51AA149CC58EA9f1339cAb68E" as `0x${string}`,
+  BoosterBoxManager: "0x4d62a3fB291D84B1d7de8AB18bA9f8ca2c014E59" as `0x${string}`,
+  CompetitionManager: "0x09F1ad0f3c27612fbf90eeE995Dde514586D3bE1" as `0x${string}`,
+  MetadataManager: "0x021Ba7c806bD8A8bCC3b673aBf1aDdeF1a1e3029" as `0x${string}`,
+  UserTracking: "0x5Bbea1E018503B05e1964aBc7525E1660Db0412f" as `0x${string}`,
+  QueryManager: "0x01582eFB9105E9fC87b30cC40A8CFe0110999D07" as `0x${string}`,
 } as const;
+
+// Mainnet addresses (Base Mainnet) - TODO: Update after deployment
+const MAINNET_ADDRESSES = {
+  // ============================================================
+  // MAIN CONTRACT - ALWAYS USE THIS FOR INTERACTIONS
+  // ============================================================
+  GeoChallenge: "0x0000000000000000000000000000000000000000" as `0x${string}`, // TODO: Deploy to mainnet
+
+  // ============================================================
+  // IMPLEMENTATION (Reference Only - DO NOT USE DIRECTLY)
+  // ============================================================
+  GeoChallengeImplementation: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+
+  // ============================================================
+  // MODULES
+  // ============================================================
+  TicketRenderer: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  ProofValidator: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  PrizeManager: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  PrizeCalculationManager: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  CompetitionLifecycleManager: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  AdminValidationManager: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  BoosterBoxManager: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  CompetitionManager: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  MetadataManager: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  UserTracking: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+  QueryManager: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+} as const;
+
+// Export addresses based on environment
+export const CONTRACT_ADDRESSES = NETWORK === 'mainnet' ? MAINNET_ADDRESSES : SEPOLIA_ADDRESSES;
+
+// Export network info based on environment
+export const CURRENT_NETWORK = NETWORK === 'mainnet' ? NETWORKS.mainnet : NETWORKS.sepolia;
 
 /**
  * DEPLOYMENT INFO
@@ -175,9 +184,8 @@ export const CONTRACT_ADDRESSES = {
  */
 
 // Types
-export type NetworkName = keyof typeof NETWORKS;
-export type ContractName = keyof typeof CONTRACT_ADDRESSES.baseSepolia;
-export type ContractAddress = string;
+export type ContractName = keyof typeof CONTRACT_ADDRESSES;
+export type ContractAddress = `0x${string}`;
 
 // Export for easy import
 export default CONTRACT_ADDRESSES;

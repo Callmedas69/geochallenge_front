@@ -41,7 +41,7 @@ export function ContractUpgrade() {
   const allConfirmed = Object.values(confirmations).every((v) => v);
   const canUpgrade = isValidAddress && allConfirmed;
 
-  const proxyAddress = CONTRACT_ADDRESSES.baseSepolia.GeoChallenge;
+  const proxyAddress = CONTRACT_ADDRESSES.GeoChallenge;
 
   // Reset form only after successful upgrade
   useEffect(() => {

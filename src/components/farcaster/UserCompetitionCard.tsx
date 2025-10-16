@@ -41,7 +41,7 @@ export function UserCompetitionCard({
 
   // Fetch competition metadata
   const { data: metadata } = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: "getCompetitionMetadata",
     args: [competitionId],
@@ -52,7 +52,7 @@ export function UserCompetitionCard({
 
   // Fetch participant prize per ticket (for claim button)
   const { data: participantPrizePerTicket } = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: "participantPrizePerTicket",
     args: [competitionId],

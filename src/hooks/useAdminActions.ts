@@ -8,7 +8,7 @@ import { useWriteContract, useWaitForTransactionReceipt, useChainId } from 'wagm
 import { useQueryClient } from '@tanstack/react-query'
 import type { Address } from 'viem'
 import { geoChallenge_implementation_ABI } from '@/abi'
-import { useContractAddresses } from '@/hooks/useNetworkConfig'
+import { CONTRACT_ADDRESSES } from '@/lib/contractList'
 import { parseAndLogError } from '@/lib/errors'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
@@ -96,12 +96,11 @@ function useAdminAction(functionName: string, successMessage?: string) {
  * Start a competition (move from NOT_STARTED to ACTIVE)
  */
 export function useStartCompetition() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Start Competition', 'Competition started successfully')
 
   const startCompetition = (competitionId: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'startCompetition',
       args: [competitionId],
@@ -115,12 +114,11 @@ export function useStartCompetition() {
  * End a competition manually (before deadline if needed)
  */
 export function useEndCompetition() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('End Competition', 'Competition ended successfully')
 
   const endCompetition = (competitionId: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'endCompetition',
       args: [competitionId],
@@ -134,12 +132,11 @@ export function useEndCompetition() {
  * Finalize a competition (after winner declared or deadline passed)
  */
 export function useFinalizeCompetition() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Finalize Competition', 'Competition finalized and prizes distributed')
 
   const finalizeCompetition = (competitionId: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'finalizeCompetition',
       args: [competitionId],
@@ -153,12 +150,11 @@ export function useFinalizeCompetition() {
  * Cancel a competition (refunds all participants)
  */
 export function useCancelCompetition() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Cancel Competition', 'Competition cancelled and participants refunded')
 
   const cancelCompetition = (competitionId: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'cancelCompetition',
       args: [competitionId],
@@ -172,12 +168,11 @@ export function useCancelCompetition() {
  * Extend competition deadline
  */
 export function useExtendDeadline() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Extend Deadline', 'Deadline extended successfully')
 
   const extendDeadline = (competitionId: bigint, newDeadline: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'extendDeadline',
       args: [competitionId, newDeadline],
@@ -195,12 +190,11 @@ export function useExtendDeadline() {
  * Emergency pause a specific competition
  */
 export function useEmergencyPauseCompetition() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Emergency Pause Competition', 'Competition paused successfully')
 
   const emergencyPause = (competitionId: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'emergencyPauseCompetition',
       args: [competitionId],
@@ -214,12 +208,11 @@ export function useEmergencyPauseCompetition() {
  * Emergency unpause a specific competition
  */
 export function useEmergencyUnpauseCompetition() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Emergency Unpause Competition', 'Competition unpaused successfully')
 
   const emergencyUnpause = (competitionId: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'emergencyUnpauseCompetition',
       args: [competitionId],
@@ -233,12 +226,11 @@ export function useEmergencyUnpauseCompetition() {
  * Global pause (all operations)
  */
 export function useGlobalPause() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Global Pause')
 
   const globalPause = () => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'pause',
     })
@@ -251,12 +243,11 @@ export function useGlobalPause() {
  * Global unpause
  */
 export function useGlobalUnpause() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Global Unpause')
 
   const globalUnpause = () => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'unpause',
     })
@@ -273,12 +264,11 @@ export function useGlobalUnpause() {
  * Add additional prize ETH to competition
  */
 export function useAddPrizeETH() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Add Prize ETH', 'Prize added to pool successfully')
 
   const addPrize = (competitionId: bigint, amount: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'addPrizeETH',
       args: [competitionId],
@@ -293,12 +283,11 @@ export function useAddPrizeETH() {
  * Add booster boxes to competition
  */
 export function useAddBoosterBoxes() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Add Booster Boxes', 'Booster boxes added successfully')
 
   const addBoosterBoxes = (competitionId: bigint, quantity: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'addBoosterBoxes',
       args: [competitionId, quantity],
@@ -312,12 +301,11 @@ export function useAddBoosterBoxes() {
  * Set booster box quantity
  */
 export function useSetBoosterBoxQuantity() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Set Booster Box Quantity', 'Booster box quantity updated successfully')
 
   const setBoosterBoxQuantity = (competitionId: bigint, quantity: bigint) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'setBoosterBoxQuantity',
       args: [competitionId, quantity],
@@ -335,12 +323,11 @@ export function useSetBoosterBoxQuantity() {
  * Update verifier address for competition
  */
 export function useUpdateVerifier() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Update Verifier', 'Verifier address updated successfully')
 
   const updateVerifier = (competitionId: bigint, newVerifier: Address) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'updateVerifier',
       args: [competitionId, newVerifier],
@@ -358,12 +345,11 @@ export function useUpdateVerifier() {
  * Transfer ownership (DANGEROUS - use with caution)
  */
 export function useTransferOwnership() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Transfer Ownership')
 
   const transferOwnership = (newOwner: Address) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'transferOwnership',
       args: [newOwner],
@@ -377,12 +363,11 @@ export function useTransferOwnership() {
  * Withdraw owner's claimable balance
  */
 export function useWithdrawBalance() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Withdraw Balance', 'Balance withdrawn successfully')
 
   const withdrawBalance = () => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'withdrawBalance',
     })
@@ -404,12 +389,11 @@ function useSetModule(moduleName: string, functionName: string): {
   isConfirming: boolean;
   isSuccess: boolean;
 } {
-  const addresses = useContractAddresses()
   const hook = useAdminAction(`Update ${moduleName}`, `${moduleName} updated successfully`)
 
   const setModule = (newAddress: Address) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: functionName as any,
       args: [newAddress],
@@ -444,12 +428,11 @@ export const useSetTicketRenderer = () => useSetModule('Ticket Renderer', 'setTi
  * UUPS proxy upgrade - only use if you know exactly what you're doing
  */
 export function useUpgradeContract() {
-  const addresses = useContractAddresses()
   const hook = useAdminAction('Upgrade Contract Implementation', 'Contract upgraded successfully')
 
   const upgradeContract = (newImplementationAddress: Address) => {
     hook.writeContract({
-      address: addresses.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'upgradeToAndCall',
       args: [newImplementationAddress, '0x' as `0x${string}`], // Empty data - no initialization call

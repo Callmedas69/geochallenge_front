@@ -97,7 +97,7 @@ export default function CompetitionDetailPage({
 
   // Fetch competition metadata (name and description)
   const { data: metadata, isLoading: loadingMetadata } = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: "getCompetitionMetadata",
     args: [competitionId],
@@ -109,7 +109,7 @@ export default function CompetitionDetailPage({
 
   // Fetch participant prize per ticket to distinguish cancelled vs finalized
   const { data: participantPrizePerTicket } = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: "participantPrizePerTicket",
     args: [competitionId],

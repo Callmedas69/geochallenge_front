@@ -21,12 +21,12 @@ async function checkPermissions() {
   try {
     // Get contract owner
     const owner = await client.readContract({
-      address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+      address: CONTRACT_ADDRESSES.GeoChallenge,
       abi: geoChallenge_implementation_ABI,
       functionName: 'owner',
     })
 
-    console.log(`\n📋 Contract Address: ${CONTRACT_ADDRESSES.baseSepolia.GeoChallenge}`)
+    console.log(`\n📋 Contract Address: ${CONTRACT_ADDRESSES.GeoChallenge}`)
     console.log(`👤 Contract Owner: ${owner}`)
 
     if (yourWallet) {

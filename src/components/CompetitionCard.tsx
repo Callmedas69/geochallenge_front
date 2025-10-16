@@ -41,7 +41,7 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
 
   // Fetch competition metadata (name and description)
   const { data: metadata, isLoading: loadingMetadata } = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: "getCompetitionMetadata",
     args: [competitionId],

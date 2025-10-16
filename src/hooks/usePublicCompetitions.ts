@@ -7,7 +7,7 @@
 
 import { useReadContract } from 'wagmi'
 import { geoChallenge_implementation_ABI, queryManager_ABI } from '@/abi'
-import { useContractAddresses } from '@/hooks/useNetworkConfig'
+import { CONTRACT_ADDRESSES } from '@/lib/contractList'
 
 /**
  * Get a specific competition by ID
@@ -15,9 +15,8 @@ import { useContractAddresses } from '@/hooks/useNetworkConfig'
  * @returns Competition data
  */
 export function useCompetitionById(competitionId: bigint | undefined) {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: 'getCompetition',
     args: competitionId !== undefined ? [competitionId] : undefined,
@@ -34,9 +33,8 @@ export function useCompetitionById(competitionId: bigint | undefined) {
  * @returns Current competition count
  */
 export function useCompetitionCount() {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: 'getCurrentCompetitionId',
     query: {
@@ -51,9 +49,8 @@ export function useCompetitionCount() {
  * @returns Array of active competition IDs
  */
 export function useActiveCompetitions() {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.QueryManager,
+    address: CONTRACT_ADDRESSES.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getActiveCompetitions',
     query: {
@@ -68,9 +65,8 @@ export function useActiveCompetitions() {
  * @returns Total ETH locked in platform
  */
 export function useTotalValueLocked() {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.QueryManager,
+    address: CONTRACT_ADDRESSES.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getTotalValueLocked',
     query: {
@@ -90,9 +86,8 @@ export function useUserTicketBalance(
   userAddress: `0x${string}` | undefined,
   competitionId: bigint | undefined
 ) {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: 'balanceOf',
     args:
@@ -112,9 +107,8 @@ export function useUserTicketBalance(
  * @returns Platform stats (notStarted, active, ended, finalized, emergencyPaused counts)
  */
 export function useCompetitionStats() {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.QueryManager,
+    address: CONTRACT_ADDRESSES.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getCompetitionStats',
     query: {
@@ -129,9 +123,8 @@ export function useCompetitionStats() {
  * @returns Array of expired competition IDs needing action
  */
 export function useExpiredCompetitions() {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.QueryManager,
+    address: CONTRACT_ADDRESSES.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getExpiredCompetitions',
     query: {
@@ -147,9 +140,8 @@ export function useExpiredCompetitions() {
  * @returns Health metrics (exists, active, hasParticipants, isPaused, isExpired, timeRemaining)
  */
 export function useCompetitionHealth(competitionId: bigint | undefined) {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.QueryManager,
+    address: CONTRACT_ADDRESSES.QueryManager,
     abi: queryManager_ABI,
     functionName: 'checkCompetitionHealth',
     args: competitionId !== undefined ? [competitionId] : undefined,
@@ -166,9 +158,8 @@ export function useCompetitionHealth(competitionId: bigint | undefined) {
  * @returns Contract health metrics
  */
 export function useContractHealth() {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.QueryManager,
+    address: CONTRACT_ADDRESSES.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getContractHealth',
     query: {
@@ -184,9 +175,8 @@ export function useContractHealth() {
  * @returns User's total claimable balance
  */
 export function useClaimableBalance(userAddress: `0x${string}` | undefined) {
-  const addresses = useContractAddresses()
   return useReadContract({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: 'getClaimableBalance',
     args: userAddress ? [userAddress] : undefined,

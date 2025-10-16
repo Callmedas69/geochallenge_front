@@ -7,7 +7,7 @@
 import { useCompetitionCount } from './usePublicCompetitions'
 import { useReadContracts } from 'wagmi'
 import { geoChallenge_implementation_ABI } from '@/abi'
-import { useContractAddresses } from '@/hooks/useNetworkConfig'
+import { CONTRACT_ADDRESSES } from '@/lib/contractList'
 import { useMemo } from 'react'
 
 export interface CompetitionWithMetadata {
@@ -33,7 +33,6 @@ export interface CompetitionWithMetadata {
 }
 
 export function useAllCompetitions() {
-  const addresses = useContractAddresses()
   const { data: totalCount, isLoading: loadingCount } = useCompetitionCount()
 
   // Generate array of competition IDs to fetch
@@ -48,13 +47,13 @@ export function useAllCompetitions() {
   const { data: rawData, isLoading: loadingData } = useReadContracts({
     contracts: competitionIds.flatMap((id) => [
       {
-        address: addresses.GeoChallenge,
+        address: CONTRACT_ADDRESSES.GeoChallenge,
         abi: geoChallenge_implementation_ABI,
         functionName: 'getCompetition',
         args: [id],
       },
       {
-        address: addresses.GeoChallenge,
+        address: CONTRACT_ADDRESSES.GeoChallenge,
         abi: geoChallenge_implementation_ABI,
         functionName: 'getCompetitionMetadata',
         args: [id],

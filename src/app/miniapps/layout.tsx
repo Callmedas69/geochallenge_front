@@ -6,7 +6,6 @@
  */
 
 import { BottomNav, FarcasterHeader } from "@/components/farcaster";
-import { NetworkSwitcher } from "@/components/NetworkSwitcher";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { FARCASTER_SHARING, createFarcasterEmbed } from "@/lib/farcaster/sharing-config";
@@ -59,10 +58,7 @@ export default function FarcasterLayout({
   return (
     <div className="min-h-screen bg-background">
       <FarcasterHeader />
-      <main className="pb-16">
-        <NetworkSwitcher />
-        {children}
-      </main>
+      <main className="pb-16">{children}</main>
       <BottomNav />
     </div>
   );

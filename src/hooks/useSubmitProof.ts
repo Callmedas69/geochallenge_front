@@ -7,7 +7,7 @@
 import { useState } from 'react'
 import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi'
 import { geoChallenge_implementation_ABI } from '@/abi'
-import { useContractAddresses } from '@/hooks/useNetworkConfig'
+import { CONTRACT_ADDRESSES } from '@/lib/contractList'
 
 interface ProofData {
   competitionId: string
@@ -24,7 +24,6 @@ interface ProofResponse {
 }
 
 export function useSubmitProof() {
-  const addresses = useContractAddresses()
   const { address } = useAccount()
   const [isGeneratingProof, setIsGeneratingProof] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -56,7 +55,7 @@ export function useSubmitProof() {
       const proofHash = proofResponse.proof.metadata as `0x${string}` // Assuming backend sends hash
 
       return writeContract({
-        address: addresses.GeoChallenge,
+        address: CONTRACT_ADDRESSES.GeoChallenge,
         abi: geoChallenge_implementation_ABI,
         functionName: 'iamtheWinner',
         args: [competitionId, proofHash, proofResponse.signature],

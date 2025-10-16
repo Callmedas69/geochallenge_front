@@ -7,7 +7,7 @@
 
 import { useWatchContractEvent } from 'wagmi'
 import { geoChallenge_implementation_ABI } from '@/abi'
-import { useContractAddresses } from '@/hooks/useNetworkConfig'
+import { CONTRACT_ADDRESSES } from '@/lib/contractList'
 
 /**
  * Listen for CompetitionCreated events
@@ -16,9 +16,8 @@ import { useContractAddresses } from '@/hooks/useNetworkConfig'
 export function useWatchCompetitionCreated(
   onCreated?: (competitionId: bigint, collectionAddress: string) => void
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'CompetitionCreated',
     poll: true,
@@ -40,9 +39,8 @@ export function useWatchCompetitionCreated(
 export function useWatchCompetitionStarted(
   onStarted?: (competitionId: bigint, deadline: bigint) => void
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'CompetitionStarted',
     poll: true,
@@ -64,9 +62,8 @@ export function useWatchCompetitionStarted(
 export function useWatchCompetitionEnded(
   onEnded?: (competitionId: bigint, hasWinner: boolean) => void
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'CompetitionEnded',
     onLogs(logs) {
@@ -86,9 +83,8 @@ export function useWatchCompetitionEnded(
 export function useWatchCompetitionCancelled(
   onCancelled?: (competitionId: bigint) => void
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'CompetitionCancelled',
     onLogs(logs) {
@@ -110,9 +106,8 @@ export function useWatchTicketPurchased(
   onPurchased?: (buyer: string, competitionId: bigint, price: bigint) => void,
   competitionId?: bigint
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'TicketPurchased',
     args: competitionId !== undefined ? { competitionId } : undefined,
@@ -137,9 +132,8 @@ export function useWatchWinnerDeclared(
   onDeclared?: (competitionId: bigint, winner: string) => void,
   competitionId?: bigint
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'WinnerDeclared',
     args: competitionId !== undefined ? { competitionId } : undefined,
@@ -164,9 +158,8 @@ export function useWatchWinnerClaimed(
   onClaimed?: (competitionId: bigint, user: string, proofHash: string) => void,
   competitionId?: bigint
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'WinnerClaimed',
     args: competitionId !== undefined ? { competitionId } : undefined,
@@ -187,9 +180,8 @@ export function useWatchWinnerClaimed(
 export function useWatchCompetitionFinalized(
   onFinalized?: (competitionId: bigint) => void
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'CompetitionFinalized',
     onLogs(logs) {
@@ -209,10 +201,9 @@ export function useWatchCompetitionFinalized(
 export function useWatchEmergencyEvents(
   onEmergency?: (competitionId: bigint, isPaused: boolean) => void
 ) {
-  const addresses = useContractAddresses()
   // Watch pause events
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'CompetitionEmergencyPaused',
     onLogs(logs) {
@@ -226,7 +217,7 @@ export function useWatchEmergencyEvents(
 
   // Watch unpause events
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'CompetitionEmergencyUnpaused',
     onLogs(logs) {
@@ -248,9 +239,8 @@ export function useWatchAdditionalPrizeAdded(
   onPrizeAdded?: (competitionId: bigint, amount: bigint, addedBy: string) => void,
   competitionId?: bigint
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'AdditionalPrizeAdded',
     args: competitionId !== undefined ? { competitionId } : undefined,
@@ -273,9 +263,8 @@ export function useWatchParticipantPrizeClaimed(
   onClaimed?: (competitionId: bigint, participant: string, amount: bigint) => void,
   competitionId?: bigint
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'ParticipantPrizeClaimed',
     args: competitionId !== undefined ? { competitionId } : undefined,
@@ -298,9 +287,8 @@ export function useWatchRefundIssued(
   onRefund?: (competitionId: bigint, user: string, amount: bigint) => void,
   competitionId?: bigint
 ) {
-  const addresses = useContractAddresses()
   useWatchContractEvent({
-    address: addresses.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     eventName: 'RefundIssued',
     args: competitionId !== undefined ? { competitionId } : undefined,

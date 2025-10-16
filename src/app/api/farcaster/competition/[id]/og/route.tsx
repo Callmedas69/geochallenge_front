@@ -177,13 +177,13 @@ export async function GET(
             return null; // Graceful degradation
           }),
         publicClient.readContract({
-          address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+          address: CONTRACT_ADDRESSES.GeoChallenge,
           abi: geoChallenge_implementation_ABI,
           functionName: "getCompetition",
           args: [competitionId],
         }),
         publicClient.readContract({
-          address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+          address: CONTRACT_ADDRESSES.GeoChallenge,
           abi: geoChallenge_implementation_ABI,
           functionName: "getCompetitionMetadata",
           args: [competitionId],

@@ -95,7 +95,7 @@ export function FarcasterCompetitionDetailPage({
 
   // Fetch competition metadata
   const { data: metadata, isLoading: loadingMetadata } = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: "getCompetitionMetadata",
     args: [competitionId],
@@ -107,7 +107,7 @@ export function FarcasterCompetitionDetailPage({
 
   // Fetch participant prize per ticket
   const { data: participantPrizePerTicket } = useReadContract({
-    address: CONTRACT_ADDRESSES.baseSepolia.GeoChallenge,
+    address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: "participantPrizePerTicket",
     args: [competitionId],
