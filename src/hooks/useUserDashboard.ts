@@ -28,7 +28,7 @@ import type {
  * Returns: { stats, activeCompIds, claimableCompIds, totalCompetitions }
  */
 export function useUserDashboardData(userAddress: Address | undefined) {
-  return useReadContract({
+  const result = useReadContract({
     address: CONTRACT_ADDRESSES.baseSepolia.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getUserDashboardData',
@@ -38,7 +38,22 @@ export function useUserDashboardData(userAddress: Address | undefined) {
       staleTime: 30_000, // 30 seconds
       refetchInterval: 60_000, // Refresh every minute
     },
-  }) as ReturnType<typeof useReadContract> & {
+  })
+
+  // CRITICAL FIX: Viem returns array [stats, activeIds, claimableIds, total]
+  // But frontend expects object { stats, activeCompIds, claimableCompIds, totalCompetitions }
+  // Transform the array into the expected object structure
+  const transformedData = result.data ? {
+    stats: (result.data as any)[0] as ContractUserStats,
+    activeCompIds: (result.data as any)[1] as readonly bigint[],
+    claimableCompIds: (result.data as any)[2] as readonly bigint[],
+    totalCompetitions: (result.data as any)[3] as bigint,
+  } : undefined
+
+  return {
+    ...result,
+    data: transformedData,
+  } as ReturnType<typeof useReadContract> & {
     data?: UserDashboardDataResult
   }
 }
@@ -48,7 +63,7 @@ export function useUserDashboardData(userAddress: Address | undefined) {
  * Returns: { competitionIds, competitions }
  */
 export function useUserCompetitions(userAddress: Address | undefined) {
-  return useReadContract({
+  const result = useReadContract({
     address: CONTRACT_ADDRESSES.baseSepolia.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getUserCompetitions',
@@ -57,7 +72,18 @@ export function useUserCompetitions(userAddress: Address | undefined) {
       enabled: !!userAddress,
       staleTime: 30_000,
     },
-  }) as ReturnType<typeof useReadContract> & {
+  })
+
+  // Transform array [competitionIds, competitions] to object
+  const transformedData = result.data ? {
+    competitionIds: (result.data as any)[0] as readonly bigint[],
+    competitions: (result.data as any)[1] as readonly any[],
+  } : undefined
+
+  return {
+    ...result,
+    data: transformedData,
+  } as ReturnType<typeof useReadContract> & {
     data?: UserCompetitionsResult
   }
 }
@@ -67,7 +93,7 @@ export function useUserCompetitions(userAddress: Address | undefined) {
  * Returns: { activeIds, activeComps }
  */
 export function useUserActiveCompetitions(userAddress: Address | undefined) {
-  return useReadContract({
+  const result = useReadContract({
     address: CONTRACT_ADDRESSES.baseSepolia.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getUserActiveCompetitions',
@@ -77,7 +103,18 @@ export function useUserActiveCompetitions(userAddress: Address | undefined) {
       staleTime: 20_000,
       refetchInterval: 30_000, // Refresh more frequently for active comps
     },
-  }) as ReturnType<typeof useReadContract> & {
+  })
+
+  // Transform array [activeIds, activeComps] to object
+  const transformedData = result.data ? {
+    activeIds: (result.data as any)[0] as readonly bigint[],
+    activeComps: (result.data as any)[1] as readonly any[],
+  } : undefined
+
+  return {
+    ...result,
+    data: transformedData,
+  } as ReturnType<typeof useReadContract> & {
     data?: UserActiveCompetitionsResult
   }
 }
@@ -87,7 +124,7 @@ export function useUserActiveCompetitions(userAddress: Address | undefined) {
  * Returns: { completedIds, completedComps }
  */
 export function useUserCompletedCompetitions(userAddress: Address | undefined) {
-  return useReadContract({
+  const result = useReadContract({
     address: CONTRACT_ADDRESSES.baseSepolia.QueryManager,
     abi: queryManager_ABI,
     functionName: 'getUserCompletedCompetitions',
@@ -96,7 +133,18 @@ export function useUserCompletedCompetitions(userAddress: Address | undefined) {
       enabled: !!userAddress,
       staleTime: 60_000, // Completed comps don't change often
     },
-  }) as ReturnType<typeof useReadContract> & {
+  })
+
+  // Transform array [completedIds, completedComps] to object
+  const transformedData = result.data ? {
+    completedIds: (result.data as any)[0] as readonly bigint[],
+    completedComps: (result.data as any)[1] as readonly any[],
+  } : undefined
+
+  return {
+    ...result,
+    data: transformedData,
+  } as ReturnType<typeof useReadContract> & {
     data?: UserCompletedCompetitionsResult
   }
 }

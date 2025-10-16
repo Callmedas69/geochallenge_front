@@ -351,6 +351,75 @@ export default function FarcasterDashboardPage() {
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Debug Panel - Shows raw contract data for troubleshooting */}
+        <details className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+          <summary className="cursor-pointer font-semibold text-sm text-orange-900 mb-2">
+            🔍 Debug Information (click to expand)
+          </summary>
+          <div className="space-y-2 text-xs mt-2">
+            <div>
+              <strong>Wallet:</strong> {address}
+            </div>
+            <div>
+              <strong>Stats from Contract:</strong>
+            </div>
+            <div className="pl-4 space-y-1">
+              <div>
+                • Total Joined: {dashboardData?.stats?.totalCompetitionsJoined?.toString() || "0"}
+              </div>
+              <div>
+                • Competitions Won: {dashboardData?.stats?.competitionsWon?.toString() || "0"}
+              </div>
+              <div>
+                • Total Prizes: {dashboardData?.stats?.totalPrizesWon?.toString() || "0"}
+              </div>
+            </div>
+            <div>
+              <strong>Active Competitions:</strong> {activeCompIds?.length || 0} competitions
+            </div>
+            <div className="pl-4">
+              {activeCompIds?.length ? (
+                activeCompIds.map((id) => (
+                  <div key={id.toString()}>• Competition #{id.toString()}</div>
+                ))
+              ) : (
+                <div className="text-muted-foreground">None</div>
+              )}
+            </div>
+            <div>
+              <strong>Claimable Competitions:</strong> {completedCompIds?.length || 0} competitions
+            </div>
+            <div className="pl-4">
+              {completedCompIds?.length ? (
+                completedCompIds.map((id) => (
+                  <div key={id.toString()}>• Competition #{id.toString()}</div>
+                ))
+              ) : (
+                <div className="text-muted-foreground">None</div>
+              )}
+            </div>
+            <div className="mt-2">
+              <strong>Full Contract Response:</strong>
+            </div>
+            <pre className="mt-1 p-2 bg-white rounded overflow-auto text-xs max-h-48 border border-orange-100">
+              {JSON.stringify(
+                {
+                  stats: dashboardData?.stats ? {
+                    totalCompetitionsJoined: dashboardData.stats.totalCompetitionsJoined?.toString(),
+                    competitionsWon: dashboardData.stats.competitionsWon?.toString(),
+                    totalPrizesWon: dashboardData.stats.totalPrizesWon?.toString(),
+                  } : null,
+                  activeCompIds: activeCompIds?.map(id => id.toString()),
+                  claimableCompIds: completedCompIds?.map(id => id.toString()),
+                  totalCompetitions: dashboardData?.totalCompetitions?.toString(),
+                },
+                null,
+                2
+              )}
+            </pre>
+          </div>
+        </details>
       </div>
     </>
   );
