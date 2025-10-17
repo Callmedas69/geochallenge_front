@@ -13,7 +13,7 @@ import { useAutoConnect } from "@/lib/farcaster";
 import {
   DashboardQuickStats,
   UserCompetitionCard,
-  ClaimablePrizesAlertMobile,
+  UnclaimedPrizesMobile,
 } from "@/components/farcaster";
 import { WithdrawBalance } from "@/components/WithdrawBalance";
 import { useUserDashboardData, useUserCompetitionIds } from "@/hooks/useUserDashboard";
@@ -47,11 +47,15 @@ export default function FarcasterDashboardPage() {
   const {
     data: dashboardData,
     isLoading,
-    refetch,
+    refetch: refetchDashboard,
     error: dashboardError,
   } = useUserDashboardData(address);
 
-  const { data: balance, error: balanceError } = useClaimableBalance(address);
+  const {
+    data: balance,
+    error: balanceError,
+    refetch: refetchBalance,
+  } = useClaimableBalance(address);
 
   // Get all competition IDs for permanent history record
   const { data: allCompetitionIds } = useUserCompetitionIds(address);
@@ -149,7 +153,14 @@ export default function FarcasterDashboardPage() {
             </AlertDescription>
           </Alert>
 
-          <Button onClick={() => refetch()} variant="outline" className="w-full">
+          <Button
+            onClick={() => {
+              refetchDashboard()
+              refetchBalance()
+            }}
+            variant="outline"
+            className="w-full"
+          >
             <RefreshCw className="h-4 w-4 mr-2" />
             Retry
           </Button>
@@ -174,7 +185,6 @@ export default function FarcasterDashboardPage() {
           {/* Stats */}
           <DashboardQuickStats
             stats={dashboardData?.stats}
-            claimableBalance={balance}
           />
 
           {/* Withdraw Balance - Mobile Optimized */}
@@ -257,7 +267,10 @@ export default function FarcasterDashboardPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => refetch()}
+            onClick={() => {
+              refetchDashboard()
+              refetchBalance()
+            }}
             disabled={isLoading}
           >
             <RefreshCw className="h-4 w-4" />
@@ -267,16 +280,17 @@ export default function FarcasterDashboardPage() {
         {/* Stats */}
         <DashboardQuickStats
           stats={dashboardData?.stats}
-          claimableBalance={balance}
         />
 
         {/* Withdraw Balance - Mobile Optimized */}
         <WithdrawBalance />
 
-        {/* Claimable Prizes Alert */}
-        <ClaimablePrizesAlertMobile
+        {/* Unclaimed Prizes */}
+        <UnclaimedPrizesMobile
           claimableCompIds={dashboardData?.claimableCompIds}
           isLoading={isLoading}
+          refetchDashboard={refetchDashboard}
+          refetchBalance={refetchBalance}
         />
 
         {/* Competition Tabs */}

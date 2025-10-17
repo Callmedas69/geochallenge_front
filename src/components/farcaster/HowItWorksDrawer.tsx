@@ -24,32 +24,39 @@ interface HowItWorksDrawerProps {
  * Bottom drawer explaining how the competition works
  * Mobile-friendly with brief, actionable steps
  */
-export function HowItWorksDrawer({ open, onOpenChange }: HowItWorksDrawerProps) {
+export function HowItWorksDrawer({
+  open,
+  onOpenChange,
+}: HowItWorksDrawerProps) {
   const steps = [
     {
       icon: Ticket,
       title: "Buy a Ticket",
-      description: "Purchase a competition ticket to participate and get access",
+      description:
+        "Purchase a competition ticket to participate and get access",
     },
     {
       icon: Package,
       title: "Collect Cards",
-      description: "Collect a complete set of required rarity cards from VibeMarket",
+      description:
+        "Collect a complete set of required rarity cards from VibeMarket",
     },
     {
       icon: CheckCircle,
       title: "Submit Proof",
-      description: "First to collect all cards and submit proof wins the grand prize",
+      description:
+        "First to collect all cards and submit proof wins the prize pool",
     },
     {
       icon: Award,
       title: "Win Prizes",
-      description: "Winner gets 70% of prize pool, all participants share 30%",
+      description: "Winner gets 80% of prize pool, all participants share 20%",
     },
     {
       icon: Trophy,
       title: "Track Progress",
-      description: "Monitor your collection progress in the competition detail page",
+      description:
+        "Monitor your collection progress in the competition detail page",
     },
   ];
 
@@ -93,7 +100,8 @@ export function HowItWorksDrawer({ open, onOpenChange }: HowItWorksDrawerProps) 
             >
               VibeMarket
             </a>
-            . Make sure you hold all required cards in your wallet before submitting proof.
+            . Make sure you hold all required cards in your wallet before
+            submitting proof.
           </p>
         </div>
       </SheetContent>

@@ -4,48 +4,60 @@
  * @dev KISS principle: Simple overview of user's activity (Phase 3 - Real Data)
  */
 
-'use client'
+"use client";
 
-import { useMemo } from 'react'
-import { useAccount } from 'wagmi'
-import { useClaimableBalance } from '@/hooks/usePublicCompetitions'
-import { useUserDashboardData, useUserCompetitionIds } from '@/hooks/useUserDashboard'
-import { WithdrawBalance } from '@/components/WithdrawBalance'
-import { UserStatsCards } from '@/components/dashboard/UserStatsCards'
-import { ClaimablePrizesAlert } from '@/components/dashboard/ClaimablePrizesAlert'
-import { ActiveCompetitionsSection } from '@/components/dashboard/ActiveCompetitionsSection'
-import { ParticipationHistoryTable } from '@/components/dashboard/ParticipationHistoryTable'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { formatEther } from 'viem'
-import { Trophy, Ticket, Wallet, User, Bell, RefreshCw, AlertCircle } from 'lucide-react'
+import { useMemo } from "react";
+import { useAccount } from "wagmi";
+import { useClaimableBalance } from "@/hooks/usePublicCompetitions";
+import {
+  useUserDashboardData,
+  useUserCompetitionIds,
+} from "@/hooks/useUserDashboard";
+import { WithdrawBalance } from "@/components/WithdrawBalance";
+import { UserStatsCards } from "@/components/dashboard/UserStatsCards";
+import { ParticipationHistoryTable } from "@/components/dashboard/ParticipationHistoryTable";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Wallet, User, RefreshCw, AlertCircle } from "lucide-react";
 
 export function UserDashboard() {
-  const { address, isConnected } = useAccount()
+  const { address, isConnected } = useAccount();
 
   // Single RPC call for all dashboard data (60x faster!)
   const {
     data: dashboardData,
     isLoading: isDashboardLoading,
     error: dashboardError,
-    refetch
-  } = useUserDashboardData(address)
-  const { data: balance, error: balanceError } = useClaimableBalance(address)
+    refetch: refetchDashboard,
+  } = useUserDashboardData(address);
+  const {
+    data: balance,
+    error: balanceError,
+    refetch: refetchBalance,
+  } = useClaimableBalance(address);
 
   // Get all competition IDs for participation history (permanent record)
-  const { data: allCompetitionIds } = useUserCompetitionIds(address)
+  const { data: allCompetitionIds } = useUserCompetitionIds(address);
 
   // Calculate completed competitions (exclude active ones)
   const completedCompIds = useMemo(() => {
-    if (!allCompetitionIds || !dashboardData?.activeCompIds) return []
+    if (!allCompetitionIds || !dashboardData?.activeCompIds) return [];
 
     // Filter out active competitions to get completed ones
-    const activeSet = new Set(dashboardData.activeCompIds.map(id => id.toString()))
-    return allCompetitionIds.filter(id => !activeSet.has(id.toString()))
-  }, [allCompetitionIds, dashboardData?.activeCompIds])
+    const activeSet = new Set(
+      dashboardData.activeCompIds.map((id) => id.toString())
+    );
+    return allCompetitionIds.filter((id) => !activeSet.has(id.toString()));
+  }, [allCompetitionIds, dashboardData?.activeCompIds]);
 
   if (!isConnected || !address) {
     return (
@@ -56,7 +68,9 @@ export function UserDashboard() {
               <User className="h-5 w-5" />
               User Dashboard
             </CardTitle>
-            <CardDescription>Connect your wallet to view your dashboard</CardDescription>
+            <CardDescription>
+              Connect your wallet to view your dashboard
+            </CardDescription>
           </CardHeader>
           <CardContent className="py-12 text-center text-muted-foreground">
             <Wallet className="h-16 w-16 mx-auto mb-4 opacity-50" />
@@ -64,7 +78,7 @@ export function UserDashboard() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   // Loading state
@@ -83,7 +97,7 @@ export function UserDashboard() {
           <Skeleton className="h-48" />
         </div>
       </div>
-    )
+    );
   }
 
   // Error state
@@ -104,7 +118,10 @@ export function UserDashboard() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => refetch()}
+            onClick={() => {
+              refetchDashboard()
+              refetchBalance()
+            }}
             disabled={isDashboardLoading}
           >
             <RefreshCw className="h-4 w-4" />
@@ -122,7 +139,14 @@ export function UserDashboard() {
           </AlertDescription>
         </Alert>
 
-        <Button onClick={() => refetch()} variant="outline" className="w-full">
+        <Button
+          onClick={() => {
+            refetchDashboard()
+            refetchBalance()
+          }}
+          variant="outline"
+          className="w-full"
+        >
           <RefreshCw className="h-4 w-4 mr-2" />
           Retry
         </Button>
@@ -143,7 +167,8 @@ export function UserDashboard() {
               <strong>Error:</strong> {dashboardError.message}
             </div>
             <div>
-              <strong>Contract Call:</strong> QueryManager.getUserDashboardData()
+              <strong>Contract Call:</strong>{" "}
+              QueryManager.getUserDashboardData()
             </div>
             <details className="mt-2">
               <summary className="cursor-pointer font-semibold">
@@ -156,10 +181,8 @@ export function UserDashboard() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
-
-  const balanceETH = balance ? parseFloat(formatEther(balance)).toFixed(4) : '0.0000'
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
@@ -177,7 +200,10 @@ export function UserDashboard() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => refetch()}
+          onClick={() => {
+            refetchDashboard()
+            refetchBalance()
+          }}
           disabled={isDashboardLoading}
         >
           <RefreshCw className="h-4 w-4" />
@@ -191,62 +217,30 @@ export function UserDashboard() {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Failed to load balance</AlertTitle>
-          <AlertDescription>
-            {balanceError.message}
-          </AlertDescription>
+          <AlertDescription>{balanceError.message}</AlertDescription>
         </Alert>
       )}
 
-      {/* Claimable Balance Alert - Show when user has balance */}
-      {balance && balance > BigInt(0) && (
-        <Alert className="border-2 border-green-500 bg-green-50">
-          <Bell className="h-5 w-5 text-green-600" />
-          <AlertTitle className="text-green-800 font-bold text-lg">
-            💰 You have {balanceETH} ETH ready to withdraw!
-          </AlertTitle>
-          <AlertDescription className="text-green-700">
-            <p className="mb-2">
-              Your prize has been claimed and is ready in your balance.
-              <strong> Click "Withdraw to Wallet" below</strong> to transfer it to your wallet.
-            </p>
-            <p className="text-sm text-green-600">
-              ℹ️ Note: Prize claiming is a 2-step process: (1) Claim Prize → Adds to balance, (2) Withdraw → Sends ETH to your wallet
-            </p>
-          </AlertDescription>
-        </Alert>
-      )}
+      {/* Stats Overview - 4 column grid with Withdraw Balance first */}
+      <div className="grid gap-6 md:grid-cols-4">
+        {/* Withdraw Balance - First position (leftmost) */}
+        <WithdrawBalance />
 
-      {/* Claimable Prizes Alert */}
-      <ClaimablePrizesAlert
-        claimableCompIds={dashboardData?.claimableCompIds}
-        isLoading={isDashboardLoading}
-      />
-
-      {/* Stats Overview */}
-      <UserStatsCards
-        stats={dashboardData?.stats}
-        claimableBalance={balance}
-        isLoading={isDashboardLoading}
-      />
-
-      {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Withdraw Balance */}
-        <div>
-          <WithdrawBalance />
-        </div>
-
-        {/* Active Competitions */}
-        <ActiveCompetitionsSection
-          activeCompIds={dashboardData?.activeCompIds}
+        {/* Stats Cards - Remaining 3 columns */}
+        <UserStatsCards
+          stats={dashboardData?.stats}
           isLoading={isDashboardLoading}
         />
       </div>
 
-      {/* Participation History */}
+      {/* My Competitions - includes claim functionality */}
       <ParticipationHistoryTable
         completedCompIds={completedCompIds}
+        activeCompIds={dashboardData?.activeCompIds}
+        claimableCompIds={dashboardData?.claimableCompIds}
         isLoading={isDashboardLoading}
+        refetchDashboard={refetchDashboard}
+        refetchBalance={refetchBalance}
       />
 
       {/* Debug Panel - Shows raw contract data for troubleshooting */}
@@ -266,17 +260,21 @@ export function UserDashboard() {
           </div>
           <div className="pl-4 space-y-1">
             <div>
-              • Total Joined: {dashboardData?.stats?.totalCompetitionsJoined?.toString() || "0"}
+              • Total Joined:{" "}
+              {dashboardData?.stats?.totalCompetitionsJoined?.toString() || "0"}
             </div>
             <div>
-              • Competitions Won: {dashboardData?.stats?.competitionsWon?.toString() || "0"}
+              • Competitions Won:{" "}
+              {dashboardData?.stats?.competitionsWon?.toString() || "0"}
             </div>
             <div>
-              • Total Prizes: {dashboardData?.stats?.totalPrizesWon?.toString() || "0"}
+              • Total Prizes:{" "}
+              {dashboardData?.stats?.totalPrizesWon?.toString() || "0"}
             </div>
           </div>
           <div>
-            <strong>Active Competitions:</strong> {dashboardData?.activeCompIds?.length || 0} competitions
+            <strong>Active Competitions:</strong>{" "}
+            {dashboardData?.activeCompIds?.length || 0} competitions
           </div>
           <div className="pl-4">
             {dashboardData?.activeCompIds?.length ? (
@@ -288,7 +286,8 @@ export function UserDashboard() {
             )}
           </div>
           <div>
-            <strong>Claimable Competitions:</strong> {dashboardData?.claimableCompIds?.length || 0} competitions
+            <strong>Claimable Competitions:</strong>{" "}
+            {dashboardData?.claimableCompIds?.length || 0} competitions
           </div>
           <div className="pl-4">
             {dashboardData?.claimableCompIds?.length ? (
@@ -306,14 +305,24 @@ export function UserDashboard() {
             <pre className="mt-2 p-2 bg-white rounded overflow-auto text-xs max-h-96">
               {JSON.stringify(
                 {
-                  stats: dashboardData?.stats ? {
-                    totalCompetitionsJoined: dashboardData.stats.totalCompetitionsJoined?.toString(),
-                    competitionsWon: dashboardData.stats.competitionsWon?.toString(),
-                    totalPrizesWon: dashboardData.stats.totalPrizesWon?.toString(),
-                  } : null,
-                  activeCompIds: dashboardData?.activeCompIds?.map(id => id.toString()),
-                  claimableCompIds: dashboardData?.claimableCompIds?.map(id => id.toString()),
-                  totalCompetitions: dashboardData?.totalCompetitions?.toString(),
+                  stats: dashboardData?.stats
+                    ? {
+                        totalCompetitionsJoined:
+                          dashboardData.stats.totalCompetitionsJoined?.toString(),
+                        competitionsWon:
+                          dashboardData.stats.competitionsWon?.toString(),
+                        totalPrizesWon:
+                          dashboardData.stats.totalPrizesWon?.toString(),
+                      }
+                    : null,
+                  activeCompIds: dashboardData?.activeCompIds?.map((id) =>
+                    id.toString()
+                  ),
+                  claimableCompIds: dashboardData?.claimableCompIds?.map((id) =>
+                    id.toString()
+                  ),
+                  totalCompetitions:
+                    dashboardData?.totalCompetitions?.toString(),
                 },
                 null,
                 2
@@ -323,5 +332,5 @@ export function UserDashboard() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

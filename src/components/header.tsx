@@ -129,7 +129,7 @@ export function Header() {
                   href="/admin"
                   className={`
                     flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-yellow-600
-                    ${pathname === "/admin" ? "text-yellow-600" : "text-muted-foreground"}
+                    ${pathname === "/admin" ? "text-yellow-600" : "!text-muted-foreground"}
                   `}
                 >
                   <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />

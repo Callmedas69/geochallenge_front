@@ -289,8 +289,11 @@ export function ClaimRefundButton({
     return (
       <Alert className="border-green-500 bg-green-50">
         <CheckCircle className="h-4 w-4 text-green-600" />
-        <AlertDescription className="text-green-800 font-semibold">
-          ✅ Refund claimed successfully!
+        <AlertDescription className="text-green-800">
+          <p className="font-semibold mb-1">✅ Refund claimed successfully!</p>
+          <p className="text-sm">
+            ⚠️ <strong>Important:</strong> Go to <a href="/dashboard" className="underline font-bold">Your Dashboard</a> and click "Withdraw to Wallet" to receive your ETH.
+          </p>
         </AlertDescription>
       </Alert>
     )

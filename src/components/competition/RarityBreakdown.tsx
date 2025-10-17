@@ -10,8 +10,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, ExternalLink } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { getRarityName, getRarityColor } from "@/lib/types";
+import { BuyPacksButton } from "@/components/BuyPacksButton";
+import type { Address } from "viem";
 
 interface ProgressData {
   totalRequired: number;
@@ -98,21 +100,12 @@ export function RarityBreakdown({
         </Alert>
       )}
 
-      {/* Find Missing Cards CTA */}
+      {/* Buy Packs CTA */}
       {!progress.isComplete && showCTA && collectionAddress && (
-        <a
-          href={`https://vibechain.com/market/${collectionAddress}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block"
-        >
-          <div className="p-3 bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors group cursor-pointer">
-            <div className="flex items-center justify-between">
-              <span className="font-medium text-sm">Find Missing Cards</span>
-              <ExternalLink className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </div>
-        </a>
+        <BuyPacksButton
+          collectionAddress={collectionAddress as Address}
+          buttonText="Buy Packs"
+        />
       )}
     </div>
   );
