@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useAccount } from "wagmi";
 import { useAutoConnect } from "@/lib/farcaster";
 import {
@@ -28,8 +28,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -41,7 +39,6 @@ export default function FarcasterDashboardPage() {
   useAutoConnect();
 
   const { address, isConnected } = useAccount();
-  const [activeTab, setActiveTab] = useState<"active" | "completed">("active");
 
   // Fetch dashboard data (auto-refresh on mount)
   const {
@@ -83,6 +80,27 @@ export default function FarcasterDashboardPage() {
     const activeSet = new Set(dashboardData.activeCompIds.map(id => id.toString()))
     return allCompetitionIds.filter(id => !activeSet.has(id.toString()))
   }, [allCompetitionIds, dashboardData?.activeCompIds]);
+
+  // Merge all competitions and sort by latest (descending ID)
+  const allCompetitionsSorted = useMemo(() => {
+    const active = activeCompIds || [];
+    const completed = completedCompIds || [];
+    const allIds = [...active, ...completed];
+
+    // Remove duplicates and sort by competition ID descending (latest first)
+    const uniqueIds = Array.from(new Set(allIds.map(id => id.toString()))).map(id => BigInt(id));
+    return uniqueIds.sort((a, b) => Number(b - a));
+  }, [activeCompIds, completedCompIds]);
+
+  // Create lookup sets for quick status checks
+  const activeSet = useMemo(
+    () => new Set(activeCompIds.map(id => id.toString())),
+    [activeCompIds]
+  );
+  const claimableSet = useMemo(
+    () => new Set((dashboardData?.claimableCompIds || []).map(id => id.toString())),
+    [dashboardData?.claimableCompIds]
+  );
 
   // Not connected state
   if (!isConnected || !address) {
@@ -170,7 +188,7 @@ export default function FarcasterDashboardPage() {
   }
 
   // Empty state - no tickets
-  if (activeCompIds.length === 0 && completedCompIds.length === 0) {
+  if (allCompetitionsSorted.length === 0) {
     return (
       <>
         <div className="container mx-auto px-3 py-4 pb-20 space-y-4">
@@ -293,78 +311,19 @@ export default function FarcasterDashboardPage() {
           refetchBalance={refetchBalance}
         />
 
-        {/* Competition Tabs */}
-        <Tabs
-          value={activeTab}
-          onValueChange={(v) => setActiveTab(v as "active" | "completed")}
-        >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="active" className="text-sm">
-              Active
-              {activeCompIds.length > 0 && (
-                <Badge variant="secondary" className="ml-2 text-xs">
-                  {activeCompIds.length}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="completed" className="text-sm">
-              Completed
-              {completedCompIds.length > 0 && (
-                <Badge variant="secondary" className="ml-2 text-xs">
-                  {completedCompIds.length}
-                </Badge>
-              )}
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Active Tab */}
-          <TabsContent value="active" className="space-y-3 mt-4">
-            {activeCompIds.length === 0 ? (
-              <Card>
-                <CardHeader className="p-4">
-                  <CardTitle className="text-base">
-                    No Active Competitions
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    You don't have any active competitions
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            ) : (
-              activeCompIds.map((id) => (
-                <UserCompetitionCard
-                  key={id.toString()}
-                  competitionId={id}
-                  isActive={true}
-                />
-              ))
-            )}
-          </TabsContent>
-
-          {/* Completed Tab */}
-          <TabsContent value="completed" className="space-y-3 mt-4">
-            {completedCompIds.length === 0 ? (
-              <Card>
-                <CardHeader className="p-4">
-                  <CardTitle className="text-base">
-                    No Completed Competitions
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    You don't have any completed competitions yet
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            ) : (
-              completedCompIds.map((id) => (
-                <UserCompetitionCard
-                  key={id.toString()}
-                  competitionId={id}
-                  isActive={false}
-                />
-              ))
-            )}
-          </TabsContent>
-        </Tabs>
+        {/* All Competitions - Sorted by Latest */}
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold text-muted-foreground">
+            My Competitions ({allCompetitionsSorted.length})
+          </h2>
+          {allCompetitionsSorted.map((id) => (
+            <UserCompetitionCard
+              key={id.toString()}
+              competitionId={id}
+              isActive={activeSet.has(id.toString())}
+            />
+          ))}
+        </div>
 
         {/* Debug Panel - Shows raw contract data for troubleshooting */}
         <details className="bg-orange-50 border border-orange-200 rounded-lg p-3">

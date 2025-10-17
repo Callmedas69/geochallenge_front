@@ -14,11 +14,13 @@ import { Progress } from "@/components/ui/progress";
 import { useCompetitionById } from "@/hooks/usePublicCompetitions";
 import { useProgressCalculator } from "@/hooks/useVibeAPI";
 import { useAccount, useReadContract } from "wagmi";
-import { CheckCircle, Gift } from "lucide-react";
+import { CheckCircle, Gift, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
+import { formatEther } from "viem";
 import { geoChallenge_implementation_ABI } from "@/abi";
 import { CONTRACT_ADDRESSES } from "@/lib/contractList";
+import { DECIMALS } from "@/lib/displayConfig";
 import {
   calculateWinnerPrize,
   calculateParticipantPrizeWithWinner,
@@ -182,6 +184,17 @@ export function UserCompetitionCard({
               {stateInfo.label}
             </Badge>
           </div>
+
+          {/* Prize Pool Display */}
+          {competition.prizePool > 0n && (
+            <div className="flex items-center gap-2 text-xs">
+              <Trophy className="h-4 w-4 text-yellow-600" />
+              <span className="text-muted-foreground">Prize Pool:</span>
+              <span className="font-bold text-foreground">
+                {parseFloat(formatEther(competition.prizePool)).toFixed(DECIMALS.FARCASTER)} ETH
+              </span>
+            </div>
+          )}
 
           {/* Progress Bar - Only for Active Competitions */}
           {isCompActive && !loadingProgress && progress && (

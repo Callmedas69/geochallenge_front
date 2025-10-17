@@ -40,7 +40,8 @@
       "WebSearch",
       "Bash(del \"src\\components\\NetworkSwitcher.tsx\")",
       "Bash(del \"src\\hooks\\useNetworkConfig.ts\")",
-      "Bash(if exist .next rd /s /q .next)"
+      "Bash(if exist .next rd /s /q .next)",
+      "Bash(del \"src\\hooks\\useSetAndDepositBoosterBoxes.ts\")"
     ],
     "deny": [],
     "ask": []

@@ -40,7 +40,9 @@ export function WithdrawBalance() {
     return (
       <Card className="border-l-4 border-l-gray-300">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-          <CardTitle className="text-sm font-medium">Withdraw Balance</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            Withdraw Balance
+          </CardTitle>
           <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
             <Wallet className="h-6 w-6 text-gray-400" />
           </div>
@@ -58,14 +60,18 @@ export function WithdrawBalance() {
     return (
       <Card className="border-l-4 border-l-gray-300">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-          <CardTitle className="text-sm font-medium">Withdraw Balance</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            Withdraw Balance
+          </CardTitle>
           <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
             <Wallet className="h-6 w-6 text-gray-400" />
           </div>
         </CardHeader>
         <CardContent>
           <div className="text-3xl font-bold text-gray-400">0.0000 ETH</div>
-          <p className="text-xs text-muted-foreground mt-1">No balance available</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            No balance available
+          </p>
         </CardContent>
       </Card>
     );
@@ -76,7 +82,9 @@ export function WithdrawBalance() {
     return (
       <Card className="border-l-4 border-l-green-500 bg-green-50">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-          <CardTitle className="text-sm font-medium text-green-800">Withdraw Balance</CardTitle>
+          <CardTitle className="text-sm font-medium text-green-800">
+            Withdraw Balance
+          </CardTitle>
           <div className="h-12 w-12 rounded-full bg-green-200 flex items-center justify-center">
             <CheckCircle className="h-6 w-6 text-green-700" />
           </div>
@@ -95,7 +103,7 @@ export function WithdrawBalance() {
 
   return (
     <Card className="border-l-4 border-l-green-500">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-sm font-medium">Withdraw Balance</CardTitle>
         <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
           <Wallet className="h-6 w-6 text-green-600" />
@@ -104,7 +112,9 @@ export function WithdrawBalance() {
       <CardContent className="space-y-3">
         {/* Balance Display */}
         <div>
-          <p className="text-xs text-muted-foreground mb-1">Available Balance</p>
+          <p className="text-xs text-muted-foreground mb-1">
+            Available Balance
+          </p>
           <p className="text-3xl font-bold text-green-600">
             {formatEther(balance)} ETH
           </p>
