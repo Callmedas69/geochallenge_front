@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle2 } from "lucide-react";
 import { getRarityName, getRarityColor } from "@/lib/types";
 import { BuyPacksButton } from "@/components/BuyPacksButton";
+import { OpenPacksButton } from "@/components/OpenPacksButton";
 import type { Address } from "viem";
 
 interface ProgressData {
@@ -100,12 +101,18 @@ export function RarityBreakdown({
         </Alert>
       )}
 
-      {/* Buy Packs CTA */}
+      {/* Pack Actions - Side by side */}
       {!progress.isComplete && showCTA && collectionAddress && (
-        <BuyPacksButton
-          collectionAddress={collectionAddress as Address}
-          buttonText="Buy Packs"
-        />
+        <div className="grid grid-cols-2 gap-2">
+          <BuyPacksButton
+            collectionAddress={collectionAddress as Address}
+            buttonText="Buy Packs"
+          />
+          <OpenPacksButton
+            collectionAddress={collectionAddress as Address}
+            buttonText="Open Packs"
+          />
+        </div>
       )}
     </div>
   );

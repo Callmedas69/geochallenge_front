@@ -22,6 +22,7 @@ import { SubmitWinnerProof } from "@/components/SubmitWinnerProof";
 import { CollectionArtGallery } from "@/components/CollectionArtGallery";
 import { CompetitionTicket, CompetitionProgress } from "@/components/farcaster";
 import { BuyPacksButton } from "@/components/BuyPacksButton";
+import { OpenPacksButton } from "@/components/OpenPacksButton";
 import { getRarityName, getRarityColor } from "@/lib/types";
 import {
   calculateWinnerPrize,
@@ -624,12 +625,18 @@ export function FarcasterCompetitionDetailPage({
               hasTicket={hasTicket}
             />
 
-            {/* Buy Packs Button - Show when user doesn't have complete set */}
+            {/* Pack Actions - Side by side when user doesn't have complete set */}
             {address && hasTicket && !progress?.isComplete && (
-              <BuyPacksButton
-                collectionAddress={competition.collectionAddress}
-                buttonText="Buy Booster Packs"
-              />
+              <div className="grid grid-cols-2 gap-2">
+                <BuyPacksButton
+                  collectionAddress={competition.collectionAddress}
+                  buttonText="Buy Packs"
+                />
+                <OpenPacksButton
+                  collectionAddress={competition.collectionAddress}
+                  buttonText="Open Packs"
+                />
+              </div>
             )}
 
             {/* Collection Art Gallery */}

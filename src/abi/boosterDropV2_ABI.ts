@@ -31,4 +31,18 @@ export const boosterDropV2_ABI = [
     outputs: [{ name: '', type: 'uint256', internalType: 'uint256' }],
     stateMutability: 'view',
   },
+  {
+    type: 'function',
+    name: 'getEntropyFee',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256', internalType: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'open',
+    inputs: [{ name: 'tokenIds', type: 'uint256[]', internalType: 'uint256[]' }],
+    outputs: [],
+    stateMutability: 'payable',
+  },
 ] as const
