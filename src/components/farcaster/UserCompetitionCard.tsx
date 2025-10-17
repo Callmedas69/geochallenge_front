@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useCompetitionById } from "@/hooks/usePublicCompetitions";
 import { useProgressCalculator } from "@/hooks/useVibeAPI";
+import { useHasClaimedWinnerPrize, useHasClaimedParticipantPrize } from "@/hooks/useUserDashboard";
 import { useAccount, useReadContract } from "wagmi";
 import { CheckCircle, Gift, Trophy } from "lucide-react";
 import Link from "next/link";
@@ -59,6 +60,23 @@ export function UserCompetitionCard({
     functionName: "participantPrizePerTicket",
     args: [competitionId],
     query: {
+      staleTime: 30000,
+    },
+  });
+
+  // Check claim status
+  const { data: hasClaimedWinner } = useHasClaimedWinnerPrize(competitionId);
+  const { data: hasClaimedParticipant } = useHasClaimedParticipantPrize(
+    competitionId,
+    address
+  );
+  const { data: hasClaimedRefund } = useReadContract({
+    address: CONTRACT_ADDRESSES.GeoChallenge,
+    abi: geoChallenge_implementation_ABI,
+    functionName: "refundsClaimed",
+    args: address ? [competitionId, address] : undefined,
+    query: {
+      enabled: !!address,
       staleTime: 30000,
     },
   });
@@ -147,18 +165,39 @@ export function UserCompetitionCard({
     address && competition.winner.toLowerCase() === address.toLowerCase()
   );
 
-  // Check claimable status
+  // Check claimable status (including already claimed check)
   const canClaimWinner = Boolean(
-    isWinner && isFinalized && calculatedPrizes.winnerPrize > 0n
+    isWinner &&
+    isFinalized &&
+    calculatedPrizes.winnerPrize > 0n &&
+    !hasClaimedWinner
   );
   const canClaimParticipant = Boolean(
     !isWinner &&
       isFinalized &&
       calculatedPrizes.participantPrize > 0n &&
-      competition.winnerDeclared
+      competition.winnerDeclared &&
+      !hasClaimedParticipant
   );
   const canClaimRefund = Boolean(
-    isFinalized && calculatedPrizes.refundAmount > 0n
+    isFinalized &&
+    calculatedPrizes.refundAmount > 0n &&
+    !hasClaimedRefund
+  );
+
+  // Check if prize exists but already claimed
+  const winnerAlreadyClaimed = Boolean(
+    isWinner && isFinalized && calculatedPrizes.winnerPrize > 0n && hasClaimedWinner
+  );
+  const participantAlreadyClaimed = Boolean(
+    !isWinner &&
+      isFinalized &&
+      calculatedPrizes.participantPrize > 0n &&
+      competition.winnerDeclared &&
+      hasClaimedParticipant
+  );
+  const refundAlreadyClaimed = Boolean(
+    isFinalized && calculatedPrizes.refundAmount > 0n && hasClaimedRefund
   );
   const isCancelled = Boolean(
     isFinalized &&
@@ -229,37 +268,37 @@ export function UserCompetitionCard({
             {isFinalized && (
               <>
                 {/* Winner Prize - Only show for winners */}
-                {isWinner && (
+                {isWinner && (canClaimWinner || winnerAlreadyClaimed) && (
                   <ClaimButton
                     enabled={canClaimWinner}
                     href={`/miniapps/competition/${competitionId.toString()}`}
                     amount={calculatedPrizes.winnerPrize}
                     label="Claim Winner Prize"
-                    disabledText="Winner Prize (Not finalized)"
+                    disabledText={winnerAlreadyClaimed ? "Already Claimed" : "Winner Prize (Not finalized)"}
                     variant="winner"
                   />
                 )}
 
                 {/* Participant Prize - Only show for non-winners when winner exists */}
-                {!isWinner && competition.winnerDeclared && (
+                {!isWinner && competition.winnerDeclared && (canClaimParticipant || participantAlreadyClaimed) && (
                   <ClaimButton
                     enabled={canClaimParticipant}
                     href={`/miniapps/competition/${competitionId.toString()}`}
                     amount={calculatedPrizes.participantPrize}
                     label="Claim Participant Prize"
-                    disabledText="Participant Prize (Not available)"
+                    disabledText={participantAlreadyClaimed ? "Already Claimed" : "Participant Prize (Not available)"}
                     variant="participant"
                   />
                 )}
 
                 {/* Refund - Only show when cancelled (no winner) */}
-                {!competition.winnerDeclared && isCancelled && (
+                {!competition.winnerDeclared && isCancelled && (canClaimRefund || refundAlreadyClaimed) && (
                   <ClaimButton
                     enabled={canClaimRefund}
                     href={`/miniapps/competition/${competitionId.toString()}`}
                     amount={calculatedPrizes.refundAmount}
                     label="Claim Refund"
-                    disabledText="Refund (Already claimed)"
+                    disabledText={refundAlreadyClaimed ? "Already Claimed" : "Refund (Not available)"}
                     variant="refund"
                   />
                 )}
