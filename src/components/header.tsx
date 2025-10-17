@@ -129,7 +129,7 @@ export function Header() {
                   href="/admin"
                   className={`
                     flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-yellow-600
-                    ${pathname === "/admin" ? "text-yellow-600" : "!text-muted-foreground"}
+                    ${pathname === "/admin" ? "text-yellow-600" : "!text-muted-foreground"} !text-black/50
                   `}
                 >
                   <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -160,7 +160,7 @@ export function Header() {
                 href={item.href}
                 className={`
                   flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-primary !text-black/50
-                  ${isActive ? "text-primary" : "text-muted-foreground"}
+                  ${isActive ? "text-primary" : "text-muted-foreground"} !text-black/50
                 `}
               >
                 <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -175,7 +175,7 @@ export function Header() {
               href="/admin"
               className={`
                 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-colors hover:text-yellow-600 !text-black/50
-                ${pathname === "/admin" ? "text-yellow-600" : "text-muted-foreground"}
+                ${pathname === "/admin" ? "text-yellow-600" : "text-muted-foreground"} !text-black/50
               `}
             >
               <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
