@@ -11,6 +11,7 @@ import { geoChallenge_implementation_ABI } from '@/abi'
 import { CONTRACT_ADDRESSES } from '@/lib/contractList'
 import { sdk } from '@farcaster/miniapp-sdk'
 import type { BatchCall } from '@/lib/farcaster'
+import { useState, useEffect } from 'react'
 
 /**
  * Ensure SDK is ready before transaction
@@ -30,7 +31,7 @@ async function ensureSDKReady(): Promise<void> {
  */
 export function useBuyTicket() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const { writeContract, data: hash, isPending, error: writeError, reset } = useWriteContract()
   const {
     isLoading: isConfirming,
     isSuccess,
@@ -42,10 +43,35 @@ export function useBuyTicket() {
     }
   })
 
+  // Timeout state management
+  const [timeoutError, setTimeoutError] = useState<string | null>(null)
+
+  // Timeout detection (60s)
+  // NOTE: This shows UI error only - does NOT cancel the blockchain transaction
+  // The transaction may still succeed after timeout
+  useEffect(() => {
+    if (!isPending && !isConfirming) return
+
+    const timer = setTimeout(() => {
+      setTimeoutError('Transaction timeout. Please try again.')
+    }, 60000)
+
+    return () => clearTimeout(timer)
+  }, [isPending, isConfirming])
+
+  // Reset timeout on success/error
+  useEffect(() => {
+    if (isSuccess || writeError || receiptError) {
+      setTimeoutError(null)
+    }
+  }, [isSuccess, writeError, receiptError])
+
   const buyTicket = async (competitionId: bigint, ticketPrice: bigint) => {
     if (!address) {
       throw new Error('Please connect your wallet')
     }
+
+    setTimeoutError(null) // Reset on new attempt
 
     // Ensure SDK is ready in Farcaster context
     await ensureSDKReady()
@@ -64,7 +90,8 @@ export function useBuyTicket() {
     isPending,
     isConfirming,
     isSuccess,
-    error: writeError || receiptError,
+    error: writeError || receiptError || (timeoutError ? new Error(timeoutError) : null),
+    retry: reset, // Use wagmi's built-in reset
     hash,
   }
 }
@@ -75,7 +102,7 @@ export function useBuyTicket() {
  */
 export function useClaimPrize() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const { writeContract, data: hash, isPending, error: writeError, reset } = useWriteContract()
   const {
     isLoading: isConfirming,
     isSuccess,
@@ -87,10 +114,35 @@ export function useClaimPrize() {
     }
   })
 
+  // Timeout state management
+  const [timeoutError, setTimeoutError] = useState<string | null>(null)
+
+  // Timeout detection (60s)
+  // NOTE: This shows UI error only - does NOT cancel the blockchain transaction
+  // The transaction may still succeed after timeout
+  useEffect(() => {
+    if (!isPending && !isConfirming) return
+
+    const timer = setTimeout(() => {
+      setTimeoutError('Transaction timeout. Please try again.')
+    }, 60000)
+
+    return () => clearTimeout(timer)
+  }, [isPending, isConfirming])
+
+  // Reset timeout on success/error
+  useEffect(() => {
+    if (isSuccess || writeError || receiptError) {
+      setTimeoutError(null)
+    }
+  }, [isSuccess, writeError, receiptError])
+
   const claimPrize = async (competitionId: bigint) => {
     if (!address) {
       throw new Error('Please connect your wallet')
     }
+
+    setTimeoutError(null) // Reset on new attempt
 
     // Ensure SDK is ready in Farcaster context
     await ensureSDKReady()
@@ -108,7 +160,8 @@ export function useClaimPrize() {
     isPending,
     isConfirming,
     isSuccess,
-    error: writeError || receiptError,
+    error: writeError || receiptError || (timeoutError ? new Error(timeoutError) : null),
+    retry: reset, // Use wagmi's built-in reset
     hash,
   }
 }
@@ -119,7 +172,7 @@ export function useClaimPrize() {
  */
 export function useClaimParticipantPrize() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const { writeContract, data: hash, isPending, error: writeError, reset } = useWriteContract()
   const {
     isLoading: isConfirming,
     isSuccess,
@@ -131,10 +184,35 @@ export function useClaimParticipantPrize() {
     }
   })
 
+  // Timeout state management
+  const [timeoutError, setTimeoutError] = useState<string | null>(null)
+
+  // Timeout detection (60s)
+  // NOTE: This shows UI error only - does NOT cancel the blockchain transaction
+  // The transaction may still succeed after timeout
+  useEffect(() => {
+    if (!isPending && !isConfirming) return
+
+    const timer = setTimeout(() => {
+      setTimeoutError('Transaction timeout. Please try again.')
+    }, 60000)
+
+    return () => clearTimeout(timer)
+  }, [isPending, isConfirming])
+
+  // Reset timeout on success/error
+  useEffect(() => {
+    if (isSuccess || writeError || receiptError) {
+      setTimeoutError(null)
+    }
+  }, [isSuccess, writeError, receiptError])
+
   const claimParticipantPrize = async (competitionId: bigint) => {
     if (!address) {
       throw new Error('Please connect your wallet')
     }
+
+    setTimeoutError(null) // Reset on new attempt
 
     // Ensure SDK is ready in Farcaster context
     await ensureSDKReady()
@@ -152,7 +230,8 @@ export function useClaimParticipantPrize() {
     isPending,
     isConfirming,
     isSuccess,
-    error: writeError || receiptError,
+    error: writeError || receiptError || (timeoutError ? new Error(timeoutError) : null),
+    retry: reset, // Use wagmi's built-in reset
     hash,
   }
 }
@@ -163,7 +242,7 @@ export function useClaimParticipantPrize() {
  */
 export function useClaimRefund() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const { writeContract, data: hash, isPending, error: writeError, reset } = useWriteContract()
   const {
     isLoading: isConfirming,
     isSuccess,
@@ -175,10 +254,35 @@ export function useClaimRefund() {
     }
   })
 
+  // Timeout state management
+  const [timeoutError, setTimeoutError] = useState<string | null>(null)
+
+  // Timeout detection (60s)
+  // NOTE: This shows UI error only - does NOT cancel the blockchain transaction
+  // The transaction may still succeed after timeout
+  useEffect(() => {
+    if (!isPending && !isConfirming) return
+
+    const timer = setTimeout(() => {
+      setTimeoutError('Transaction timeout. Please try again.')
+    }, 60000)
+
+    return () => clearTimeout(timer)
+  }, [isPending, isConfirming])
+
+  // Reset timeout on success/error
+  useEffect(() => {
+    if (isSuccess || writeError || receiptError) {
+      setTimeoutError(null)
+    }
+  }, [isSuccess, writeError, receiptError])
+
   const claimRefund = async (competitionId: bigint) => {
     if (!address) {
       throw new Error('Please connect your wallet')
     }
+
+    setTimeoutError(null) // Reset on new attempt
 
     // Ensure SDK is ready in Farcaster context
     await ensureSDKReady()
@@ -196,7 +300,8 @@ export function useClaimRefund() {
     isPending,
     isConfirming,
     isSuccess,
-    error: writeError || receiptError,
+    error: writeError || receiptError || (timeoutError ? new Error(timeoutError) : null),
+    retry: reset, // Use wagmi's built-in reset
     hash,
   }
 }
@@ -207,7 +312,7 @@ export function useClaimRefund() {
  */
 export function useWithdrawBalance() {
   const { address } = useAccount()
-  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract()
+  const { writeContract, data: hash, isPending, error: writeError, reset } = useWriteContract()
   const {
     isLoading: isConfirming,
     isSuccess,
@@ -219,10 +324,35 @@ export function useWithdrawBalance() {
     }
   })
 
+  // Timeout state management
+  const [timeoutError, setTimeoutError] = useState<string | null>(null)
+
+  // Timeout detection (60s)
+  // NOTE: This shows UI error only - does NOT cancel the blockchain transaction
+  // The transaction may still succeed after timeout
+  useEffect(() => {
+    if (!isPending && !isConfirming) return
+
+    const timer = setTimeout(() => {
+      setTimeoutError('Transaction timeout. Please try again.')
+    }, 60000)
+
+    return () => clearTimeout(timer)
+  }, [isPending, isConfirming])
+
+  // Reset timeout on success/error
+  useEffect(() => {
+    if (isSuccess || writeError || receiptError) {
+      setTimeoutError(null)
+    }
+  }, [isSuccess, writeError, receiptError])
+
   const withdrawBalance = async () => {
     if (!address) {
       throw new Error('Please connect your wallet')
     }
+
+    setTimeoutError(null) // Reset on new attempt
 
     // Ensure SDK is ready in Farcaster context
     await ensureSDKReady()
@@ -240,7 +370,8 @@ export function useWithdrawBalance() {
     isPending,
     isConfirming,
     isSuccess,
-    error: writeError || receiptError,
+    error: writeError || receiptError || (timeoutError ? new Error(timeoutError) : null),
+    retry: reset, // Use wagmi's built-in reset
     hash,
   }
 }

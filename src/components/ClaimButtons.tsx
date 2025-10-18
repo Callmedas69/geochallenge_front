@@ -35,7 +35,7 @@ export function ClaimPrizeButton({
   isFinalized,
 }: ClaimPrizeButtonProps) {
   const { address } = useAccount()
-  const { claimPrize, isPending, isConfirming, isSuccess, error } = useClaimPrize()
+  const { claimPrize, isPending, isConfirming, isSuccess, error, retry, hash } = useClaimPrize()
 
   const handleClaim = async () => {
     try {
@@ -72,6 +72,18 @@ export function ClaimPrizeButton({
           <p className="text-sm">
             ⚠️ <strong>Important:</strong> Go to <a href="/dashboard" className="underline font-bold">Your Dashboard</a> and click "Withdraw to Wallet" to receive your ETH.
           </p>
+          {hash && (
+            <p className="text-xs mt-2">
+              <a
+                href={`https://basescan.org/tx/${hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                View on BaseScan ↗
+              </a>
+            </p>
+          )}
         </AlertDescription>
       </Alert>
     )
@@ -93,6 +105,19 @@ export function ClaimPrizeButton({
             {formatEther(prizeAmount)} ETH
           </span>
         </div>
+
+        {hash && isConfirming && (
+          <div className="text-xs text-center text-muted-foreground">
+            <a
+              href={`https://basescan.org/tx/${hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              View Transaction ↗
+            </a>
+          </div>
+        )}
 
         <Button
           onClick={handleClaim}
@@ -122,10 +147,22 @@ export function ClaimPrizeButton({
 
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>
-              {error.message.includes('Already claimed')
-                ? 'Prize already claimed'
-                : 'Failed to claim prize. Please try again.'}
+            <AlertDescription className="space-y-2">
+              <p>
+                {error.message.includes('Already claimed')
+                  ? 'Prize already claimed'
+                  : error.message.includes('timeout')
+                    ? 'Transaction timeout'
+                    : 'Failed to claim prize'}
+              </p>
+              <Button
+                onClick={retry}
+                variant="outline"
+                size="sm"
+                className="w-full"
+              >
+                Try Again
+              </Button>
             </AlertDescription>
           </Alert>
         )}
@@ -153,7 +190,7 @@ export function ClaimParticipantPrizeButton({
   hasWinner,
 }: ClaimParticipantPrizeButtonProps) {
   const { address } = useAccount()
-  const { claimParticipantPrize, isPending, isConfirming, isSuccess, error } =
+  const { claimParticipantPrize, isPending, isConfirming, isSuccess, error, retry, hash } =
     useClaimParticipantPrize()
 
   const handleClaim = async () => {
@@ -188,6 +225,18 @@ export function ClaimParticipantPrizeButton({
           <p className="text-sm">
             ⚠️ <strong>Important:</strong> Go to <a href="/dashboard" className="underline font-bold">Your Dashboard</a> and click "Withdraw to Wallet" to receive your ETH.
           </p>
+          {hash && (
+            <p className="text-xs mt-2">
+              <a
+                href={`https://basescan.org/tx/${hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                View on BaseScan ↗
+              </a>
+            </p>
+          )}
         </AlertDescription>
       </Alert>
     )
@@ -213,6 +262,19 @@ export function ClaimParticipantPrizeButton({
             {formatEther(prizePerTicket)} ETH
           </span>
         </div>
+
+        {hash && isConfirming && (
+          <div className="text-xs text-center text-muted-foreground">
+            <a
+              href={`https://basescan.org/tx/${hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              View Transaction ↗
+            </a>
+          </div>
+        )}
 
         <Button
           onClick={handleClaim}
@@ -242,10 +304,22 @@ export function ClaimParticipantPrizeButton({
 
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>
-              {error.message.includes('Already claimed')
-                ? 'Prize already claimed'
-                : 'Failed to claim prize. Please try again.'}
+            <AlertDescription className="space-y-2">
+              <p>
+                {error.message.includes('Already claimed')
+                  ? 'Prize already claimed'
+                  : error.message.includes('timeout')
+                    ? 'Transaction timeout'
+                    : 'Failed to claim prize'}
+              </p>
+              <Button
+                onClick={retry}
+                variant="outline"
+                size="sm"
+                className="w-full"
+              >
+                Try Again
+              </Button>
             </AlertDescription>
           </Alert>
         )}
@@ -271,7 +345,7 @@ export function ClaimRefundButton({
   isCancelled,
 }: ClaimRefundButtonProps) {
   const { address } = useAccount()
-  const { claimRefund, isPending, isConfirming, isSuccess, error } = useClaimRefund()
+  const { claimRefund, isPending, isConfirming, isSuccess, error, retry, hash } = useClaimRefund()
 
   const handleClaim = async () => {
     try {
@@ -294,6 +368,18 @@ export function ClaimRefundButton({
           <p className="text-sm">
             ⚠️ <strong>Important:</strong> Go to <a href="/dashboard" className="underline font-bold">Your Dashboard</a> and click "Withdraw to Wallet" to receive your ETH.
           </p>
+          {hash && (
+            <p className="text-xs mt-2">
+              <a
+                href={`https://basescan.org/tx/${hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                View on BaseScan ↗
+              </a>
+            </p>
+          )}
         </AlertDescription>
       </Alert>
     )
@@ -318,6 +404,19 @@ export function ClaimRefundButton({
           </span>
         </div>
 
+        {hash && isConfirming && (
+          <div className="text-xs text-center text-muted-foreground">
+            <a
+              href={`https://basescan.org/tx/${hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              View Transaction ↗
+            </a>
+          </div>
+        )}
+
         <Button
           onClick={handleClaim}
           disabled={isPending || isConfirming}
@@ -341,10 +440,22 @@ export function ClaimRefundButton({
 
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>
-              {error.message.includes('Already claimed')
-                ? 'Refund already claimed'
-                : 'Failed to claim refund. Please try again.'}
+            <AlertDescription className="space-y-2">
+              <p>
+                {error.message.includes('Already claimed')
+                  ? 'Refund already claimed'
+                  : error.message.includes('timeout')
+                    ? 'Transaction timeout'
+                    : 'Failed to claim refund'}
+              </p>
+              <Button
+                onClick={retry}
+                variant="outline"
+                size="sm"
+                className="w-full"
+              >
+                Try Again
+              </Button>
             </AlertDescription>
           </Alert>
         )}
