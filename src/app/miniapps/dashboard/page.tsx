@@ -220,53 +220,6 @@ export default function FarcasterDashboardPage() {
                 You haven't joined any competitions yet
               </p>
 
-              {/* Debug info for troubleshooting */}
-              <details className="text-left bg-muted p-3 rounded text-xs">
-                <summary className="cursor-pointer font-semibold mb-2">
-                  🔍 Debug Info (click to expand)
-                </summary>
-                <div className="space-y-2">
-                  <p>
-                    <strong>Wallet:</strong> {address}
-                  </p>
-                  <p>
-                    <strong>Active Competitions:</strong>{" "}
-                    {dashboardData?.activeCompIds?.length || 0}
-                  </p>
-                  <p>
-                    <strong>Claimable Competitions:</strong>{" "}
-                    {dashboardData?.claimableCompIds?.length || 0}
-                  </p>
-                  <p>
-                    <strong>Total Joined:</strong>{" "}
-                    {dashboardData?.stats?.totalCompetitionsJoined?.toString() ||
-                      "0"}
-                  </p>
-                  <pre className="whitespace-pre-wrap overflow-auto max-h-48 bg-background p-2 rounded mt-2">
-                    {JSON.stringify(
-                      {
-                        activeCompIds: activeCompIds.map((id) => id.toString()),
-                        completedCompIds: completedCompIds.map((id) =>
-                          id.toString()
-                        ),
-                        stats: dashboardData?.stats
-                          ? {
-                              totalJoined:
-                                dashboardData.stats.totalCompetitionsJoined?.toString(),
-                              totalWon:
-                                dashboardData.stats.competitionsWon?.toString(),
-                              prizesWon:
-                                dashboardData.stats.totalPrizesWon?.toString(),
-                            }
-                          : null,
-                      },
-                      null,
-                      2
-                    )}
-                  </pre>
-                </div>
-              </details>
-
               <Button asChild>
                 <Link href="/miniapps/browse">Browse Competitions</Link>
               </Button>
