@@ -70,7 +70,7 @@ export function HowItWorksDrawer({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 space-y-4">
+        <div className="mt-6 space-y-4 px-5">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
@@ -87,22 +87,6 @@ export function HowItWorksDrawer({
               </div>
             );
           })}
-        </div>
-
-        <div className="mt-6 p-3 bg-muted rounded-lg">
-          <p className="text-xs text-muted-foreground">
-            <strong>Note:</strong> Card collections are verified from{" "}
-            <a
-              href="https://vibechain.com/market"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline"
-            >
-              VibeMarket
-            </a>
-            . Make sure you hold all required cards in your wallet before
-            submitting proof.
-          </p>
         </div>
       </SheetContent>
     </Sheet>

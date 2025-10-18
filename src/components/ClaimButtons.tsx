@@ -15,8 +15,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { formatEther } from 'viem'
-import { useAccount } from 'wagmi'
+import { useAccount, useReadContract } from 'wagmi'
 import { CheckCircle, Loader2, Trophy, Users, DollarSign } from 'lucide-react'
+import { geoChallenge_implementation_ABI } from '@/abi'
+import { CONTRACT_ADDRESSES } from '@/lib/contractList'
 
 /**
  * Claim Winner Prize Button
@@ -36,6 +38,21 @@ export function ClaimPrizeButton({
 }: ClaimPrizeButtonProps) {
   const { address } = useAccount()
   const { claimPrize, isPending, isConfirming, isSuccess, error, retry, hash } = useClaimPrize()
+
+  // Check on-chain claim status
+  const {
+    data: isClaimedOnChain,
+    isLoading: isCheckingClaim,
+    isError: claimCheckError,
+  } = useReadContract({
+    address: CONTRACT_ADDRESSES.GeoChallenge,
+    abi: geoChallenge_implementation_ABI,
+    functionName: 'winnerPrizeClaimed',
+    args: [competitionId],
+    query: {
+      enabled: !!address && isWinner && isFinalized,
+    },
+  })
 
   const handleClaim = async () => {
     try {
@@ -59,6 +76,25 @@ export function ClaimPrizeButton({
         <AlertDescription>
           Competition must be finalized before claiming prize
         </AlertDescription>
+      </Alert>
+    )
+  }
+
+  // Handle query error
+  if (claimCheckError) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>Unable to verify claim status. Please refresh.</AlertDescription>
+      </Alert>
+    )
+  }
+
+  // Show "Already Claimed" if claimed on-chain (but not during active transaction)
+  if (isClaimedOnChain && !isPending && !isConfirming) {
+    return (
+      <Alert className="border-gray-500 bg-gray-50">
+        <CheckCircle className="h-4 w-4 text-gray-600" />
+        <AlertDescription className="text-gray-800">Prize already claimed</AlertDescription>
       </Alert>
     )
   }
@@ -121,7 +157,7 @@ export function ClaimPrizeButton({
 
         <Button
           onClick={handleClaim}
-          disabled={isPending || isConfirming}
+          disabled={isPending || isConfirming || isCheckingClaim}
           className="w-full bg-yellow-600 hover:bg-yellow-700"
           size="lg"
         >
@@ -193,6 +229,21 @@ export function ClaimParticipantPrizeButton({
   const { claimParticipantPrize, isPending, isConfirming, isSuccess, error, retry, hash } =
     useClaimParticipantPrize()
 
+  // Check on-chain claim status
+  const {
+    data: isClaimedOnChain,
+    isLoading: isCheckingClaim,
+    isError: claimCheckError,
+  } = useReadContract({
+    address: CONTRACT_ADDRESSES.GeoChallenge,
+    abi: geoChallenge_implementation_ABI,
+    functionName: 'participantPrizeClaimed',
+    args: [competitionId, address!],
+    query: {
+      enabled: !!address && hasTicket && isFinalized,
+    },
+  })
+
   const handleClaim = async () => {
     try {
       await claimParticipantPrize(competitionId)
@@ -211,6 +262,27 @@ export function ClaimParticipantPrizeButton({
       <Alert>
         <AlertDescription>
           Competition must be finalized before claiming participant prize
+        </AlertDescription>
+      </Alert>
+    )
+  }
+
+  // Handle query error
+  if (claimCheckError) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>Unable to verify claim status. Please refresh.</AlertDescription>
+      </Alert>
+    )
+  }
+
+  // Show "Already Claimed" if claimed on-chain (but not during active transaction)
+  if (isClaimedOnChain && !isPending && !isConfirming) {
+    return (
+      <Alert className="border-gray-500 bg-gray-50">
+        <CheckCircle className="h-4 w-4 text-gray-600" />
+        <AlertDescription className="text-gray-800">
+          Participant prize already claimed
         </AlertDescription>
       </Alert>
     )
@@ -278,7 +350,7 @@ export function ClaimParticipantPrizeButton({
 
         <Button
           onClick={handleClaim}
-          disabled={isPending || isConfirming}
+          disabled={isPending || isConfirming || isCheckingClaim}
           className="w-full bg-blue-600 hover:bg-blue-700"
           size="lg"
         >
@@ -347,6 +419,21 @@ export function ClaimRefundButton({
   const { address } = useAccount()
   const { claimRefund, isPending, isConfirming, isSuccess, error, retry, hash } = useClaimRefund()
 
+  // Check on-chain claim status
+  const {
+    data: isClaimedOnChain,
+    isLoading: isCheckingClaim,
+    isError: claimCheckError,
+  } = useReadContract({
+    address: CONTRACT_ADDRESSES.GeoChallenge,
+    abi: geoChallenge_implementation_ABI,
+    functionName: 'refundsClaimed',
+    args: [competitionId, address!],
+    query: {
+      enabled: !!address && hasTicket && isCancelled,
+    },
+  })
+
   const handleClaim = async () => {
     try {
       await claimRefund(competitionId)
@@ -357,6 +444,25 @@ export function ClaimRefundButton({
 
   if (!address || !hasTicket || !isCancelled) {
     return null
+  }
+
+  // Handle query error
+  if (claimCheckError) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>Unable to verify claim status. Please refresh.</AlertDescription>
+      </Alert>
+    )
+  }
+
+  // Show "Already Claimed" if claimed on-chain (but not during active transaction)
+  if (isClaimedOnChain && !isPending && !isConfirming) {
+    return (
+      <Alert className="border-gray-500 bg-gray-50">
+        <CheckCircle className="h-4 w-4 text-gray-600" />
+        <AlertDescription className="text-gray-800">Refund already claimed</AlertDescription>
+      </Alert>
+    )
   }
 
   if (isSuccess) {
@@ -419,7 +525,7 @@ export function ClaimRefundButton({
 
         <Button
           onClick={handleClaim}
-          disabled={isPending || isConfirming}
+          disabled={isPending || isConfirming || isCheckingClaim}
           className="w-full bg-red-600 hover:bg-red-700"
           size="lg"
         >
