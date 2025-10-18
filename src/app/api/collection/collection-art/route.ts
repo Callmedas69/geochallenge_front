@@ -83,8 +83,6 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    console.log(`[Collection Art] Found ${contestedCards.length} cards from contested tiers [${rarityTiers.join(', ')}] for ${contractAddress}`);
-
     return NextResponse.json({
       success: true,
       cards: contestedCards,

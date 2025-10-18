@@ -18,8 +18,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log('[Ticket API] Fetching metadata for competition:', competitionId, 'user:', userAddress);
-
     // Create viem client to read from GeoChallenge contract
     const client = createPublicClient({
       chain: baseSepolia,
@@ -34,8 +32,6 @@ export async function GET(request: NextRequest) {
       args: [BigInt(competitionId)],
     });
 
-    console.log('[Ticket API] Contract URI:', metadataUri);
-
     if (!metadataUri || typeof metadataUri !== 'string') {
       throw new Error('Invalid metadata URI from contract');
     }
@@ -45,8 +41,6 @@ export async function GET(request: NextRequest) {
       const base64Data = metadataUri.replace('data:application/json;base64,', '');
       const jsonString = Buffer.from(base64Data, 'base64').toString('utf-8');
       const metadata = JSON.parse(jsonString);
-
-      console.log('[Ticket API] Parsed data URI metadata:', metadata);
 
       return NextResponse.json({
         name: metadata.name || 'Competition Ticket',
@@ -64,8 +58,6 @@ export async function GET(request: NextRequest) {
       fetchUrl = metadataUri.replace('ipfs://', 'https://ipfs.io/ipfs/');
     }
 
-    console.log('[Ticket API] Fetching metadata from:', fetchUrl);
-
     const metadataResponse = await fetch(fetchUrl);
 
     if (!metadataResponse.ok) {
@@ -74,7 +66,6 @@ export async function GET(request: NextRequest) {
     }
 
     const metadata = await metadataResponse.json();
-    console.log('[Ticket API] Fetched metadata:', metadata);
 
     // Return formatted metadata
     return NextResponse.json({

@@ -112,7 +112,6 @@ export function useTransactionFeedback() {
 
     // Don't show toast for user rejections (less annoying)
     if (isUserRejection(error)) {
-      console.log('User rejected transaction')
       options?.onError?.()
       return
     }

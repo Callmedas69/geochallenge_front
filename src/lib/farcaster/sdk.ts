@@ -22,7 +22,6 @@ export async function initFarcasterSDK(): Promise<boolean> {
     setTimeout(async () => {
       try {
         await farcasterSDK.actions.ready();
-        console.log('✅ Farcaster SDK: Ready');
         resolve(true);
       } catch (error) {
         console.warn('⚠️ Farcaster SDK: Not in miniApp context', error);

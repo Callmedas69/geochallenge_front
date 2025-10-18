@@ -70,7 +70,7 @@ export function Footer() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="text-muted-foreground hover:text-primary transition-colors !text-black/50"
+                    className="hover:text-primary transition-colors !text-black/50"
                     aria-label={social.label}
                   >
                     <Icon className="w-5 h-5" />
@@ -81,21 +81,21 @@ export function Footer() {
           </div>
 
           {/* Product Links */}
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <h4 className="text-sm font-semibold">Links</h4>
             <ul className="space-y-2">
               {FOOTER_LINKS.geoLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors !text-black/50"
+                    className="text-sm hover:text-primary transition-colors !text-black/50"
                   >
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           {/* Resources Links */}
           {/* <div className="space-y-4">

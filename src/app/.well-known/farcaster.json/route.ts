@@ -36,7 +36,7 @@ export async function GET() {
       ogDescription:
         "Complete your GeoArt collection and compete for prizes on Base",
       ogImageUrl: `${URL}/og.png`, 
-      noindex: true,
+      noindex: false,
     },
   };
 

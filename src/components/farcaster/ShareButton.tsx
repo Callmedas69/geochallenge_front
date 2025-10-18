@@ -62,11 +62,9 @@ export function ShareButton({
         });
 
         if (result?.cast) {
-          console.log("✅ Cast created:", result.cast.hash);
+          return;
         }
-        return;
       } catch (err) {
-        console.log("SDK composeCast unavailable, falling back...");
         // Fall through to next method
       }
     }
@@ -82,7 +80,6 @@ export function ShareButton({
         return;
       } catch (err) {
         // User cancelled or share failed, fall through to Warpcast
-        console.log("Native share cancelled or unavailable");
       }
     }
 

@@ -16,7 +16,10 @@ import {
   UnclaimedPrizesMobile,
 } from "@/components/farcaster";
 import { WithdrawBalance } from "@/components/WithdrawBalance";
-import { useUserDashboardData, useUserCompetitionIds } from "@/hooks/useUserDashboard";
+import {
+  useUserDashboardData,
+  useUserCompetitionIds,
+} from "@/hooks/useUserDashboard";
 import {
   useClaimableBalance,
   useCompetitionCount,
@@ -57,15 +60,6 @@ export default function FarcasterDashboardPage() {
   // Get all competition IDs for permanent history record
   const { data: allCompetitionIds } = useUserCompetitionIds(address);
 
-  // DEBUG: Log dashboard data
-  console.log("🔍 Dashboard Debug:", {
-    address,
-    dashboardData,
-    isLoading,
-    error: dashboardError,
-    balanceError,
-  });
-
   // Extract competition IDs from QueryManager
   const activeCompIds = useMemo(
     () => dashboardData?.activeCompIds || [],
@@ -74,11 +68,13 @@ export default function FarcasterDashboardPage() {
 
   // Calculate completed competitions (permanent record, not just claimable)
   const completedCompIds = useMemo(() => {
-    if (!allCompetitionIds || !dashboardData?.activeCompIds) return []
+    if (!allCompetitionIds || !dashboardData?.activeCompIds) return [];
 
     // Filter out active competitions to get completed ones
-    const activeSet = new Set(dashboardData.activeCompIds.map(id => id.toString()))
-    return allCompetitionIds.filter(id => !activeSet.has(id.toString()))
+    const activeSet = new Set(
+      dashboardData.activeCompIds.map((id) => id.toString())
+    );
+    return allCompetitionIds.filter((id) => !activeSet.has(id.toString()));
   }, [allCompetitionIds, dashboardData?.activeCompIds]);
 
   // Merge all competitions and sort by latest (descending ID)
@@ -88,17 +84,22 @@ export default function FarcasterDashboardPage() {
     const allIds = [...active, ...completed];
 
     // Remove duplicates and sort by competition ID descending (latest first)
-    const uniqueIds = Array.from(new Set(allIds.map(id => id.toString()))).map(id => BigInt(id));
+    const uniqueIds = Array.from(
+      new Set(allIds.map((id) => id.toString()))
+    ).map((id) => BigInt(id));
     return uniqueIds.sort((a, b) => Number(b - a));
   }, [activeCompIds, completedCompIds]);
 
   // Create lookup sets for quick status checks
   const activeSet = useMemo(
-    () => new Set(activeCompIds.map(id => id.toString())),
+    () => new Set(activeCompIds.map((id) => id.toString())),
     [activeCompIds]
   );
   const claimableSet = useMemo(
-    () => new Set((dashboardData?.claimableCompIds || []).map(id => id.toString())),
+    () =>
+      new Set(
+        (dashboardData?.claimableCompIds || []).map((id) => id.toString())
+      ),
     [dashboardData?.claimableCompIds]
   );
 
@@ -173,8 +174,8 @@ export default function FarcasterDashboardPage() {
 
           <Button
             onClick={() => {
-              refetchDashboard()
-              refetchBalance()
+              refetchDashboard();
+              refetchBalance();
             }}
             variant="outline"
             className="w-full"
@@ -201,9 +202,7 @@ export default function FarcasterDashboardPage() {
           </div>
 
           {/* Stats */}
-          <DashboardQuickStats
-            stats={dashboardData?.stats}
-          />
+          <DashboardQuickStats stats={dashboardData?.stats} />
 
           {/* Withdraw Balance - Mobile Optimized */}
           <WithdrawBalance />
@@ -240,18 +239,26 @@ export default function FarcasterDashboardPage() {
                   </p>
                   <p>
                     <strong>Total Joined:</strong>{" "}
-                    {dashboardData?.stats?.totalCompetitionsJoined?.toString() || "0"}
+                    {dashboardData?.stats?.totalCompetitionsJoined?.toString() ||
+                      "0"}
                   </p>
                   <pre className="whitespace-pre-wrap overflow-auto max-h-48 bg-background p-2 rounded mt-2">
                     {JSON.stringify(
                       {
-                        activeCompIds: activeCompIds.map(id => id.toString()),
-                        completedCompIds: completedCompIds.map(id => id.toString()),
-                        stats: dashboardData?.stats ? {
-                          totalJoined: dashboardData.stats.totalCompetitionsJoined?.toString(),
-                          totalWon: dashboardData.stats.competitionsWon?.toString(),
-                          prizesWon: dashboardData.stats.totalPrizesWon?.toString(),
-                        } : null,
+                        activeCompIds: activeCompIds.map((id) => id.toString()),
+                        completedCompIds: completedCompIds.map((id) =>
+                          id.toString()
+                        ),
+                        stats: dashboardData?.stats
+                          ? {
+                              totalJoined:
+                                dashboardData.stats.totalCompetitionsJoined?.toString(),
+                              totalWon:
+                                dashboardData.stats.competitionsWon?.toString(),
+                              prizesWon:
+                                dashboardData.stats.totalPrizesWon?.toString(),
+                            }
+                          : null,
                       },
                       null,
                       2
@@ -286,8 +293,8 @@ export default function FarcasterDashboardPage() {
             variant="ghost"
             size="sm"
             onClick={() => {
-              refetchDashboard()
-              refetchBalance()
+              refetchDashboard();
+              refetchBalance();
             }}
             disabled={isLoading}
           >
@@ -296,9 +303,7 @@ export default function FarcasterDashboardPage() {
         </div>
 
         {/* Stats */}
-        <DashboardQuickStats
-          stats={dashboardData?.stats}
-        />
+        <DashboardQuickStats stats={dashboardData?.stats} />
 
         {/* Withdraw Balance - Mobile Optimized */}
         <WithdrawBalance />
@@ -324,75 +329,6 @@ export default function FarcasterDashboardPage() {
             />
           ))}
         </div>
-
-        {/* Debug Panel - Shows raw contract data for troubleshooting */}
-        <details className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-          <summary className="cursor-pointer font-semibold text-sm text-orange-900 mb-2">
-            🔍 Debug Information (click to expand)
-          </summary>
-          <div className="space-y-2 text-xs mt-2">
-            <div>
-              <strong>Wallet:</strong> {address}
-            </div>
-            <div>
-              <strong>Stats from Contract:</strong>
-            </div>
-            <div className="pl-4 space-y-1">
-              <div>
-                • Total Joined: {dashboardData?.stats?.totalCompetitionsJoined?.toString() || "0"}
-              </div>
-              <div>
-                • Competitions Won: {dashboardData?.stats?.competitionsWon?.toString() || "0"}
-              </div>
-              <div>
-                • Total Prizes: {dashboardData?.stats?.totalPrizesWon?.toString() || "0"}
-              </div>
-            </div>
-            <div>
-              <strong>Active Competitions:</strong> {activeCompIds?.length || 0} competitions
-            </div>
-            <div className="pl-4">
-              {activeCompIds?.length ? (
-                activeCompIds.map((id) => (
-                  <div key={id.toString()}>• Competition #{id.toString()}</div>
-                ))
-              ) : (
-                <div className="text-muted-foreground">None</div>
-              )}
-            </div>
-            <div>
-              <strong>Claimable Competitions:</strong> {completedCompIds?.length || 0} competitions
-            </div>
-            <div className="pl-4">
-              {completedCompIds?.length ? (
-                completedCompIds.map((id) => (
-                  <div key={id.toString()}>• Competition #{id.toString()}</div>
-                ))
-              ) : (
-                <div className="text-muted-foreground">None</div>
-              )}
-            </div>
-            <div className="mt-2">
-              <strong>Full Contract Response:</strong>
-            </div>
-            <pre className="mt-1 p-2 bg-white rounded overflow-auto text-xs max-h-48 border border-orange-100">
-              {JSON.stringify(
-                {
-                  stats: dashboardData?.stats ? {
-                    totalCompetitionsJoined: dashboardData.stats.totalCompetitionsJoined?.toString(),
-                    competitionsWon: dashboardData.stats.competitionsWon?.toString(),
-                    totalPrizesWon: dashboardData.stats.totalPrizesWon?.toString(),
-                  } : null,
-                  activeCompIds: activeCompIds?.map(id => id.toString()),
-                  claimableCompIds: completedCompIds?.map(id => id.toString()),
-                  totalCompetitions: dashboardData?.totalCompetitions?.toString(),
-                },
-                null,
-                2
-              )}
-            </pre>
-          </div>
-        </details>
       </div>
     </>
   );

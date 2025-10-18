@@ -119,8 +119,8 @@ export function UserDashboard() {
             variant="ghost"
             size="sm"
             onClick={() => {
-              refetchDashboard()
-              refetchBalance()
+              refetchDashboard();
+              refetchBalance();
             }}
             disabled={isDashboardLoading}
           >
@@ -141,8 +141,8 @@ export function UserDashboard() {
 
         <Button
           onClick={() => {
-            refetchDashboard()
-            refetchBalance()
+            refetchDashboard();
+            refetchBalance();
           }}
           variant="outline"
           className="w-full"
@@ -201,8 +201,8 @@ export function UserDashboard() {
           variant="ghost"
           size="sm"
           onClick={() => {
-            refetchDashboard()
-            refetchBalance()
+            refetchDashboard();
+            refetchBalance();
           }}
           disabled={isDashboardLoading}
         >
@@ -242,95 +242,6 @@ export function UserDashboard() {
         refetchDashboard={refetchDashboard}
         refetchBalance={refetchBalance}
       />
-
-      {/* Debug Panel - Shows raw contract data for troubleshooting */}
-      <Card className="border-orange-200 bg-orange-50">
-        <CardHeader>
-          <CardTitle className="text-sm">🔍 Debug Information</CardTitle>
-          <CardDescription className="text-xs">
-            Raw contract data - useful for troubleshooting display issues
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2 text-xs">
-          <div>
-            <strong>Wallet:</strong> {address}
-          </div>
-          <div>
-            <strong>Stats from Contract:</strong>
-          </div>
-          <div className="pl-4 space-y-1">
-            <div>
-              • Total Joined:{" "}
-              {dashboardData?.stats?.totalCompetitionsJoined?.toString() || "0"}
-            </div>
-            <div>
-              • Competitions Won:{" "}
-              {dashboardData?.stats?.competitionsWon?.toString() || "0"}
-            </div>
-            <div>
-              • Total Prizes:{" "}
-              {dashboardData?.stats?.totalPrizesWon?.toString() || "0"}
-            </div>
-          </div>
-          <div>
-            <strong>Active Competitions:</strong>{" "}
-            {dashboardData?.activeCompIds?.length || 0} competitions
-          </div>
-          <div className="pl-4">
-            {dashboardData?.activeCompIds?.length ? (
-              dashboardData.activeCompIds.map((id) => (
-                <div key={id.toString()}>• Competition #{id.toString()}</div>
-              ))
-            ) : (
-              <div className="text-muted-foreground">None</div>
-            )}
-          </div>
-          <div>
-            <strong>Claimable Competitions:</strong>{" "}
-            {dashboardData?.claimableCompIds?.length || 0} competitions
-          </div>
-          <div className="pl-4">
-            {dashboardData?.claimableCompIds?.length ? (
-              dashboardData.claimableCompIds.map((id) => (
-                <div key={id.toString()}>• Competition #{id.toString()}</div>
-              ))
-            ) : (
-              <div className="text-muted-foreground">None</div>
-            )}
-          </div>
-          <details className="mt-2">
-            <summary className="cursor-pointer font-semibold">
-              Full Contract Response
-            </summary>
-            <pre className="mt-2 p-2 bg-white rounded overflow-auto text-xs max-h-96">
-              {JSON.stringify(
-                {
-                  stats: dashboardData?.stats
-                    ? {
-                        totalCompetitionsJoined:
-                          dashboardData.stats.totalCompetitionsJoined?.toString(),
-                        competitionsWon:
-                          dashboardData.stats.competitionsWon?.toString(),
-                        totalPrizesWon:
-                          dashboardData.stats.totalPrizesWon?.toString(),
-                      }
-                    : null,
-                  activeCompIds: dashboardData?.activeCompIds?.map((id) =>
-                    id.toString()
-                  ),
-                  claimableCompIds: dashboardData?.claimableCompIds?.map((id) =>
-                    id.toString()
-                  ),
-                  totalCompetitions:
-                    dashboardData?.totalCompetitions?.toString(),
-                },
-                null,
-                2
-              )}
-            </pre>
-          </details>
-        </CardContent>
-      </Card>
     </div>
   );
 }

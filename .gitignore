@@ -34,6 +34,7 @@ yarn-error.log*
 .env*
 docs/*
 smartContract/*
+CLAUDE.md
 scripts/*
 
 # vercel

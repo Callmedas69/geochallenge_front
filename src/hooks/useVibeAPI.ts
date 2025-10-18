@@ -294,14 +294,12 @@ export function useTicketMetadata(
   useEffect(() => {
     const fetchMetadata = async () => {
       if (!competitionId || !userAddress) {
-        console.log('[useTicketMetadata] Missing params:', { competitionId, userAddress });
         setLoading(false);
         return;
       }
 
       try {
         setLoading(true);
-        console.log('[useTicketMetadata] Fetching for competition:', competitionId.toString());
 
         // Fetch from API that calls GeoChallenge.uri(tokenId)
         const response = await fetch(
@@ -315,8 +313,6 @@ export function useTicketMetadata(
         }
 
         const data = await response.json();
-        console.log('[useTicketMetadata] Success:', data);
-
         setMetadata(data);
         setError(null);
       } catch (err) {
