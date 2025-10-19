@@ -13,13 +13,13 @@
  */
 export const DECIMALS = {
   // Farcaster miniApps (mobile) - fewer decimals for compact display
-  FARCASTER: 4,
+  FARCASTER: 5,
 
   // Main website (desktop) - more precision available
-  MAIN: 4,
+  MAIN: 5,
 
   // Admin dashboard - highest precision for accounting
-  ADMIN: 4,
+  ADMIN: 5,
 
   // Percentages
   PERCENTAGE: 2,
