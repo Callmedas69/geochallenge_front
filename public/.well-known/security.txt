@@ -1,0 +1,5 @@
+# security.txt for GeoChallenge
+Contact: mailto:0xdas@proton.me
+Contact: https://twitter.com/0xdasx
+Preferred-Languages: en
+Canonical: https://challenge.geoart.studio/.well-known/security.txt

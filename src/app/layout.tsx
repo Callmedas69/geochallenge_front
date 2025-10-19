@@ -38,6 +38,18 @@ export async function generateMetadata(): Promise<Metadata> {
           },
         },
       }),
+
+      // ✅ Safe-site metadata
+      "geoart-verification": "official-geochallenge",
+      "wallet-safety": "verified-base-dapp",
+      "og:site_name": "GeoChallenge",
+      "og:url": `${URL}`,
+      "og:type": "website",
+      "twitter:card": "summary_large_image",
+      "twitter:creator": "@0xd_eth",
+      "twitter:image": `${URL}/hero.png`,
+      "application-name": "GeoChallenge",
+      "theme-color": "#0a0a0a",
     },
   };
 }
