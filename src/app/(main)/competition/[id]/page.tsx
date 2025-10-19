@@ -52,6 +52,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
+import { ShareIcons } from "@/components/web/ShareIcons";
 import { formatEther } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 import {
@@ -495,7 +496,7 @@ export default function CompetitionDetailPage({
                     <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-4">
                       {/* Column 1: Collection Image */}
                       {collectionInfo.contractInfo.packImage && (
-                        <div className="relative w-full sm:w-44 h-56 flex-shrink-0">
+                        <div className="relative w-full sm:w-44 h-64 flex-shrink-0">
                           <Image
                             src={collectionInfo.contractInfo.packImage}
                             alt={collectionInfo.contractInfo.nftName}
@@ -870,6 +871,15 @@ export default function CompetitionDetailPage({
               isCancelled={isCancelled}
             />
           )}
+
+          {/* Share Competition */}
+          <div className="pt-4 border-t">
+            <ShareIcons
+              type="competition"
+              competitionId={id}
+              collectionName={metadata?.[0]}
+            />
+          </div>
         </div>
       </div>
     </div>

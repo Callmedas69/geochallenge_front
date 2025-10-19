@@ -494,7 +494,9 @@ export function FarcasterCompetitionDetailPage({
         <ShareButton
           type="competition"
           competitionId={id}
-          collectionName={collectionInfo?.contractInfo?.nftName || metadata?.[0]}
+          collectionName={
+            collectionInfo?.contractInfo?.nftName || metadata?.[0]
+          }
           variant="outline"
           size="default"
           className="w-full"
@@ -541,7 +543,7 @@ export function FarcasterCompetitionDetailPage({
           <CardContent className="p-3 space-y-3">
             <div className="flex gap-3">
               {collectionInfo.contractInfo.packImage && (
-                <div className="relative w-24 h-32 flex-shrink-0">
+                <div className="relative w-24 h-40 flex-shrink-0">
                   <Image
                     src={collectionInfo.contractInfo.packImage}
                     alt={collectionInfo.contractInfo.nftName}

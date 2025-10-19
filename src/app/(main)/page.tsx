@@ -8,6 +8,7 @@
 
 import { ActiveCompetitionList } from "@/components/ActiveCompetitionList";
 import { EventNotifications } from "@/components/EventNotifications";
+import { ShareIcons } from "@/components/web/ShareIcons";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -19,10 +20,11 @@ export default function HomePage() {
       <EventNotifications />
 
       {/* Hero Section */}
-      <div className="text-center space-y-4 py-8 min-h-[calc(100vh-8rem)] md:min-h-[calc(100vh-6rem)] flex items-center justify-center">
+      <div className="text-center space-y-4 py-8 min-h-[calc(100vh-8rem)] md:min-h-[calc(100vh-6rem)] flex flex-col items-center justify-center">
         <p className="text-lg sm:text-xl md:text-2xl font-bold italic max-w-2xl mx-auto px-4">
           "Complete the sets, win prizes."
         </p>
+        <ShareIcons type="platform" />
       </div>
 
       <Separator />

@@ -19,9 +19,13 @@ export const FARCASTER_SHARING = {
   // Dynamic OG API endpoint
   competitionOgApi: (id: string) => `${PRODUCTION_URL}/api/farcaster/competition/${id}/og`,
 
-  // Page URLs
+  // Page URLs (Miniapp)
   homeUrl: `${PRODUCTION_URL}/miniapps`,
   competitionUrl: (id: string) => `${PRODUCTION_URL}/miniapps/competition/${id}`,
+
+  // Page URLs (Web)
+  webHomeUrl: `${PRODUCTION_URL}`,
+  webCompetitionUrl: (id: string) => `${PRODUCTION_URL}/competition/${id}`,
 
   // Button text (Farcaster max: 32 characters)
   platformButtonText: "Open GeoChallenge",
