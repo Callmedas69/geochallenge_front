@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useReadTicketRendererGenerateTokenUri } from '@/generated';
 import { CONTRACT_ADDRESSES } from '@/lib/contractList';
+import { API_CHAIN_ID } from '@/lib/config';
 import type { Competition, TicketMetadata as GlobalTicketMetadata } from '@/lib/types';
 
 interface ContractInfo {
@@ -75,7 +75,7 @@ export function useContractInfo(contractAddress: string) {
     const fetchContractInfo = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/vibe/contract/${contractAddress}?chainId=8453`);
+        const response = await fetch(`/api/vibe/contract/${contractAddress}?chainId=${API_CHAIN_ID}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch contract info');
@@ -113,7 +113,7 @@ export function useUserHoldings(
     try {
       setLoading(true);
 
-      let url = `/api/vibe/holdings/${userAddress}?contractAddress=${contractAddress}&chainId=8453&status=rarity_assigned`;
+      let url = `/api/vibe/holdings/${userAddress}?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}&status=rarity_assigned`;
 
       if (rarity !== undefined) {
         url += `&rarity=${rarity}`;
@@ -165,7 +165,7 @@ export function useProgressCalculator(
         setLoading(true);
 
         // Get collection rarity stats for target counts
-        const collectionResponse = await fetch(`/api/collection/rarity?contractAddress=${contractAddress}&chainId=8453`);
+        const collectionResponse = await fetch(`/api/collection/rarity?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}`);
         const collectionData = await collectionResponse.json();
 
         if (!collectionData.success) {
@@ -183,7 +183,7 @@ export function useProgressCalculator(
 
         // Fetch user holdings for all rarities at once
         const userResponse = await fetch(
-          `/api/vibe/holdings/${userAddress}?contractAddress=${contractAddress}&chainId=8453&status=rarity_assigned`
+          `/api/vibe/holdings/${userAddress}?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}&status=rarity_assigned`
         );
         const userData = await userResponse.json();
 
@@ -250,7 +250,7 @@ export function useCollectionRarityStats(contractAddress: string) {
     const fetchRarityStats = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/collection/rarity?contractAddress=${contractAddress}&chainId=8453`);
+        const response = await fetch(`/api/collection/rarity?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch rarity stats');
@@ -369,7 +369,7 @@ export function useCollectionArt(
 
         // Fetch collection cards
         const cardsResponse = await fetch(
-          `/api/collection/collection-art?contractAddress=${contractAddress}&chainId=8453&rarityTiers=${rarityTiersParam}`,
+          `/api/collection/collection-art?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}&rarityTiers=${rarityTiersParam}`,
           { signal: abortController.signal }
         );
 
@@ -385,7 +385,7 @@ export function useCollectionArt(
         if (userAddress && cardsResult.success && cardsResult.cards) {
           // Fetch user holdings
           const holdingsResponse = await fetch(
-            `/api/vibe/holdings/${userAddress}?contractAddress=${contractAddress}&chainId=8453&status=rarity_assigned`,
+            `/api/vibe/holdings/${userAddress}?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}&status=rarity_assigned`,
             { signal: abortController.signal }
           );
 

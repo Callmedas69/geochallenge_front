@@ -9,6 +9,8 @@
  * Some functions removed from proxy - use modules directly (ProofValidator, QueryManager)
  */
 
+import { base, baseSepolia } from 'viem/chains';
+
 // Determine network from environment (defaults to sepolia for development)
 const NETWORK = process.env.NEXT_PUBLIC_NETWORK || 'sepolia';
 
@@ -73,6 +75,9 @@ export const CONTRACT_ADDRESSES = NETWORK === 'mainnet' ? MAINNET_ADDRESSES : SE
 
 // Export network info based on environment
 export const CURRENT_NETWORK = NETWORK === 'mainnet' ? NETWORKS.mainnet : NETWORKS.sepolia;
+
+// Export chain based on environment (for viem clients)
+export const CURRENT_CHAIN = NETWORK === 'mainnet' ? base : baseSepolia;
 
 // Types
 export type ContractName = keyof typeof CONTRACT_ADDRESSES;

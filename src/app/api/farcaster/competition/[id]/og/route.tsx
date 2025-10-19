@@ -8,9 +8,9 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { CONTRACT_ADDRESSES } from "@/lib/contractList";
+import { API_CHAIN, API_RPC_URL, API_CHAIN_ID } from "@/lib/config";
 import { geoChallenge_implementation_ABI } from "@/abi";
 import { createPublicClient, http, formatEther } from "viem";
-import { baseSepolia } from "viem/chains";
 
 export const runtime = "edge";
 
@@ -28,10 +28,10 @@ function fetchWithTimeout(
   ]);
 }
 
-// --- Chain Client (Base Sepolia) ---
+// --- Chain Client (Base Mainnet) ---
 const publicClient = createPublicClient({
-  chain: baseSepolia,
-  transport: http(process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC),
+  chain: API_CHAIN,
+  transport: http(API_RPC_URL),
 });
 
 // --- Vibe API ---
@@ -104,7 +104,7 @@ async function fetchImageAsBase64(imageUrl: string): Promise<string | null> {
 // --- Fetch collection data from Vibe API (with timeout) ---
 async function fetchCollectionData(collectionAddress: string) {
   try {
-    const url = `${VIBE_API_BASE}/contractAddress/${collectionAddress}?chainId=8453`;
+    const url = `${VIBE_API_BASE}/contractAddress/${collectionAddress}?chainId=${API_CHAIN_ID}`;
     const res = await fetchWithTimeout(
       url,
       {

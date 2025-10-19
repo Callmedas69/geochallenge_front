@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPublicClient, http } from 'viem';
-import { baseSepolia } from 'viem/chains';
 import { geoChallenge_implementation_ABI } from '@/abi/geoChallenge_implementation_ABI';
 import { CONTRACT_ADDRESSES } from '@/lib/contractList';
+import { API_CHAIN, API_RPC_URL } from '@/lib/config';
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,9 +19,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Create viem client to read from GeoChallenge contract
+    // Uses network configuration from @/lib/config (Base Mainnet)
     const client = createPublicClient({
-      chain: baseSepolia,
-      transport: http(),
+      chain: API_CHAIN,
+      transport: http(API_RPC_URL),
     });
 
     // Call uri() function on GeoChallenge contract (ERC1155 standard)

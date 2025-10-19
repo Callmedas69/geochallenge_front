@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import type { Address } from 'viem'
 import { useOpenPacks } from '@/hooks/useOpenPacks'
+import { API_CHAIN_ID } from '@/lib/config'
 import {
   Dialog,
   DialogContent,
@@ -67,9 +68,9 @@ export function OpenPacksButton({
         setLoadingPacks(true)
         setFetchError(null)
 
-        // Fetch all user holdings (no status filter to avoid conflicts)
+        // Fetch unopened packs (status=minted, rarity=0)
         const response = await fetch(
-          `/api/vibe/holdings/${address}?contractAddress=${collectionAddress}&chainId=8453`
+          `/api/vibe/unopened/${address}?contractAddress=${collectionAddress}&chainId=${API_CHAIN_ID}`
         )
 
         if (!response.ok) throw new Error('Failed to fetch packs')
@@ -77,7 +78,8 @@ export function OpenPacksButton({
         const data = await response.json()
         const boxes = data.boxes || []
 
-        // Filter for unopened packs (rarity = 0)
+        // API returns only unopened packs (status=minted, rarity=0)
+        // No need to filter, but keep safety check for rarity=0
         const unopened = boxes.filter((box: any) => box.rarity === 0)
         setUnopenedPacks(unopened)
       } catch (error) {
