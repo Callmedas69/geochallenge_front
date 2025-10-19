@@ -21,8 +21,9 @@ export const API_CHAIN_ID = 8453
 
 /**
  * RPC URL for viem clients
+ * Uses Alchemy RPC to avoid Cloudflare rate limiting on public endpoints
  */
-export const API_RPC_URL = 'https://mainnet.base.org'
+export const API_RPC_URL = process.env.NEXT_PUBLIC_BASE_MAINNET_RPC || 'https://mainnet.base.org'
 
 /**
  * Chain object for viem operations (server and client)
