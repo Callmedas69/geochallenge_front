@@ -3,6 +3,7 @@ import { createPublicClient, http } from 'viem';
 import { geoChallenge_implementation_ABI } from '@/abi/geoChallenge_implementation_ABI';
 import { CONTRACT_ADDRESSES } from '@/lib/contractList';
 import { API_CHAIN, API_RPC_URL } from '@/lib/config';
+import { validateImageUrlWithAudit } from '@/lib/validateImageUrl';
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,10 +44,16 @@ export async function GET(request: NextRequest) {
       const jsonString = Buffer.from(base64Data, 'base64').toString('utf-8');
       const metadata = JSON.parse(jsonString);
 
+      // SECURITY: Validate image URL before returning
+      const validatedImage = validateImageUrlWithAudit(metadata.image, {
+        competitionId,
+        source: 'ticket_metadata_base64',
+      });
+
       return NextResponse.json({
         name: metadata.name || 'Competition Ticket',
         description: metadata.description || '',
-        image: metadata.image || '',
+        image: validatedImage,
         attributes: metadata.attributes || [],
       });
     }
@@ -68,11 +75,17 @@ export async function GET(request: NextRequest) {
 
     const metadata = await metadataResponse.json();
 
-    // Return formatted metadata
+    // SECURITY: Validate image URL before returning
+    const validatedImage = validateImageUrlWithAudit(metadata.image, {
+      competitionId,
+      source: 'ticket_metadata_uri',
+    });
+
+    // Return formatted metadata with validated image URL
     return NextResponse.json({
       name: metadata.name || 'Competition Ticket',
       description: metadata.description || '',
-      image: metadata.image || '',
+      image: validatedImage,
       attributes: metadata.attributes || [],
     });
   } catch (error) {

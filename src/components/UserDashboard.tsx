@@ -150,36 +150,6 @@ export function UserDashboard() {
           <RefreshCw className="h-4 w-4 mr-2" />
           Retry
         </Button>
-
-        {/* Debug Panel */}
-        <Card className="border-orange-200 bg-orange-50">
-          <CardHeader>
-            <CardTitle className="text-sm">🔍 Debug Information</CardTitle>
-            <CardDescription className="text-xs">
-              Technical details for troubleshooting
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2 text-xs">
-            <div>
-              <strong>Wallet:</strong> {address}
-            </div>
-            <div>
-              <strong>Error:</strong> {dashboardError.message}
-            </div>
-            <div>
-              <strong>Contract Call:</strong>{" "}
-              QueryManager.getUserDashboardData()
-            </div>
-            <details className="mt-2">
-              <summary className="cursor-pointer font-semibold">
-                Full Error Details
-              </summary>
-              <pre className="mt-2 p-2 bg-white rounded overflow-auto text-xs">
-                {JSON.stringify(dashboardError, null, 2)}
-              </pre>
-            </details>
-          </CardContent>
-        </Card>
       </div>
     );
   }

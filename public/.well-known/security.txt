@@ -1,5 +1,13 @@
-# security.txt for GeoChallenge
-Contact: mailto:0xdas@proton.me
+# security.txt for GeoChallenge - Trading Card Competition Platform
+# This is a legitimate Web3 application built on Base blockchain
+# Report security vulnerabilities responsibly
+
+Contact: mailto:phan.harry@gmail.com
 Contact: https://twitter.com/0xdasx
+Expires: 2026-12-31T23:59:59.000Z
 Preferred-Languages: en
 Canonical: https://challenge.geoart.studio/.well-known/security.txt
+
+# Smart Contract Addresses (Base Mainnet)
+# Main Contract: 0x09A711bF488aa3d47c28677BEf662d9f7b1b0627
+# All contracts are verified on BaseScan

@@ -1,11 +1,11 @@
 /**
- * @title useSubmitProof - Winner Proof Submission Hook
- * @notice Hook to submit competition winner proof with EIP-712
- * @dev KISS principle: Simple flow - backend generates proof → submit to contract
+ * @title useSubmitProof - Winner Proof Submission Hook (SECURE)
+ * @notice Hook to submit competition winner proof with wallet signature authentication
+ * @dev KISS principle: User signs message → backend validates NFTs → generates proof → submit to contract
  */
 
 import { useState } from 'react'
-import { useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi'
+import { useWriteContract, useWaitForTransactionReceipt, useAccount, useSignMessage } from 'wagmi'
 import { geoChallenge_implementation_ABI } from '@/abi'
 import { CONTRACT_ADDRESSES } from '@/lib/contractList'
 
@@ -20,6 +20,13 @@ interface ProofResponse {
   success: boolean
   proof?: ProofData
   signature?: `0x${string}`
+  validation?: {
+    isComplete: boolean
+    totalRequired: number
+    totalOwned: number
+    percentage: number
+    message: string
+  }
   error?: string
 }
 
@@ -28,6 +35,7 @@ export function useSubmitProof() {
   const [isGeneratingProof, setIsGeneratingProof] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const { signMessageAsync } = useSignMessage()
   const { writeContract, data: hash, isPending, error: contractError } = useWriteContract()
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
@@ -41,16 +49,30 @@ export function useSubmitProof() {
     setError(null)
 
     try {
-      // Step 1: Get proof from backend
+      // Step 1: Sign authentication message with user's wallet
+      const timestamp = Math.floor(Date.now() / 1000)
+      const message = `I am claiming completion for competition ${competitionId} at ${timestamp}`
+
       setIsGeneratingProof(true)
-      const proofResponse = await getProofFromBackend(competitionId, address)
+
+      // Request user to sign the message
+      const userSignature = await signMessageAsync({ message })
+
+      // Step 2: Get proof from backend (with signature authentication)
+      const proofResponse = await getProofFromBackend(
+        competitionId,
+        address,
+        message,
+        userSignature
+      )
+
       setIsGeneratingProof(false)
 
       if (!proofResponse.success || !proofResponse.proof || !proofResponse.signature) {
         throw new Error(proofResponse.error || 'Failed to generate proof')
       }
 
-      // Step 2: Submit proof to contract
+      // Step 3: Submit proof to contract
       // Convert proof to bytes32 hash (you may need to adjust this based on your backend response)
       const proofHash = proofResponse.proof.metadata as `0x${string}` // Assuming backend sends hash
 
@@ -80,11 +102,13 @@ export function useSubmitProof() {
 }
 
 /**
- * Get proof from backend API
+ * Get proof from backend API with wallet signature authentication
  */
 async function getProofFromBackend(
   competitionId: bigint,
-  userAddress: string
+  userAddress: string,
+  message: string,
+  signature: string
 ): Promise<ProofResponse> {
   const response = await fetch('/api/proof/submit-completion', {
     method: 'POST',
@@ -92,6 +116,8 @@ async function getProofFromBackend(
     body: JSON.stringify({
       competitionId: competitionId.toString(),
       userAddress,
+      message,
+      signature,
     }),
   })
 

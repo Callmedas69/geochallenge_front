@@ -109,12 +109,10 @@ export function WithdrawBalance() {
           <Wallet className="h-6 w-6 text-green-600" />
         </div>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent>
         {/* Balance Display */}
         <div>
-          <p className="text-xs text-muted-foreground mb-1">
-            Available Balance
-          </p>
+          <p className="text-xs text-muted-foreground">Available Balance</p>
           <p className="text-3xl font-bold text-green-600">
             {formatEther(balance)} ETH
           </p>

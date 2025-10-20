@@ -1,8 +1,9 @@
 /**
- * @title Competition OG Image Generator (Geo Theme)
+ * @title Competition OG Image Generator (Geo Theme) - SECURE
  * @notice Generates clean 1200x630 OG images for GeoChallenge competitions
- * @dev 100% Satori-safe, Edge-optimized
+ * @dev 100% Satori-safe, Edge-optimized, SSRF-protected
  * @route /api/farcaster/competition/[id]/og
+ * @security Image URLs validated against whitelist to prevent SSRF attacks
  */
 
 import { ImageResponse } from "next/og";
@@ -11,6 +12,7 @@ import { CONTRACT_ADDRESSES } from "@/lib/contractList";
 import { API_CHAIN, API_RPC_URL, API_CHAIN_ID } from "@/lib/config";
 import { geoChallenge_implementation_ABI } from "@/abi";
 import { createPublicClient, http, formatEther } from "viem";
+import { isAllowedImageDomain } from "@/lib/validateImageUrl";
 
 export const runtime = "edge";
 
@@ -79,9 +81,25 @@ function formatRelativeDeadline(deadline: bigint): string {
   return "Ending soon";
 }
 
-// --- Convert image to base64 (with timeout) ---
-async function fetchImageAsBase64(imageUrl: string): Promise<string | null> {
+// --- Convert image to base64 (with SSRF protection) ---
+async function fetchImageAsBase64(
+  imageUrl: string,
+  context?: { competitionId?: string; source?: string }
+): Promise<string | null> {
   try {
+    // SECURITY: Validate URL before fetching to prevent SSRF attacks
+    if (!isAllowedImageDomain(imageUrl)) {
+      const timestamp = new Date().toISOString();
+      console.warn(
+        `[SECURITY_OG_IMAGE] ${timestamp} | ` +
+        `Blocked untrusted image URL | ` +
+        `Competition: ${context?.competitionId || 'N/A'} | ` +
+        `Source: ${context?.source || 'unknown'} | ` +
+        `URL: ${imageUrl}`
+      );
+      return null;
+    }
+
     const res = await fetchWithTimeout(imageUrl, {}, 5000); // 5s timeout
     if (!res.ok) return null;
     const buffer = await res.arrayBuffer();
@@ -102,7 +120,10 @@ async function fetchImageAsBase64(imageUrl: string): Promise<string | null> {
 }
 
 // --- Fetch collection data from Vibe API (with timeout) ---
-async function fetchCollectionData(collectionAddress: string) {
+async function fetchCollectionData(
+  collectionAddress: string,
+  competitionId?: string
+) {
   try {
     const url = `${VIBE_API_BASE}/contractAddress/${collectionAddress}?chainId=${API_CHAIN_ID}`;
     const res = await fetchWithTimeout(
@@ -124,8 +145,13 @@ async function fetchCollectionData(collectionAddress: string) {
       data.contractInfo?.packImage ||
       data.contractInfo?.featuredImageUrl ||
       null;
+
+    // SECURITY: Pass context for audit logging
     const packImageBase64 = packImageUrl
-      ? await fetchImageAsBase64(packImageUrl)
+      ? await fetchImageAsBase64(packImageUrl, {
+          competitionId,
+          source: 'vibe_api_collection_image',
+        })
       : null;
 
     return {
@@ -192,7 +218,8 @@ export async function GET(
 
     // --- Fetch collection info ---
     const collectionData = await fetchCollectionData(
-      competition.collectionAddress
+      competition.collectionAddress,
+      id // Pass competitionId for audit logging
     );
     const packImage = collectionData?.packImage || null;
 
