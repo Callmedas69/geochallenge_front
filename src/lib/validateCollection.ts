@@ -10,7 +10,7 @@ const VIBE_API_BASE = 'https://build.wield.xyz/vibe/boosterbox';
 const API_KEY = process.env.VIBE_API_KEY || 'DEMO_REPLACE_WITH_FREE_API_KEY';
 
 // Rarity tier mapping
-const RARITY_MAP: Record<number, string> = {
+export const RARITY_MAP: Record<number, string> = {
   1: 'Common',
   2: 'Rare',
   3: 'Epic',

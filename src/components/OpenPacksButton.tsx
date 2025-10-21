@@ -10,6 +10,8 @@ import { useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import type { Address } from 'viem'
 import { useOpenPacks } from '@/hooks/useOpenPacks'
+import { useOpenRarity } from '@/hooks/useVibeAPI'
+import { RARITY_MAP } from '@/lib/validateCollection'
 import { API_CHAIN_ID } from '@/lib/config'
 import {
   Dialog,
@@ -29,11 +31,14 @@ interface OpenPacksButtonProps {
   collectionAddress: Address
   /** Optional: Custom button text */
   buttonText?: string
+  /** Optional: Callback when packs are successfully opened */
+  onPacksOpened?: () => void
 }
 
 export function OpenPacksButton({
   collectionAddress,
   buttonText = 'Open Packs',
+  onPacksOpened,
 }: OpenPacksButtonProps) {
   const { address, isConnected } = useAccount()
   const [open, setOpen] = useState(false)
@@ -54,10 +59,17 @@ export function OpenPacksButton({
     isOpening,
     isSuccess,
     error: openError,
+    hash,
   } = useOpenPacks({
     collectionAddress,
     tokenIds: tokenIdsToOpen,
   })
+
+  // Fetch rarity breakdown after successful opening
+  const { data: rarityData, loading: loadingRarity } = useOpenRarity(
+    hash,
+    collectionAddress
+  )
 
   // Fetch unopened packs from API
   useEffect(() => {
@@ -106,6 +118,13 @@ export function OpenPacksButton({
     }
   }, [open])
 
+  // Call onPacksOpened callback when packs are successfully opened
+  useEffect(() => {
+    if (isSuccess) {
+      onPacksOpened?.()
+    }
+  }, [isSuccess, onPacksOpened])
+
   const handleOpen = () => {
     openPacks()
   }
@@ -152,7 +171,27 @@ export function OpenPacksButton({
               <Alert className="bg-green-50 border-green-200">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-green-800">
-                  <strong>Success!</strong> {quantity} pack(s) opened! Randomness is being processed...
+                  <strong>Success!</strong> {quantity} pack(s) opened!
+                  {loadingRarity ? (
+                    <div className="mt-2 flex items-center gap-2 text-sm">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      <span>Loading rarity data...</span>
+                    </div>
+                  ) : rarityData?.success && rarityData.rarities ? (
+                    <div className="mt-2 text-sm font-medium">
+                      {Object.entries(rarityData.rarities)
+                        .filter(([_, count]) => count > 0)
+                        .map(([rarity, count]) => (
+                          <span key={rarity} className="mr-3">
+                            • {count}x {RARITY_MAP[Number(rarity)]}
+                          </span>
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="mt-1 text-sm">
+                      Randomness is being processed...
+                    </div>
+                  )}
                 </AlertDescription>
               </Alert>
             )}

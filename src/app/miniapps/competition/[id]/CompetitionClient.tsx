@@ -134,7 +134,7 @@ export function FarcasterCompetitionDetailPage({
   } = useCollectionRarityStats(competition?.collectionAddress || "");
 
   // Fetch collection art
-  const { data: collectionArt, loading: loadingCollectionArt } =
+  const { data: collectionArt, loading: loadingCollectionArt, refetch: refetchArt } =
     useCollectionArt(
       competition?.collectionAddress || "",
       competition?.rarityTiers || [],
@@ -142,7 +142,7 @@ export function FarcasterCompetitionDetailPage({
     );
 
   // Fetch user's collection progress
-  const { progress, loading: loadingProgress } = useProgressCalculator(
+  const { progress, loading: loadingProgress, refetch: refetchProgress } = useProgressCalculator(
     address || "",
     competition?.collectionAddress || "",
     competition?.rarityTiers || []
@@ -633,10 +633,18 @@ export function FarcasterCompetitionDetailPage({
                 <BuyPacksButton
                   collectionAddress={competition.collectionAddress}
                   buttonText="Buy Packs"
+                  onPacksOpened={() => {
+                    refetchProgress();
+                    refetchArt();
+                  }}
                 />
                 <OpenPacksButton
                   collectionAddress={competition.collectionAddress}
                   buttonText="Open Packs"
+                  onPacksOpened={() => {
+                    refetchProgress();
+                    refetchArt();
+                  }}
                 />
               </div>
             )}

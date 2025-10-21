@@ -159,76 +159,76 @@ export function useProgressCalculator(
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const calculateProgress = async () => {
-      try {
-        setLoading(true);
+  const calculateProgress = async () => {
+    try {
+      setLoading(true);
 
-        // Get collection rarity stats for target counts
-        const collectionResponse = await fetch(`/api/collection/rarity?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}`);
-        const collectionData = await collectionResponse.json();
+      // Get collection rarity stats for target counts
+      const collectionResponse = await fetch(`/api/collection/rarity?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}`);
+      const collectionData = await collectionResponse.json();
 
-        if (!collectionData.success) {
-          throw new Error('Failed to fetch collection rarity data');
-        }
-
-        // Map rarity numbers to collection counts
-        const rarityMap: Record<number, number> = {
-          1: collectionData.data.common || 0,
-          2: collectionData.data.rare || 0,
-          3: collectionData.data.epic || 0,
-          4: collectionData.data.legendary || 0,
-          5: collectionData.data.mythic || 0,
-        };
-
-        // Fetch user holdings for all rarities at once
-        const userResponse = await fetch(
-          `/api/vibe/holdings/${userAddress}?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}&status=rarity_assigned`
-        );
-        const userData = await userResponse.json();
-
-        const rarityBreakdown: Record<number, { required: number; owned: number }> = {};
-        let totalRequired = 0;
-        let totalOwned = 0;
-
-        requiredRarities.forEach((rarity) => {
-          const required = rarityMap[rarity] || 0;
-
-          // Count unique cards user owns for this rarity
-          const userCardsForRarity = userData.boxes?.filter((box: any) => box.rarity === rarity) || [];
-          const uniqueCardsOwned = new Set(userCardsForRarity.map((box: any) => box.metadata?.name)).size;
-
-          rarityBreakdown[rarity] = { required, owned: uniqueCardsOwned };
-          totalRequired += required;
-          totalOwned += uniqueCardsOwned;
-        });
-
-        const percentage = totalRequired > 0 ? (totalOwned / totalRequired) * 100 : 0;
-        const isComplete = requiredRarities.every(rarity =>
-          rarityBreakdown[rarity].owned >= rarityBreakdown[rarity].required
-        );
-
-        setProgress({
-          totalRequired,
-          totalOwned,
-          percentage,
-          rarityBreakdown,
-          isComplete,
-        });
-      } catch (err) {
-        console.error('Progress calculation error:', err);
-        setProgress(null);
-      } finally {
-        setLoading(false);
+      if (!collectionData.success) {
+        throw new Error('Failed to fetch collection rarity data');
       }
-    };
 
+      // Map rarity numbers to collection counts
+      const rarityMap: Record<number, number> = {
+        1: collectionData.data.common || 0,
+        2: collectionData.data.rare || 0,
+        3: collectionData.data.epic || 0,
+        4: collectionData.data.legendary || 0,
+        5: collectionData.data.mythic || 0,
+      };
+
+      // Fetch user holdings for all rarities at once
+      const userResponse = await fetch(
+        `/api/vibe/holdings/${userAddress}?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}&status=rarity_assigned`
+      );
+      const userData = await userResponse.json();
+
+      const rarityBreakdown: Record<number, { required: number; owned: number }> = {};
+      let totalRequired = 0;
+      let totalOwned = 0;
+
+      requiredRarities.forEach((rarity) => {
+        const required = rarityMap[rarity] || 0;
+
+        // Count unique cards user owns for this rarity
+        const userCardsForRarity = userData.boxes?.filter((box: any) => box.rarity === rarity) || [];
+        const uniqueCardsOwned = new Set(userCardsForRarity.map((box: any) => box.metadata?.name)).size;
+
+        rarityBreakdown[rarity] = { required, owned: uniqueCardsOwned };
+        totalRequired += required;
+        totalOwned += uniqueCardsOwned;
+      });
+
+      const percentage = totalRequired > 0 ? (totalOwned / totalRequired) * 100 : 0;
+      const isComplete = requiredRarities.every(rarity =>
+        rarityBreakdown[rarity].owned >= rarityBreakdown[rarity].required
+      );
+
+      setProgress({
+        totalRequired,
+        totalOwned,
+        percentage,
+        rarityBreakdown,
+        isComplete,
+      });
+    } catch (err) {
+      console.error('Progress calculation error:', err);
+      setProgress(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (userAddress && contractAddress && requiredRarities.length > 0) {
       calculateProgress();
     }
   }, [userAddress, contractAddress, requiredRarities]);
 
-  return { progress, loading };
+  return { progress, loading, refetch: calculateProgress };
 }
 
 export function useCollectionRarityStats(contractAddress: string) {
@@ -354,6 +354,83 @@ export function useCollectionArt(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchCollectionArt = async () => {
+    try {
+      setLoading(true);
+      const rarityTiersParam = rarityTiers.join(',');
+
+      // Fetch collection cards
+      const cardsResponse = await fetch(
+        `/api/collection/collection-art?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}&rarityTiers=${rarityTiersParam}`
+      );
+
+      if (!cardsResponse.ok) {
+        throw new Error('Failed to fetch collection art');
+      }
+
+      const cardsResult = await cardsResponse.json();
+
+      // If user address provided, fetch holdings and match
+      let cardsWithOwnership: CollectionCard[] = [];
+
+      if (userAddress && cardsResult.success && cardsResult.cards) {
+        // Fetch user holdings
+        const holdingsResponse = await fetch(
+          `/api/vibe/holdings/${userAddress}?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}&status=rarity_assigned`
+        );
+
+        if (holdingsResponse.ok) {
+          const holdingsResult = await holdingsResponse.json();
+          const holdings = holdingsResult.boxes || [];
+
+          // Count ownership for each card by rarity + name
+          cardsWithOwnership = cardsResult.cards.map((card: any) => {
+            const ownedCount = holdings.filter(
+              (box: any) =>
+                box.rarity === card.rarity &&
+                box.metadata?.name === card.name
+            ).length;
+
+            return {
+              name: card.name,
+              rarity: card.rarity,
+              imageUrl: card.imageUrl,
+              ownedCount,
+            };
+          });
+        } else {
+          // Holdings fetch failed, show all as unowned
+          cardsWithOwnership = cardsResult.cards.map((card: any) => ({
+            name: card.name,
+            rarity: card.rarity,
+            imageUrl: card.imageUrl,
+            ownedCount: 0,
+          }));
+        }
+      } else {
+        // No user address, show all as unowned
+        cardsWithOwnership = (cardsResult.cards || []).map((card: any) => ({
+          name: card.name,
+          rarity: card.rarity,
+          imageUrl: card.imageUrl,
+          ownedCount: 0,
+        }));
+      }
+
+      setData({
+        success: true,
+        cards: cardsWithOwnership,
+        count: cardsWithOwnership.length,
+      });
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!contractAddress || !rarityTiers || rarityTiers.length === 0) {
       setLoading(false);
@@ -362,7 +439,7 @@ export function useCollectionArt(
 
     const abortController = new AbortController();
 
-    const fetchCollectionArt = async () => {
+    const fetchWithAbort = async () => {
       try {
         setLoading(true);
         const rarityTiersParam = rarityTiers.join(',');
@@ -453,13 +530,66 @@ export function useCollectionArt(
       }
     };
 
-    fetchCollectionArt();
+    fetchWithAbort();
 
     // Cleanup: abort fetch on unmount or params change
     return () => {
       abortController.abort();
     };
   }, [contractAddress, rarityTiers, userAddress]);
+
+  return { data, loading, error, refetch: fetchCollectionArt };
+}
+
+/**
+ * Hook to fetch rarity breakdown from transaction hash
+ * @param transactionHash - The transaction hash from pack opening
+ * @param contractAddress - The BoosterDrop contract address
+ * @returns Rarity breakdown data with loading/error states
+ */
+export function useOpenRarity(
+  transactionHash: `0x${string}` | undefined,
+  contractAddress: string
+) {
+  const [data, setData] = useState<{
+    success: boolean;
+    rarities: Record<number, number>;
+  } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!transactionHash || !contractAddress) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchRarity = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(
+          `/api/vibe/open-rarity?transactionHash=${transactionHash}&contractAddress=${contractAddress}`
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch rarity data');
+        }
+
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        console.error('[useOpenRarity] Error:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRarity();
+  }, [transactionHash, contractAddress]);
 
   return { data, loading, error };
 }

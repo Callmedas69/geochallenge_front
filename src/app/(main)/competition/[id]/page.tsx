@@ -135,7 +135,7 @@ export default function CompetitionDetailPage({
   } = useCollectionRarityStats(competition?.collectionAddress || "");
 
   // Fetch collection art (contested rarity cards) with ownership data
-  const { data: collectionArt, loading: loadingCollectionArt } =
+  const { data: collectionArt, loading: loadingCollectionArt, refetch: refetchArt } =
     useCollectionArt(
       competition?.collectionAddress || "",
       competition?.rarityTiers || [],
@@ -143,7 +143,7 @@ export default function CompetitionDetailPage({
     );
 
   // Fetch user's collection progress (only if wallet connected)
-  const { progress, loading: loadingProgress } = useProgressCalculator(
+  const { progress, loading: loadingProgress, refetch: refetchProgress } = useProgressCalculator(
     address || "",
     competition?.collectionAddress || "",
     competition?.rarityTiers || []
@@ -829,6 +829,10 @@ export default function CompetitionDetailPage({
                   loading={loadingProgress}
                   collectionAddress={competition.collectionAddress}
                   showCTA={true}
+                  onPacksOpened={() => {
+                    refetchProgress();
+                    refetchArt();
+                  }}
                 />
               </CardContent>
             </Card>

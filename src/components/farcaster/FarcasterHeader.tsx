@@ -48,9 +48,6 @@ export function FarcasterHeader() {
 
           {/* Right side: Wallet + Info */}
           <div className="flex items-center gap-2">
-            {/* Wallet Button - Shows connected wallet */}
-            <CompactWalletButton />
-
             {/* Info Icon */}
             <Button
               variant="ghost"
@@ -60,6 +57,9 @@ export function FarcasterHeader() {
             >
               <Info className="h-5 w-5" />
             </Button>
+
+            {/* Wallet Button - Shows connected wallet */}
+            <CompactWalletButton />
           </div>
         </div>
       </header>

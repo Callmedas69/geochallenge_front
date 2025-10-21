@@ -32,6 +32,8 @@ interface BuyPacksButtonProps {
   collectionAddress: Address
   /** Optional: Custom button text */
   buttonText?: string
+  /** Optional: Callback when packs are opened (triggered on modal close) */
+  onPacksOpened?: () => void
 }
 
 const PREDEFINED_QUANTITIES = [1, 50, 500, 1000]
@@ -41,6 +43,7 @@ const MIN_QUANTITY = 1
 export function BuyPacksButton({
   collectionAddress,
   buttonText = 'Buy Packs',
+  onPacksOpened,
 }: BuyPacksButtonProps) {
   const { address, isConnected } = useAccount()
   const [open, setOpen] = useState(false)
@@ -359,6 +362,7 @@ export function BuyPacksButton({
         tokenIds={mintedTokenIds}
         open={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
+        onPacksOpened={onPacksOpened}
       />
     </Dialog>
   )

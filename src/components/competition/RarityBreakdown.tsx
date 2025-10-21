@@ -33,6 +33,8 @@ interface RarityBreakdownProps {
   collectionAddress?: string;
   /** Show "Find Missing Cards" CTA */
   showCTA?: boolean;
+  /** Optional: Callback when packs are successfully opened */
+  onPacksOpened?: () => void;
 }
 
 /**
@@ -44,6 +46,7 @@ export function RarityBreakdown({
   loading,
   collectionAddress,
   showCTA = true,
+  onPacksOpened,
 }: RarityBreakdownProps) {
   if (loading) {
     return <Skeleton className="h-32 w-full" />;
@@ -111,6 +114,7 @@ export function RarityBreakdown({
           <OpenPacksButton
             collectionAddress={collectionAddress as Address}
             buttonText="Open Packs"
+            onPacksOpened={onPacksOpened}
           />
         </div>
       )}

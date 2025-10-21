@@ -6,6 +6,7 @@
 
 "use client";
 
+import { useEffect } from "react";
 import { useBuyTicket } from "@/hooks/useUserActions";
 import { useUserTicketBalance } from "@/hooks/usePublicCompetitions";
 import { Button } from "@/components/ui/button";
@@ -30,8 +31,15 @@ export function BuyTicketButton({
   const { address, isConnecting } = useAccount();
   const { buyTicket, isPending, isConfirming, isSuccess, error } =
     useBuyTicket();
-  const { data: ticketBalance, isLoading: checkingBalance } =
+  const { data: ticketBalance, isLoading: checkingBalance, refetch } =
     useUserTicketBalance(address, competitionId);
+
+  // Auto-refetch ticket balance when ticket purchase succeeds
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+    }
+  }, [isSuccess, refetch]);
 
   const handleBuyTicket = () => {
     buyTicket(competitionId, ticketPrice);

@@ -80,13 +80,13 @@ export function useTotalValueLocked() {
  * Check if user owns a ticket for a specific competition
  * @param userAddress - User wallet address
  * @param competitionId - Competition ID
- * @returns Ticket balance (0 = no ticket, >0 = has ticket(s))
+ * @returns Ticket balance (0 = no ticket, >0 = has ticket(s)) with refetch function
  */
 export function useUserTicketBalance(
   userAddress: `0x${string}` | undefined,
   competitionId: bigint | undefined
 ) {
-  return useReadContract({
+  const { data, isLoading, refetch } = useReadContract({
     address: CONTRACT_ADDRESSES.GeoChallenge,
     abi: geoChallenge_implementation_ABI,
     functionName: 'balanceOf',
@@ -100,6 +100,8 @@ export function useUserTicketBalance(
       gcTime: 60000,
     },
   })
+
+  return { data, isLoading, refetch }
 }
 
 /**
