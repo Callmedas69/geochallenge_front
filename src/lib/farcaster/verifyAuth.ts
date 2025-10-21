@@ -1,7 +1,7 @@
 /**
  * @title Farcaster Quick Auth Verification (Backend)
  * @notice Server-side JWT verification for Farcaster Quick Auth tokens
- * @dev KISS principle: Simple verification, secure by default
+ * @dev KISS principle: Simple verification using official Farcaster SDK
  * @dev Professional best practice: Cryptographic verification of user identity
  *
  * Security: Verifies JWT signed by Farcaster's Quick Auth server
@@ -9,9 +9,11 @@
  *
  * @see https://miniapps.farcaster.xyz/docs/sdk/quick-auth
  *
- * IMPORTANT: Requires `jose` package for JWT verification
- * Run: npm install jose
+ * IMPORTANT: Uses official @farcaster/quick-auth package
+ * Run: npm install @farcaster/quick-auth
  */
+
+import { createClient, Errors } from '@farcaster/quick-auth';
 
 /**
  * Verified Quick Auth payload
@@ -25,45 +27,30 @@ export interface VerifiedAuth {
 }
 
 /**
- * SIMPLE VERSION: Extract auth data from token (WITHOUT verification)
- * ⚠️ WARNING: This trusts the client! Only use for logging/audit trail
- * ⚠️ For production security, use verifyQuickAuthToken() instead
+ * Extract domain from URL or return domain as-is
+ * Handles both full URLs (https://example.com) and domains (example.com)
  *
- * @param token - JWT token from Quick Auth
- * @returns Auth data (unverified)
+ * @param urlOrDomain - Full URL or domain string
+ * @returns Domain string without protocol/port/path, or undefined
  */
-export function extractAuthData(token: string | null): VerifiedAuth | null {
-  if (!token) return null;
+function extractDomain(urlOrDomain?: string): string | undefined {
+  if (!urlOrDomain) return undefined;
 
   try {
-    // Decode JWT (without verification - NOT SECURE!)
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-
-    const payload = JSON.parse(
-      Buffer.from(parts[1], 'base64url').toString('utf-8')
-    );
-
-    return {
-      fid: parseInt(payload.sub || '0', 10),
-      custody: payload.custody || '',
-      username: payload.username,
-      isValid: false, // Mark as unverified
-    };
-  } catch (error) {
-    console.error('Failed to extract auth data:', error);
-    return null;
+    // Try parsing as URL
+    const url = new URL(urlOrDomain);
+    return url.hostname;
+  } catch {
+    // Already a domain (no protocol), return as-is
+    return urlOrDomain;
   }
 }
 
 /**
- * SECURE VERSION: Verify Quick Auth JWT token (RECOMMENDED)
+ * SECURE: Verify Quick Auth JWT token using official Farcaster SDK
  * ✅ Cryptographically verifies token is signed by Farcaster
  * ✅ Checks expiration
  * ✅ Validates issuer and audience
- *
- * NOTE: Requires `jose` package
- * Install with: npm install jose
  *
  * @param token - JWT token from Quick Auth
  * @param domain - Your app's domain (for audience verification)
@@ -90,39 +77,38 @@ export async function verifyQuickAuthToken(
   if (!token) return null;
 
   try {
-    // Try to import jose (might not be installed yet)
-    const { jwtVerify, createRemoteJWKSet } = await import('jose');
+    // Create official Farcaster Quick Auth client
+    const client = createClient();
 
-    // Farcaster's Quick Auth JWKS endpoint
-    const JWKS_URL = 'https://auth.farcaster.xyz/.well-known/jwks.json';
+    // Extract and validate domain if provided, use empty string as default
+    // (Quick Auth SDK requires domain parameter, but accepts empty string when not validating audience)
+    const validatedDomain = extractDomain(domain) || '';
 
-    // Create JWKS fetcher
-    const JWKS = createRemoteJWKSet(new URL(JWKS_URL));
-
-    // Verify JWT
-    const { payload } = await jwtVerify(token, JWKS, {
-      issuer: 'https://auth.farcaster.xyz',
-      audience: domain || undefined,
+    // Verify JWT using official SDK
+    // This cryptographically verifies the token against Farcaster's JWKS
+    const payload = await client.verifyJwt({
+      token,
+      domain: validatedDomain
     });
 
-    // Extract verified data
+    // Extract verified data from payload
+    // Note: custody and username are custom claims added by Farcaster Quick Auth
     return {
-      fid: parseInt(payload.sub || '0', 10),
+      fid: payload.sub,
       custody: (payload as any).custody || '',
       username: (payload as any).username,
       isValid: true,
     };
   } catch (error: any) {
-    // If jose is not installed, fallback to extraction (with warning)
-    if (error.code === 'MODULE_NOT_FOUND' || error.message?.includes('jose')) {
-      console.warn('⚠️ jose package not installed - using unverified extraction');
-      console.warn('⚠️ Install with: npm install jose');
-      return extractAuthData(token);
+    // Handle invalid token errors (expired, malformed, wrong signature, etc.)
+    if (error instanceof Errors.InvalidTokenError) {
+      console.error('[SECURITY] Invalid Quick Auth token:', error.message);
+      return null;
     }
 
-    // JWT verification failed
-    console.error('JWT verification failed:', error);
-    return null;
+    // Re-throw unexpected errors (network issues, etc.)
+    console.error('[QUICK_AUTH] Unexpected verification error:', error);
+    throw error;
   }
 }
 

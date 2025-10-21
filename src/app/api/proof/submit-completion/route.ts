@@ -174,7 +174,8 @@ export async function POST(request: NextRequest) {
       )
     } else if (authToken) {
       // Auth token present but verification failed
-      auditLog(competitionId, userAddress, false, 'Quick Auth verification failed')
+      // (Invalid signature, expired, wrong issuer, etc. - verified by official @farcaster/quick-auth)
+      auditLog(competitionId, userAddress, false, 'Quick Auth verification failed - Invalid or expired token')
       return NextResponse.json(
         {
           success: false,

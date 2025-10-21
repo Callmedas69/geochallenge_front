@@ -42,6 +42,25 @@ interface QuickAuthOptions {
 }
 
 /**
+ * Decode JWT payload (without verification - for client-side only)
+ * Backend must verify the JWT signature
+ */
+function decodeJWT(token: string): any {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+
+    const payload = JSON.parse(
+      Buffer.from(parts[1], 'base64url').toString('utf-8')
+    );
+    return payload;
+  } catch (error) {
+    console.error('Failed to decode JWT:', error);
+    return null;
+  }
+}
+
+/**
  * Get Quick Auth token from Farcaster SDK
  * Internal helper - use withQuickAuth() wrapper instead
  */
@@ -55,11 +74,20 @@ async function getQuickAuthToken(): Promise<QuickAuthResult | null> {
     // Get authenticated token from Farcaster
     const authResult = await sdk.quickAuth.getToken();
 
+    // Decode JWT to extract user info
+    // Note: This is only for display/logging - backend must verify signature
+    const payload = decodeJWT(authResult.token);
+
+    if (!payload) {
+      console.warn('⚠️ Failed to decode Quick Auth token');
+      return null;
+    }
+
     return {
       token: authResult.token,
-      fid: authResult.fid,
-      custody: authResult.custody,
-      username: authResult.username,
+      fid: parseInt(payload.sub || '0', 10),
+      custody: payload.custody || '',
+      username: payload.username,
     };
   } catch (error) {
     console.warn('⚠️ Quick Auth failed:', error);
