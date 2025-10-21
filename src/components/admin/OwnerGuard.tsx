@@ -7,12 +7,11 @@
 'use client'
 
 import { useAccount } from 'wagmi'
+import { useCardCompetitionOwner } from '@/hooks/useContracts'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, Lock } from 'lucide-react'
 import Link from 'next/link'
-
-const OWNER_ADDRESS = '0x127E3d1c1ae474A688789Be39fab0da6371926A7' // From deployment
 
 interface OwnerGuardProps {
   children: React.ReactNode
@@ -20,14 +19,17 @@ interface OwnerGuardProps {
 
 export function OwnerGuard({ children }: OwnerGuardProps) {
   const { address, isConnected, isConnecting } = useAccount()
+  const { data: ownerAddress, isLoading: isLoadingOwner } = useCardCompetitionOwner()
 
-  // Loading state
-  if (isConnecting) {
+  // Loading state (wallet or owner check)
+  if (isConnecting || isLoadingOwner) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
           <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-          <p className="text-muted-foreground">Checking wallet...</p>
+          <p className="text-muted-foreground">
+            {isConnecting ? 'Checking wallet...' : 'Verifying owner from contract...'}
+          </p>
         </div>
       </div>
     )
@@ -51,8 +53,11 @@ export function OwnerGuard({ children }: OwnerGuardProps) {
     )
   }
 
-  // Not owner
-  if (address.toLowerCase() !== OWNER_ADDRESS.toLowerCase()) {
+  // Not owner (verified from contract)
+  const isOwner = ownerAddress && address &&
+    address.toLowerCase() === ownerAddress.toLowerCase()
+
+  if (!isOwner) {
     return (
       <div className="mx-auto max-w-2xl p-8">
         <Alert variant="destructive">
@@ -66,9 +71,9 @@ export function OwnerGuard({ children }: OwnerGuardProps) {
               <code className="text-xs">{address}</code>
             </p>
             <p className="text-sm">
-              <span className="font-semibold">Owner address:</span>
+              <span className="font-semibold">Owner address (from contract):</span>
               <br />
-              <code className="text-xs">{OWNER_ADDRESS}</code>
+              <code className="text-xs">{ownerAddress || 'Loading...'}</code>
             </p>
           </AlertDescription>
         </Alert>

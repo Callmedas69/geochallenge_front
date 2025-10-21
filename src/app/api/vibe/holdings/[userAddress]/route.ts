@@ -137,6 +137,16 @@ export async function GET(
              'unknown';
 
   try {
+    // Step 0: Validate API key is configured (security: prevent demo key usage)
+    if (!process.env.VIBE_API_KEY || API_KEY.includes('DEMO')) {
+      console.error('[SECURITY] VIBE_API_KEY not configured - using demo key');
+      auditLog('N/A', ip, false, 'API key not configured');
+      return NextResponse.json(
+        { error: 'API configuration error. Please set VIBE_API_KEY environment variable.' },
+        { status: 503 }
+      );
+    }
+
     // Step 1: Rate Limiting
     if (!checkRateLimit(ip)) {
       auditLog('N/A', ip, false, 'Rate limit exceeded (30 req/min)');

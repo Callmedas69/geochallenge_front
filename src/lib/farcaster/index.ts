@@ -8,3 +8,4 @@ export * from './sdk';
 export * from './config';
 export * from './wallet';
 export * from './useAutoConnect';
+export * from './auth';

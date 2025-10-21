@@ -11,6 +11,19 @@ const API_KEY = process.env.VIBE_API_KEY || 'DEMO_REPLACE_WITH_FREE_API_KEY'
 
 export async function GET() {
   try {
+    // Validate API key is configured (security: prevent demo key usage in production)
+    if (!process.env.VIBE_API_KEY || API_KEY.includes('DEMO')) {
+      console.error('[SECURITY] VIBE_API_KEY not configured - using demo key')
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'API configuration error. Please set VIBE_API_KEY environment variable.',
+          price: 0
+        },
+        { status: 503 }
+      )
+    }
+
     const url = `${VIBE_API_BASE}/eth-price`
 
     const response = await fetch(url, {

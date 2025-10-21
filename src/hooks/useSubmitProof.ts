@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { useWriteContract, useWaitForTransactionReceipt, useAccount, useSignMessage } from 'wagmi'
 import { geoChallenge_implementation_ABI } from '@/abi'
 import { CONTRACT_ADDRESSES } from '@/lib/contractList'
+import { withQuickAuth, getAuthToken } from '@/lib/farcaster'
 
 interface ProofData {
   competitionId: string
@@ -48,46 +49,49 @@ export function useSubmitProof() {
 
     setError(null)
 
-    try {
-      // Step 1: Sign authentication message with user's wallet
-      const timestamp = Math.floor(Date.now() / 1000)
-      const message = `I am claiming completion for competition ${competitionId} at ${timestamp}`
+    // Wrap entire proof submission with Quick Auth for security
+    return withQuickAuth(async () => {
+      try {
+        // Step 1: Sign authentication message with user's wallet
+        const timestamp = Math.floor(Date.now() / 1000)
+        const message = `I am claiming completion for competition ${competitionId} at ${timestamp}`
 
-      setIsGeneratingProof(true)
+        setIsGeneratingProof(true)
 
-      // Request user to sign the message
-      const userSignature = await signMessageAsync({ message })
+        // Request user to sign the message
+        const userSignature = await signMessageAsync({ message })
 
-      // Step 2: Get proof from backend (with signature authentication)
-      const proofResponse = await getProofFromBackend(
-        competitionId,
-        address,
-        message,
-        userSignature
-      )
+        // Step 2: Get proof from backend (with Quick Auth + signature authentication)
+        const proofResponse = await getProofFromBackend(
+          competitionId,
+          address,
+          message,
+          userSignature
+        )
 
-      setIsGeneratingProof(false)
+        setIsGeneratingProof(false)
 
-      if (!proofResponse.success || !proofResponse.proof || !proofResponse.signature) {
-        throw new Error(proofResponse.error || 'Failed to generate proof')
+        if (!proofResponse.success || !proofResponse.proof || !proofResponse.signature) {
+          throw new Error(proofResponse.error || 'Failed to generate proof')
+        }
+
+        // Step 3: Submit proof to contract
+        // Convert proof to bytes32 hash (you may need to adjust this based on your backend response)
+        const proofHash = proofResponse.proof.metadata as `0x${string}` // Assuming backend sends hash
+
+        return writeContract({
+          address: CONTRACT_ADDRESSES.GeoChallenge,
+          abi: geoChallenge_implementation_ABI,
+          functionName: 'iamtheWinner',
+          args: [competitionId, proofHash, proofResponse.signature],
+        })
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to submit proof'
+        setError(errorMessage)
+        setIsGeneratingProof(false)
+        throw err
       }
-
-      // Step 3: Submit proof to contract
-      // Convert proof to bytes32 hash (you may need to adjust this based on your backend response)
-      const proofHash = proofResponse.proof.metadata as `0x${string}` // Assuming backend sends hash
-
-      return writeContract({
-        address: CONTRACT_ADDRESSES.GeoChallenge,
-        abi: geoChallenge_implementation_ABI,
-        functionName: 'iamtheWinner',
-        args: [competitionId, proofHash, proofResponse.signature],
-      })
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to submit proof'
-      setError(errorMessage)
-      setIsGeneratingProof(false)
-      throw err
-    }
+    }, { required: true }) // Require Quick Auth for proof submission (high security)
   }
 
   return {
@@ -102,7 +106,7 @@ export function useSubmitProof() {
 }
 
 /**
- * Get proof from backend API with wallet signature authentication
+ * Get proof from backend API with Quick Auth + wallet signature authentication
  */
 async function getProofFromBackend(
   competitionId: bigint,
@@ -110,9 +114,21 @@ async function getProofFromBackend(
   message: string,
   signature: string
 ): Promise<ProofResponse> {
+  // Get auth token from session (set by withQuickAuth)
+  const authToken = getAuthToken()
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  }
+
+  // Add auth token if available
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`
+  }
+
   const response = await fetch('/api/proof/submit-completion', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({
       competitionId: competitionId.toString(),
       userAddress,

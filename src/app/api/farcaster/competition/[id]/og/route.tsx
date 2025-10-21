@@ -125,6 +125,12 @@ async function fetchCollectionData(
   competitionId?: string
 ) {
   try {
+    // Validate API key is configured (security: prevent demo key usage)
+    if (!process.env.VIBE_API_KEY || VIBE_API_KEY.includes('DEMO')) {
+      console.error('[SECURITY] VIBE_API_KEY not configured - using demo key');
+      return null; // Return null to fallback to default image
+    }
+
     const url = `${VIBE_API_BASE}/contractAddress/${collectionAddress}?chainId=${API_CHAIN_ID}`;
     const res = await fetchWithTimeout(
       url,

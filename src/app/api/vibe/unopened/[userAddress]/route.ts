@@ -14,6 +14,15 @@ export async function GET(
   { params }: { params: Promise<{ userAddress: string }> }
 ) {
   try {
+    // Validate API key is configured (security: prevent demo key usage)
+    if (!process.env.VIBE_API_KEY || API_KEY.includes('DEMO')) {
+      console.error('[SECURITY] VIBE_API_KEY not configured - using demo key');
+      return NextResponse.json(
+        { error: 'API configuration error. Please set VIBE_API_KEY environment variable.' },
+        { status: 503 }
+      );
+    }
+
     const { userAddress } = await params;
     const { searchParams } = new URL(request.url);
 

@@ -40,6 +40,11 @@ export async function validateCollectionCompletion(
   requiredRarities: readonly number[]
 ): Promise<ValidationResult> {
   try {
+    // Validate API key is configured (security: prevent demo key usage)
+    if (!process.env.VIBE_API_KEY || API_KEY.includes('DEMO')) {
+      throw new Error('API configuration error. Please set VIBE_API_KEY environment variable.');
+    }
+
     // Step 1: Get collection rarity stats (total unique cards per tier)
     const collectionResponse = await fetch(
       `/api/collection/rarity?contractAddress=${contractAddress}&chainId=${API_CHAIN_ID}`,

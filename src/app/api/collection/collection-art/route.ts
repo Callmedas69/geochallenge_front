@@ -3,13 +3,36 @@ import { NextRequest, NextResponse } from 'next/server';
 const VIBE_API_BASE = 'https://build.wield.xyz/vibe/boosterbox';
 const API_KEY = process.env.VIBE_API_KEY || 'DEMO_REPLACE_WITH_FREE_API_KEY';
 
+// Input validation helpers
+function isValidEthereumAddress(address: string): boolean {
+  return /^0x[a-fA-F0-9]{40}$/.test(address);
+}
+
+function validateChainId(chainId: string | null): number {
+  const parsed = parseInt(chainId || '8453', 10);
+  if (isNaN(parsed) || parsed < 1 || parsed > 999999) {
+    return 8453; // Default to Base
+  }
+  return parsed;
+}
+
 export async function GET(request: NextRequest) {
   try {
+    // Validate API key is configured (security: prevent demo key usage)
+    if (!process.env.VIBE_API_KEY || API_KEY.includes('DEMO')) {
+      console.error('[SECURITY] VIBE_API_KEY not configured - using demo key');
+      return NextResponse.json(
+        { success: false, error: 'API configuration error. Please set VIBE_API_KEY environment variable.' },
+        { status: 503 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const contractAddress = searchParams.get('contractAddress');
-    const chainId = searchParams.get('chainId') || '8453';
+    const chainIdParam = searchParams.get('chainId');
     const rarityTiersParam = searchParams.get('rarityTiers');
 
+    // Validate contractAddress
     if (!contractAddress) {
       return NextResponse.json(
         { success: false, error: 'contractAddress is required' },
@@ -17,6 +40,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    if (!isValidEthereumAddress(contractAddress)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid Ethereum address format' },
+        { status: 400 }
+      );
+    }
+
+    // Validate chainId
+    const chainId = validateChainId(chainIdParam);
+
+    // Validate rarityTiers
     if (!rarityTiersParam) {
       return NextResponse.json(
         { success: false, error: 'rarityTiers is required' },
@@ -24,8 +58,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Parse rarityTiers from comma-separated string to number array
-    const rarityTiers = rarityTiersParam.split(',').map(tier => parseInt(tier.trim())).filter(tier => !isNaN(tier));
+    // Parse and validate rarityTiers
+    const rarityTiers = rarityTiersParam
+      .split(',')
+      .map(tier => parseInt(tier.trim(), 10))
+      .filter(tier => !isNaN(tier) && tier >= 1 && tier <= 5); // Only allow valid rarity range
+
+    // Limit array length to prevent abuse
+    if (rarityTiers.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'At least one valid rarityTier (1-5) is required' },
+        { status: 400 }
+      );
+    }
+
+    if (rarityTiers.length > 5) {
+      return NextResponse.json(
+        { success: false, error: 'Maximum 5 rarityTiers allowed' },
+        { status: 400 }
+      );
+    }
 
     // Fetch collection metadata from VibeMarket API
     const url = `${VIBE_API_BASE}/contractAddress/${contractAddress}/all-metadata?chainId=${chainId}`;

@@ -19,6 +19,7 @@ import { base, baseSepolia } from 'viem/chains'
 import { validateCollectionCompletion } from '@/lib/validateCollection'
 import { geoChallenge_implementation_ABI } from '@/abi'
 import { CONTRACT_ADDRESSES, CURRENT_NETWORK } from '@/lib/contractList'
+import { verifyQuickAuthToken, getAuthTokenFromRequest } from '@/lib/farcaster/verifyAuth'
 
 // =============================================================================
 // Environment & Configuration
@@ -138,6 +139,55 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields: competitionId, userAddress, signature, message' },
         { status: 400 }
+      )
+    }
+
+    // Step 2.5: Verify Farcaster Quick Auth (NEW SECURITY LAYER)
+    // Ensures request comes from authenticated Farcaster user
+    const authToken = getAuthTokenFromRequest(request)
+    const verifiedAuth = await verifyQuickAuthToken(authToken, process.env.NEXT_PUBLIC_APP_URL)
+
+    if (verifiedAuth && verifiedAuth.isValid) {
+      // Quick Auth verified - check custody wallet matches claiming wallet
+      if (verifiedAuth.custody.toLowerCase() !== userAddress.toLowerCase()) {
+        auditLog(
+          competitionId,
+          userAddress,
+          false,
+          `Quick Auth wallet mismatch: FID ${verifiedAuth.fid} custody ${verifiedAuth.custody} != claiming wallet ${userAddress}`
+        )
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Wallet mismatch: Your Farcaster custody wallet does not match the claiming wallet',
+          },
+          { status: 403 }
+        )
+      }
+
+      // Log successful auth
+      auditLog(
+        competitionId,
+        userAddress,
+        true,
+        `Quick Auth verified: FID ${verifiedAuth.fid} (${verifiedAuth.username || 'unknown'})`
+      )
+    } else if (authToken) {
+      // Auth token present but verification failed
+      auditLog(competitionId, userAddress, false, 'Quick Auth verification failed')
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Invalid or expired authentication token',
+        },
+        { status: 401 }
+      )
+    } else {
+      // No auth token provided - REQUIRED for production security
+      auditLog(competitionId, userAddress, false, 'Missing Quick Auth token')
+      return NextResponse.json(
+        { success: false, error: 'Farcaster authentication required' },
+        { status: 401 }
       )
     }
 

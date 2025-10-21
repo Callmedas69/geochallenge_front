@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { HowItWorksDrawer } from "./HowItWorksDrawer";
+import { CompactWalletButton } from "./CompactWalletButton";
 import localFont from "next/font/local";
 
 const spartanFont = localFont({
@@ -45,15 +46,21 @@ export function FarcasterHeader() {
             </span>
           </div>
 
-          {/* Info Icon */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setDrawerOpen(true)}
-            aria-label="How it works"
-          >
-            <Info className="h-5 w-5" />
-          </Button>
+          {/* Right side: Wallet + Info */}
+          <div className="flex items-center gap-2">
+            {/* Wallet Button - Shows connected wallet */}
+            <CompactWalletButton />
+
+            {/* Info Icon */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDrawerOpen(true)}
+              aria-label="How it works"
+            >
+              <Info className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
