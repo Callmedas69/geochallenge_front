@@ -122,17 +122,17 @@ export default function CompetitionDetailPage({
 
   // Memoize rarityTiers and collectionAddress using VALUE-based comparison
   // Convert to stable keys to prevent wagmi's object reference changes from triggering updates
-  const rarityTiersKey = competition?.rarityTiers?.join(',') || '';
-  const collectionAddressValue = competition?.collectionAddress || '';
+  const rarityTiersKey = competition?.rarityTiers?.join(",") || "";
+  const collectionAddressValue = competition?.collectionAddress || "";
 
   const rarityTiers = useMemo(
     () => competition?.rarityTiers || [],
-    [rarityTiersKey]  // Compare "1,2,3,4,5" string, not array reference
+    [rarityTiersKey] // Compare "1,2,3,4,5" string, not array reference
   );
 
   const collectionAddressMemo = useMemo(
     () => collectionAddressValue,
-    [collectionAddressValue]  // Direct string value comparison
+    [collectionAddressValue] // Direct string value comparison
   );
 
   // Fetch collection info from VibeMarket API
@@ -150,19 +150,22 @@ export default function CompetitionDetailPage({
   } = useCollectionRarityStats(collectionAddressMemo);
 
   // Fetch collection art (contested rarity cards) with ownership data
-  const { data: collectionArt, loading: loadingCollectionArt, refetch: refetchArt } =
-    useCollectionArt(
-      collectionAddressMemo,
-      rarityTiers,
-      address // Pass user address for ownership matching
-    );
+  const {
+    data: collectionArt,
+    loading: loadingCollectionArt,
+    refetch: refetchArt,
+  } = useCollectionArt(
+    collectionAddressMemo,
+    rarityTiers,
+    address // Pass user address for ownership matching
+  );
 
   // Fetch user's collection progress (only if wallet connected)
-  const { progress, loading: loadingProgress, refetch: refetchProgress } = useProgressCalculator(
-    address || "",
-    collectionAddressMemo,
-    rarityTiers
-  );
+  const {
+    progress,
+    loading: loadingProgress,
+    refetch: refetchProgress,
+  } = useProgressCalculator(address || "", collectionAddressMemo, rarityTiers);
 
   // Memoized callback for pack opening to prevent infinite re-renders
   const handlePacksOpened = useCallback(() => {
@@ -378,11 +381,11 @@ export default function CompetitionDetailPage({
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold flex items-center gap-2 sm:gap-3">
               <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500 flex-shrink-0" />
-              <span className="break-words">
-                {metadata?.[0] || `Competition #${id}`} (#{id})
+              <span className="break-words uppercase">
+                {metadata?.[0] || `Competition #${id}`}
               </span>
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground mt-2">
+            <p className="text-sm md:text-2xl sm:text-base text-muted-foreground mt-5 italic">
               {metadata?.[1] ||
                 `Collection: ${competition.collectionAddress.slice(0, 10)}...${competition.collectionAddress.slice(-8)}`}
             </p>

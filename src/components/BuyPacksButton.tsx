@@ -54,6 +54,7 @@ export function BuyPacksButton({
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [mintedTokenIds, setMintedTokenIds] = useState<bigint[]>([])
   const [validatedCustomQuantity, setValidatedCustomQuantity] = useState<number>(0)
+  const [snapshotQuantity, setSnapshotQuantity] = useState<number>(0) // Snapshot quantity when modal opens
 
   // Validate custom quantity input in useEffect to avoid state updates during render
   useEffect(() => {
@@ -187,7 +188,7 @@ export function BuyPacksButton({
           }
 
           const data = await response.json()
-          const unopenedPacks = data.unopenedNFTs || []
+          const unopenedPacks = data.boxes || []
 
           // Extract the last N token IDs (most recently minted)
           const tokenIds = unopenedPacks
@@ -195,12 +196,14 @@ export function BuyPacksButton({
             .map((pack: { tokenId: string }) => BigInt(pack.tokenId))
 
           setMintedTokenIds(tokenIds)
+          setSnapshotQuantity(actualQuantity) // Snapshot quantity before opening modal
           setOpen(false)
           setShowSuccessModal(true)
         } catch (error) {
           console.error('Error fetching unopened packs:', error)
           // Fallback: still show success modal but with empty token IDs
           setMintedTokenIds([])
+          setSnapshotQuantity(actualQuantity) // Snapshot quantity before opening modal
           setOpen(false)
           setShowSuccessModal(true)
         }
@@ -379,7 +382,7 @@ export function BuyPacksButton({
       {/* Success Modal */}
       <PackSuccessModal
         collectionAddress={collectionAddress}
-        quantity={actualQuantity}
+        quantity={snapshotQuantity}
         tokenIds={mintedTokenIds}
         open={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}

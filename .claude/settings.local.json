@@ -12,7 +12,9 @@
       "Bash(npm install @farcaster/quick-auth)",
       "Bash(taskkill:*)",
       "Bash(dir:*)",
-      "Bash(if exist .next rmdir /s /q .next)"
+      "Bash(if exist .next rmdir /s /q .next)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

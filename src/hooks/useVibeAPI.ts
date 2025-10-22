@@ -545,25 +545,34 @@ export function useCollectionArt(
  * Hook to fetch rarity breakdown from transaction hash with polling
  * @param transactionHash - The transaction hash from pack opening
  * @param contractAddress - The BoosterDrop contract address
+ * @param enabled - Only fetch when true (default: true)
  * @returns Rarity breakdown data with loading/error states
+ * @dev Uses 2-step flow: 1) Get tokenIds from tx hash, 2) Get rarity from /range endpoint
  * @dev Polls every 5 seconds for up to 3 minutes waiting for VRF to complete
  */
 export function useOpenRarity(
   transactionHash: `0x${string}` | undefined,
-  contractAddress: string
+  contractAddress: string,
+  enabled: boolean = true
 ) {
   const [data, setData] = useState<{
     success: boolean;
     rarities: Record<number, number>;
   } | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!transactionHash || !contractAddress) {
+    // Early exit if not enabled or missing required params
+    if (!enabled || !transactionHash || !contractAddress) {
       setLoading(false);
+      if (!enabled) {
+        console.log('[useOpenRarity] Hook disabled - waiting for trigger');
+      }
       return;
     }
+
+    console.log('[useOpenRarity] Starting polling for hash:', transactionHash);
 
     let pollCount = 0;
     const maxPolls = 36; // 3 minutes (36 * 5 seconds)
@@ -575,25 +584,70 @@ export function useOpenRarity(
         setLoading(true);
         setError(null);
 
-        const response = await fetch(
+        // Step 1: Get tokenIds from transaction hash
+        const openRarityResponse = await fetch(
           `/api/vibe/open-rarity?transactionHash=${transactionHash}&contractAddress=${contractAddress}`
         );
 
-        if (!response.ok) {
+        if (!openRarityResponse.ok) {
           // If API fails, we'll retry on next poll
           return false;
         }
 
-        const result = await response.json();
+        const openRarityResult = await openRarityResponse.json();
+        console.log('[useOpenRarity] Step 1 - Transaction data:', openRarityResult);
 
-        // Check if we have valid rarity data
-        if (result.success && result.rarities && Object.keys(result.rarities).length > 0) {
-          setData(result);
-          setLoading(false);
-          return true; // Data received, stop polling
+        // Get tokenIds array
+        const tokenIds = openRarityResult.tokenIds || [];
+
+        if (tokenIds.length === 0) {
+          console.log('[useOpenRarity] No tokenIds in response yet');
+          return false;
         }
 
-        return false; // No data yet, continue polling
+        // Step 2: Get rarity data for those specific tokenIds using /range endpoint
+        const rangeResponse = await fetch(
+          `/api/vibe/range?tokenIds=${tokenIds.join(',')}&contractAddress=${contractAddress}`
+        );
+
+        if (!rangeResponse.ok) {
+          console.log('[useOpenRarity] Range API not ready yet, will retry');
+          return false;
+        }
+
+        const rangeResult = await rangeResponse.json();
+        console.log('[useOpenRarity] Step 2 - Range data:', rangeResult);
+
+        const boxes = rangeResult.boxes || [];
+
+        // Step 3: Check if all cards have rarity assigned
+        const cardsWithRarity = boxes.filter((box: any) => box.rarity && box.rarity > 0);
+
+        if (cardsWithRarity.length < tokenIds.length) {
+          console.log(
+            `[useOpenRarity] VRF processing: ${cardsWithRarity.length}/${tokenIds.length} cards ready`
+          );
+          return false; // Not all cards have rarity yet, keep polling
+        }
+
+        // Step 4: Aggregate rarity counts
+        const rarities: Record<number, number> = {};
+        boxes.forEach((box: any) => {
+          if (box.rarity && box.rarity > 0) {
+            rarities[box.rarity] = (rarities[box.rarity] || 0) + 1;
+          }
+        });
+
+        if (Object.keys(rarities).length > 0) {
+          const transformedData = { success: true, rarities };
+          console.log('[useOpenRarity] All cards processed! Final counts:', transformedData);
+          setData(transformedData);
+          setLoading(false);
+          return true; // All data received, stop polling
+        }
+
+        console.log('[useOpenRarity] No valid rarity data yet');
+        return false; // Continue polling
       } catch (err) {
         console.error('[useOpenRarity] Error:', err);
         // Don't set error on first few attempts, VRF might just be processing
@@ -633,7 +687,7 @@ export function useOpenRarity(
         clearInterval(intervalId);
       }
     };
-  }, [transactionHash, contractAddress]);
+  }, [transactionHash, contractAddress, enabled]);
 
   return { data, loading, error };
 }
