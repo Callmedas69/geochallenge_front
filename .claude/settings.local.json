@@ -9,7 +9,10 @@
       "Bash(npm run build)",
       "WebSearch",
       "WebFetch(domain:miniapps.farcaster.xyz)",
-      "Bash(npm install @farcaster/quick-auth)"
+      "Bash(npm install @farcaster/quick-auth)",
+      "Bash(taskkill:*)",
+      "Bash(dir:*)",
+      "Bash(if exist .next rmdir /s /q .next)"
     ],
     "deny": [],
     "ask": []

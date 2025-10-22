@@ -120,34 +120,55 @@ export default function CompetitionDetailPage({
     },
   });
 
+  // Memoize rarityTiers and collectionAddress using VALUE-based comparison
+  // Convert to stable keys to prevent wagmi's object reference changes from triggering updates
+  const rarityTiersKey = competition?.rarityTiers?.join(',') || '';
+  const collectionAddressValue = competition?.collectionAddress || '';
+
+  const rarityTiers = useMemo(
+    () => competition?.rarityTiers || [],
+    [rarityTiersKey]  // Compare "1,2,3,4,5" string, not array reference
+  );
+
+  const collectionAddressMemo = useMemo(
+    () => collectionAddressValue,
+    [collectionAddressValue]  // Direct string value comparison
+  );
+
   // Fetch collection info from VibeMarket API
   const {
     data: collectionInfo,
     loading: loadingCollectionInfo,
     error: collectionInfoError,
-  } = useContractInfo(competition?.collectionAddress || "");
+  } = useContractInfo(collectionAddressMemo);
 
   // Fetch rarity distribution stats
   const {
     data: rarityStats,
     loading: loadingRarityStats,
     error: rarityStatsError,
-  } = useCollectionRarityStats(competition?.collectionAddress || "");
+  } = useCollectionRarityStats(collectionAddressMemo);
 
   // Fetch collection art (contested rarity cards) with ownership data
   const { data: collectionArt, loading: loadingCollectionArt, refetch: refetchArt } =
     useCollectionArt(
-      competition?.collectionAddress || "",
-      competition?.rarityTiers || [],
+      collectionAddressMemo,
+      rarityTiers,
       address // Pass user address for ownership matching
     );
 
   // Fetch user's collection progress (only if wallet connected)
   const { progress, loading: loadingProgress, refetch: refetchProgress } = useProgressCalculator(
     address || "",
-    competition?.collectionAddress || "",
-    competition?.rarityTiers || []
+    collectionAddressMemo,
+    rarityTiers
   );
+
+  // Memoized callback for pack opening to prevent infinite re-renders
+  const handlePacksOpened = useCallback(() => {
+    refetchProgress();
+    refetchArt();
+  }, [refetchProgress, refetchArt]);
 
   // Live ticket counter state
   const [pulse, setPulse] = useState(false);
@@ -827,12 +848,9 @@ export default function CompetitionDetailPage({
                 <RarityBreakdown
                   progress={progress}
                   loading={loadingProgress}
-                  collectionAddress={competition.collectionAddress}
+                  collectionAddress={collectionAddressMemo}
                   showCTA={true}
-                  onPacksOpened={() => {
-                    refetchProgress();
-                    refetchArt();
-                  }}
+                  onPacksOpened={handlePacksOpened}
                 />
               </CardContent>
             </Card>

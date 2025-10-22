@@ -10,8 +10,6 @@ import { useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import type { Address } from 'viem'
 import { useOpenPacks } from '@/hooks/useOpenPacks'
-import { useOpenRarity } from '@/hooks/useVibeAPI'
-import { RARITY_MAP } from '@/lib/validateCollection'
 import { API_CHAIN_ID } from '@/lib/config'
 import {
   Dialog,
@@ -24,7 +22,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Package, CheckCircle2, Loader2, AlertCircle, PackageOpen } from 'lucide-react'
+import { Loader2, AlertCircle, PackageOpen } from 'lucide-react'
+import { OpenPackSuccessModal } from '@/components/OpenPackSuccessModal'
 
 interface OpenPacksButtonProps {
   /** BoosterDrop contract address */
@@ -46,6 +45,8 @@ export function OpenPacksButton({
   const [unopenedPacks, setUnopenedPacks] = useState<Array<{ tokenId: string }>>([])
   const [loadingPacks, setLoadingPacks] = useState(false)
   const [fetchError, setFetchError] = useState<string | null>(null)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [openedQuantity, setOpenedQuantity] = useState(0)
 
   // Get token IDs to open (first N unopened packs)
   const quantity = parseInt(quantityToOpen) || 0
@@ -64,12 +65,6 @@ export function OpenPacksButton({
     collectionAddress,
     tokenIds: tokenIdsToOpen,
   })
-
-  // Fetch rarity breakdown after successful opening
-  const { data: rarityData, loading: loadingRarity } = useOpenRarity(
-    hash,
-    collectionAddress
-  )
 
   // Fetch unopened packs from API
   useEffect(() => {
@@ -118,12 +113,14 @@ export function OpenPacksButton({
     }
   }, [open])
 
-  // Call onPacksOpened callback when packs are successfully opened
+  // Show success modal when packs are successfully opened
   useEffect(() => {
     if (isSuccess) {
-      onPacksOpened?.()
+      setOpenedQuantity(quantity)
+      setOpen(false) // Close main dialog
+      setShowSuccessModal(true) // Show success modal
     }
-  }, [isSuccess, onPacksOpened])
+  }, [isSuccess, quantity])
 
   const handleOpen = () => {
     openPacks()
@@ -166,36 +163,6 @@ export function OpenPacksButton({
           </Alert>
         ) : (
           <div className="space-y-4">
-            {/* Success State */}
-            {isSuccess && (
-              <Alert className="bg-green-50 border-green-200">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
-                  <strong>Success!</strong> {quantity} pack(s) opened!
-                  {loadingRarity ? (
-                    <div className="mt-2 flex items-center gap-2 text-sm">
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      <span>Loading rarity data...</span>
-                    </div>
-                  ) : rarityData?.success && rarityData.rarities ? (
-                    <div className="mt-2 text-sm font-medium">
-                      {Object.entries(rarityData.rarities)
-                        .filter(([_, count]) => count > 0)
-                        .map(([rarity, count]) => (
-                          <span key={rarity} className="mr-3">
-                            • {count}x {RARITY_MAP[Number(rarity)]}
-                          </span>
-                        ))}
-                    </div>
-                  ) : (
-                    <div className="mt-1 text-sm">
-                      Randomness is being processed...
-                    </div>
-                  )}
-                </AlertDescription>
-              </Alert>
-            )}
-
             {/* Error State */}
             {openError && (
               <Alert variant="destructive">
@@ -207,68 +174,67 @@ export function OpenPacksButton({
             )}
 
             {/* Unopened packs count */}
-            {!isSuccess && (
-              <>
-                <div className="p-4 bg-muted rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Unopened Packs:</span>
-                    <div className="text-right">
-                      {loadingPacks ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <div className="text-lg font-bold">{unopenedCount}</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quantity Input */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    How many to open? (max {unopenedCount})
-                  </label>
-                  <Input
-                    type="number"
-                    placeholder={`Enter 1-${unopenedCount}...`}
-                    value={quantityToOpen}
-                    onChange={(e) => setQuantityToOpen(e.target.value)}
-                    min="1"
-                    max={unopenedCount}
-                    disabled={unopenedCount === 0}
-                  />
-                </div>
-
-                {/* Open Button */}
-                <Button
-                  onClick={handleOpen}
-                  disabled={!canOpen}
-                  className="w-full"
-                  size="lg"
-                >
-                  {isOpening ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Opening...
-                    </>
+            <div className="p-4 bg-muted rounded-lg">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Unopened Packs:</span>
+                <div className="text-right">
+                  {loadingPacks ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <>
-                      <PackageOpen className="mr-2 h-4 w-4" />
-                      Open {quantity} Pack{quantity !== 1 ? 's' : ''}
-                    </>
+                    <div className="text-lg font-bold">{unopenedCount}</div>
                   )}
-                </Button>
-              </>
-            )}
+                </div>
+              </div>
+            </div>
 
-            {/* Close Button (after success) */}
-            {isSuccess && (
-              <Button onClick={() => setOpen(false)} className="w-full">
-                Close
-              </Button>
-            )}
+            {/* Quantity Input */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                How many to open? (max {unopenedCount})
+              </label>
+              <Input
+                type="number"
+                placeholder={`Enter 1-${unopenedCount}...`}
+                value={quantityToOpen}
+                onChange={(e) => setQuantityToOpen(e.target.value)}
+                min="1"
+                max={unopenedCount}
+                disabled={unopenedCount === 0}
+              />
+            </div>
+
+            {/* Open Button */}
+            <Button
+              onClick={handleOpen}
+              disabled={!canOpen}
+              className="w-full"
+              size="lg"
+            >
+              {isOpening ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Opening...
+                </>
+              ) : (
+                <>
+                  <PackageOpen className="mr-2 h-4 w-4" />
+                  Open {quantity} Pack{quantity !== 1 ? 's' : ''}
+                </>
+              )}
+            </Button>
           </div>
         )}
       </DialogContent>
+
+      {/* Success Modal */}
+      <OpenPackSuccessModal
+        collectionAddress={collectionAddress}
+        quantity={openedQuantity}
+        transactionHash={hash}
+        open={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        onPacksOpened={onPacksOpened}
+      />
     </Dialog>
   )
 }

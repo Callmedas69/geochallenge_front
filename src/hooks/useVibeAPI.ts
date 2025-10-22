@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { CONTRACT_ADDRESSES } from '@/lib/contractList';
 import { API_CHAIN_ID } from '@/lib/config';
 import type { Competition, TicketMetadata as GlobalTicketMetadata } from '@/lib/types';
@@ -159,7 +159,7 @@ export function useProgressCalculator(
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const calculateProgress = async () => {
+  const calculateProgress = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -220,7 +220,7 @@ export function useProgressCalculator(
     } finally {
       setLoading(false);
     }
-  };
+  }, [userAddress, contractAddress, requiredRarities]);
 
   useEffect(() => {
     if (userAddress && contractAddress && requiredRarities.length > 0) {
@@ -354,7 +354,7 @@ export function useCollectionArt(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCollectionArt = async () => {
+  const fetchCollectionArt = useCallback(async () => {
     try {
       setLoading(true);
       const rarityTiersParam = rarityTiers.join(',');
@@ -429,7 +429,7 @@ export function useCollectionArt(
     } finally {
       setLoading(false);
     }
-  };
+  }, [contractAddress, rarityTiers, userAddress]);
 
   useEffect(() => {
     if (!contractAddress || !rarityTiers || rarityTiers.length === 0) {
@@ -542,10 +542,11 @@ export function useCollectionArt(
 }
 
 /**
- * Hook to fetch rarity breakdown from transaction hash
+ * Hook to fetch rarity breakdown from transaction hash with polling
  * @param transactionHash - The transaction hash from pack opening
  * @param contractAddress - The BoosterDrop contract address
  * @returns Rarity breakdown data with loading/error states
+ * @dev Polls every 5 seconds for up to 3 minutes waiting for VRF to complete
  */
 export function useOpenRarity(
   transactionHash: `0x${string}` | undefined,
@@ -564,6 +565,11 @@ export function useOpenRarity(
       return;
     }
 
+    let pollCount = 0;
+    const maxPolls = 36; // 3 minutes (36 * 5 seconds)
+    const pollInterval = 5000; // 5 seconds
+    let intervalId: NodeJS.Timeout | null = null;
+
     const fetchRarity = async () => {
       try {
         setLoading(true);
@@ -574,21 +580,59 @@ export function useOpenRarity(
         );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch rarity data');
+          // If API fails, we'll retry on next poll
+          return false;
         }
 
         const result = await response.json();
-        setData(result);
+
+        // Check if we have valid rarity data
+        if (result.success && result.rarities && Object.keys(result.rarities).length > 0) {
+          setData(result);
+          setLoading(false);
+          return true; // Data received, stop polling
+        }
+
+        return false; // No data yet, continue polling
       } catch (err) {
         console.error('[useOpenRarity] Error:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error');
-        setData(null);
-      } finally {
-        setLoading(false);
+        // Don't set error on first few attempts, VRF might just be processing
+        if (pollCount > 10) {
+          setError(err instanceof Error ? err.message : 'Unknown error');
+        }
+        return false;
       }
     };
 
-    fetchRarity();
+    // Initial fetch
+    fetchRarity().then((success) => {
+      if (success) return; // Got data immediately, no need to poll
+
+      // Start polling if no data yet
+      intervalId = setInterval(async () => {
+        pollCount++;
+
+        if (pollCount >= maxPolls) {
+          // Max attempts reached
+          setLoading(false);
+          setError('Randomness processing timeout. Please refresh to check status.');
+          if (intervalId) clearInterval(intervalId);
+          return;
+        }
+
+        const success = await fetchRarity();
+        if (success && intervalId) {
+          clearInterval(intervalId); // Stop polling when data received
+        }
+      }, pollInterval);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [transactionHash, contractAddress]);
 
   return { data, loading, error };

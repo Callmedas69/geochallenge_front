@@ -6,13 +6,13 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { useQuery } from '@tanstack/react-query'
 import type { Address } from 'viem'
 import { formatEther, parseEther } from 'viem'
 import { boosterDropV2_ABI } from '@/abi/boosterDropV2_ABI'
-import { REFERRER_ADDRESS } from '@/lib/config'
+import { REFERRER_ADDRESS, API_CHAIN_ID } from '@/lib/config'
 import {
   Dialog,
   DialogContent,
@@ -53,33 +53,44 @@ export function BuyPacksButton({
   const [validationError, setValidationError] = useState<string>('')
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [mintedTokenIds, setMintedTokenIds] = useState<bigint[]>([])
+  const [validatedCustomQuantity, setValidatedCustomQuantity] = useState<number>(0)
 
-  // Validate and calculate actual quantity to use
-  const validateQuantity = useCallback((value: string): number => {
-    const parsed = parseInt(value, 10)
-
-    if (isNaN(parsed) || value.trim() === '') {
+  // Validate custom quantity input in useEffect to avoid state updates during render
+  useEffect(() => {
+    if (!isCustomMode || customQuantity.trim() === '') {
       setValidationError('')
-      return 0
+      setValidatedCustomQuantity(0)
+      return
+    }
+
+    const parsed = parseInt(customQuantity, 10)
+
+    if (isNaN(parsed)) {
+      setValidationError('')
+      setValidatedCustomQuantity(0)
+      return
     }
 
     if (parsed < MIN_QUANTITY) {
       setValidationError(`Minimum quantity is ${MIN_QUANTITY}`)
-      return 0
+      setValidatedCustomQuantity(0)
+      return
     }
 
     if (parsed > MAX_QUANTITY) {
       setValidationError(`Maximum quantity is ${MAX_QUANTITY}`)
-      return MAX_QUANTITY
+      setValidatedCustomQuantity(MAX_QUANTITY)
+      return
     }
 
     setValidationError('')
-    return parsed
-  }, [])
+    setValidatedCustomQuantity(parsed)
+  }, [customQuantity, isCustomMode])
 
-  const actualQuantity = isCustomMode
-    ? validateQuantity(customQuantity)
-    : selectedQuantity
+  // Calculate actual quantity using memoization
+  const actualQuantity = useMemo(() => {
+    return isCustomMode ? validatedCustomQuantity : selectedQuantity
+  }, [isCustomMode, validatedCustomQuantity, selectedQuantity])
 
   // Debounce custom input for price queries
   const [debouncedQuantity, setDebouncedQuantity] = useState<number>(actualQuantity)
@@ -154,40 +165,50 @@ export function BuyPacksButton({
         setCustomQuantity('')
         setIsCustomMode(false)
         setValidationError('')
+        setValidatedCustomQuantity(0)
         setMintedTokenIds([])
         resetMint()
       }, 300)
     }
   }, [open, resetMint])
 
-  // Handle success: extract token IDs and show success modal
+  // Handle success: fetch real unopened packs and show success modal
   useEffect(() => {
-    if (isConfirmed && receipt) {
-      // Simple approach: Generate token IDs based on quantity
-      // Assuming sequential minting, we can infer token IDs
-      // For more accuracy, parse BoosterDropsMinted event from logs
+    if (isConfirmed && receipt && address) {
+      // Fetch unopened packs to get real token IDs
+      const fetchUnopenedPacks = async () => {
+        try {
+          const response = await fetch(
+            `/api/vibe/unopened/${address}?contractAddress=${collectionAddress}&chainId=${API_CHAIN_ID}`
+          )
 
-      // For now, use simple sequential generation
-      // The actual token IDs will be the last N minted tokens
-      // Since we just minted them, we can assume they are sequential
-      const tokenIds: bigint[] = []
+          if (!response.ok) {
+            throw new Error('Failed to fetch unopened packs')
+          }
 
-      // If we have access to the starting token ID from event logs, use it
-      // Otherwise, we'll need to query totalSupply or parse events
-      // For simplicity, let's generate based on quantity
-      // The hook will work regardless, as user just minted these
+          const data = await response.json()
+          const unopenedPacks = data.unopenedNFTs || []
 
-      // Generate placeholder IDs - these will be populated correctly
-      // when we parse the actual event in production
-      for (let i = 0; i < actualQuantity; i++) {
-        tokenIds.push(BigInt(i))
+          // Extract the last N token IDs (most recently minted)
+          const tokenIds = unopenedPacks
+            .slice(-actualQuantity) // Get last N packs
+            .map((pack: { tokenId: string }) => BigInt(pack.tokenId))
+
+          setMintedTokenIds(tokenIds)
+          setOpen(false)
+          setShowSuccessModal(true)
+        } catch (error) {
+          console.error('Error fetching unopened packs:', error)
+          // Fallback: still show success modal but with empty token IDs
+          setMintedTokenIds([])
+          setOpen(false)
+          setShowSuccessModal(true)
+        }
       }
 
-      setMintedTokenIds(tokenIds)
-      setOpen(false)
-      setShowSuccessModal(true)
+      fetchUnopenedPacks()
     }
-  }, [isConfirmed, receipt, actualQuantity])
+  }, [isConfirmed, receipt, address, actualQuantity, collectionAddress])
 
   const handleMint = async () => {
     if (!address || !mintPrice || actualQuantity <= 0) return
