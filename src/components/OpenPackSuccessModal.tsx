@@ -6,17 +6,12 @@
 
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import type { Address } from "viem";
 import { useContractInfo, useOpenRarity } from "@/hooks/useVibeAPI";
-import { useRotatingText } from "@/hooks/useRotatingText";
 import { RARITY_MAP } from "@/lib/validateCollection";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, CheckCircle2, CircleX } from "lucide-react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-
 interface OpenPackSuccessModalProps {
   /** BoosterDrop contract address to fetch pack image */
   collectionAddress: Address;
@@ -30,36 +25,6 @@ interface OpenPackSuccessModalProps {
   onClose: () => void;
   /** Optional: Callback when user closes modal (triggered with delay for VRF) */
   onPacksOpened?: () => void;
-}
-
-// Bouncing text animation component
-function BouncingText({ text }: { text: string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    if (containerRef.current) {
-      gsap.to(".char", {
-        y: -8,
-        duration: 0.5,
-        stagger: {
-          each: 0.05,
-          repeat: -1,
-          yoyo: true,
-          ease: "bounce.out",
-        },
-      });
-    }
-  }, [text]);
-
-  return (
-    <div ref={containerRef} className="inline-flex">
-      {text.split("").map((char, i) => (
-        <span key={i} className="char inline-block">
-          {char === " " ? "\u00A0" : char}
-        </span>
-      ))}
-    </div>
-  );
 }
 
 export function OpenPackSuccessModal({
@@ -111,15 +76,8 @@ export function OpenPackSuccessModal({
   // Get pack image from contract info
   const packImage = contractInfo?.contractInfo?.packImage;
 
-  // Handle modal close - call callback with delay for VRF
+  // Handle modal close
   const handleClose = () => {
-    if (onPacksOpened) {
-      // Delay refetch to allow VRF to complete (30 seconds)
-      // This prevents premature refetch before cards receive rarity_assigned status
-      setTimeout(() => {
-        onPacksOpened();
-      }, 30000);
-    }
     onClose();
   };
 
@@ -137,36 +95,38 @@ export function OpenPackSuccessModal({
           <CircleX className="h-12 w-12 text-white/80 hover:text-white" />
         </button>
 
-        {/* Content: Pack image with overlaid text */}
-        <div className="flex flex-col items-center justify-between h-full py-6 px-4">
-          <div className="w-full max-w-sm space-y-3">
-            {/* Success State with Rarity Breakdown */}
-            <Alert className="bg-black/20 border-black/50 backdrop-blur-sm">
-              <AlertDescription className="text-green-100 text-lg">
-                <strong>Great!</strong> {quantity} pack(s) opened!
-                {loadingRarity ? (
-                  <div className="mt-2 flex items-center gap-2 text-xl">
-                    <Loader2 className="h-3 w-3 animate-spin flex-shrink-0" />
-                    <BouncingText text={rotatingMessage} />
-                  </div>
-                ) : rarityData?.success && rarityData.rarities ? (
-                  <div className="mt-2 text-sm font-medium">
-                    {Object.entries(rarityData.rarities)
-                      .filter(([_, count]) => count > 0)
-                      .map(([rarity, count]) => (
-                        <span key={rarity} className="mr-3">
-                          • {count}x {RARITY_MAP[Number(rarity)]}
-                        </span>
-                      ))}
-                  </div>
-                ) : (
-                  <div className="mt-1 text-sm">
-                    <BouncingText text={rotatingMessage} />
-                  </div>
-                )}
-              </AlertDescription>
-            </Alert>
-          </div>
+        {/* Content: Clean centered style */}
+        <div className="flex flex-col items-center justify-center h-full py-6 px-4">
+          {loadingRarity ? (
+            // Loading State - Rotating messages while fetching rarity
+            <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
+              <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
+              <p className="text-lg font-medium text-white">{rotatingMessage}</p>
+            </div>
+          ) : rarityData?.success && rarityData.rarities ? (
+            // Success State - Show rarity breakdown
+            <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
+              <CheckCircle2 className="h-12 w-12 mx-auto text-green-500" />
+              <div className="space-y-2">
+                <p className="text-lg font-medium text-white">{quantity} pack(s) opened!</p>
+                <div className="text-base text-white/90">
+                  {Object.entries(rarityData.rarities)
+                    .filter(([_, count]) => count > 0)
+                    .map(([rarity, count]) => (
+                      <div key={rarity}>
+                        • {count}x {RARITY_MAP[Number(rarity)]}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            // Fallback - Still waiting
+            <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
+              <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
+              <p className="text-lg font-medium text-white">{rotatingMessage}</p>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

@@ -148,6 +148,19 @@ export function FarcasterCompetitionDetailPage({
     competition?.rarityTiers || []
   );
 
+  // Manual refetch state
+  const [isRefetching, setIsRefetching] = useState(false);
+
+  // Manual refetch handler
+  const handleRefetch = useCallback(async () => {
+    setIsRefetching(true);
+    try {
+      await Promise.all([refetchProgress(), refetchArt()]);
+    } finally {
+      setIsRefetching(false);
+    }
+  }, [refetchProgress, refetchArt]);
+
   // Live ticket counter state
   const [pulse, setPulse] = useState(false);
 
@@ -625,6 +638,8 @@ export function FarcasterCompetitionDetailPage({
               loading={loadingProgress}
               address={address}
               hasTicket={hasTicket}
+              onRefetch={handleRefetch}
+              isRefetching={isRefetching}
             />
 
             {/* Pack Actions - Side by side when user doesn't have complete set */}
@@ -633,18 +648,10 @@ export function FarcasterCompetitionDetailPage({
                 <BuyPacksButton
                   collectionAddress={competition.collectionAddress}
                   buttonText="Buy Packs"
-                  onPacksOpened={() => {
-                    refetchProgress();
-                    refetchArt();
-                  }}
                 />
                 <OpenPacksButton
                   collectionAddress={competition.collectionAddress}
                   buttonText="Open Packs"
-                  onPacksOpened={() => {
-                    refetchProgress();
-                    refetchArt();
-                  }}
                 />
               </div>
             )}

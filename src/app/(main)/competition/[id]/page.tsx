@@ -173,6 +173,19 @@ export default function CompetitionDetailPage({
     refetchArt();
   }, [refetchProgress, refetchArt]);
 
+  // Manual refetch state
+  const [isRefetching, setIsRefetching] = useState(false);
+
+  // Manual refetch handler
+  const handleRefetch = useCallback(async () => {
+    setIsRefetching(true);
+    try {
+      await Promise.all([refetchProgress(), refetchArt()]);
+    } finally {
+      setIsRefetching(false);
+    }
+  }, [refetchProgress, refetchArt]);
+
   // Live ticket counter state
   const [pulse, setPulse] = useState(false);
 
@@ -629,6 +642,8 @@ export default function CompetitionDetailPage({
                         <OverallProgress
                           progress={progress}
                           loading={loadingProgress}
+                          onRefetch={handleRefetch}
+                          isRefetching={isRefetching}
                         />
                       </div>
                     )}

@@ -260,15 +260,17 @@ export function BuyPacksButton({
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" />
-            Buy Booster Packs
-          </DialogTitle>
-          <DialogDescription>
-            Select quantity and mint booster packs with ETH
-          </DialogDescription>
-        </DialogHeader>
+        {!isConfirmed && (
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              Buy Booster Packs
+            </DialogTitle>
+            <DialogDescription>
+              Select quantity and mint booster packs with ETH
+            </DialogDescription>
+          </DialogHeader>
+        )}
 
         {!isConnected ? (
           <Alert>
@@ -287,9 +289,15 @@ export function BuyPacksButton({
               </Alert>
             )}
 
-            {/* Predefined Quantities */}
-            {!isConfirmed && (
+            {/* Success Waiting State - Fun message while fetching packs */}
+            {isConfirmed ? (
+              <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
+                <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
+                <p className="text-lg font-medium animate-pulse">Rolling for mythical glory drops...</p>
+              </div>
+            ) : (
               <>
+                {/* Predefined Quantities */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Quick Select</label>
                   <div className="grid grid-cols-4 gap-2">

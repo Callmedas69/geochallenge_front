@@ -9,6 +9,7 @@
 
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { RefreshCw } from "lucide-react";
 
 interface ProgressData {
   totalRequired: number;
@@ -23,13 +24,22 @@ interface OverallProgressProps {
   progress: ProgressData | null;
   /** Loading state */
   loading: boolean;
+  /** Optional: Manual refetch callback */
+  onRefetch?: () => void;
+  /** Optional: Refetching state */
+  isRefetching?: boolean;
 }
 
 /**
  * Overall Progress Component
  * Shows completion percentage and progress bar
  */
-export function OverallProgress({ progress, loading }: OverallProgressProps) {
+export function OverallProgress({
+  progress,
+  loading,
+  onRefetch,
+  isRefetching = false,
+}: OverallProgressProps) {
   if (loading) {
     return <Skeleton className="h-20 w-full" />;
   }
@@ -40,8 +50,20 @@ export function OverallProgress({ progress, loading }: OverallProgressProps) {
 
   return (
     <div className="space-y-2">
-      <div className="flex justify-between text-sm">
-        <span className="font-medium">Overall Progress</span>
+      <div className="flex justify-between items-center text-sm">
+        <div className="flex items-center gap-2">
+          <span className="font-medium">Overall Progress</span>
+          {onRefetch && (
+            <button
+              onClick={onRefetch}
+              disabled={isRefetching}
+              className="flex items-center gap-1 text-xs px-2 py-1 rounded-md hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className={`h-3 w-3 ${isRefetching ? 'animate-spin' : ''}`} />
+              <span>Update</span>
+            </button>
+          )}
+        </div>
         <span
           className={`font-bold ${
             progress.percentage === 100

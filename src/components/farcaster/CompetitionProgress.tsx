@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, RefreshCw } from "lucide-react";
 
 interface ProgressData {
   totalRequired: number;
@@ -30,6 +30,10 @@ interface CompetitionProgressProps {
   address: string | undefined;
   /** Whether user owns a ticket */
   hasTicket: boolean;
+  /** Optional: Manual refetch callback */
+  onRefetch?: () => void;
+  /** Optional: Refetching state */
+  isRefetching?: boolean;
 }
 
 /**
@@ -41,6 +45,8 @@ export function CompetitionProgress({
   loading,
   address,
   hasTicket,
+  onRefetch,
+  isRefetching = false,
 }: CompetitionProgressProps) {
   // Don't show if user doesn't have ticket or isn't connected
   if (!address || !hasTicket) {
@@ -56,8 +62,20 @@ export function CompetitionProgress({
           <>
             {/* Progress Bar */}
             <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="font-medium">Overall Progress</span>
+              <div className="flex justify-between items-center text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">Overall Progress</span>
+                  {onRefetch && (
+                    <button
+                      onClick={onRefetch}
+                      disabled={isRefetching}
+                      className="flex items-center gap-1 text-xs px-2 py-1 rounded-md hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <RefreshCw className={`h-3 w-3 ${isRefetching ? 'animate-spin' : ''}`} />
+                      <span>Update</span>
+                    </button>
+                  )}
+                </div>
                 <span
                   className={`font-bold ${
                     progress.percentage === 100
