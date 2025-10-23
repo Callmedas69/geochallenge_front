@@ -10,8 +10,14 @@ import React, { useEffect } from "react";
 import type { Address } from "viem";
 import { useContractInfo, useOpenRarity } from "@/hooks/useVibeAPI";
 import { RARITY_MAP } from "@/lib/validateCollection";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Loader2, CheckCircle2, CircleX } from "lucide-react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogPortal,
+  DialogOverlay,
+} from "@/components/ui/dialog";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { Loader2, CheckCircle2, CircleX, BadgeCheck } from "lucide-react";
 interface OpenPackSuccessModalProps {
   /** BoosterDrop contract address to fetch pack image */
   collectionAddress: Address;
@@ -83,52 +89,61 @@ export function OpenPackSuccessModal({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="border-none bg-transparent shadow-none">
-        <DialogTitle className="sr-only"></DialogTitle>
+      <DialogPortal>
+        {/* Custom transparent overlay - no darkening effect */}
+        <DialogOverlay className="bg-transparent" />
 
-        {/* Close Icon - Top Right */}
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 z-50 rounded-full p-2 hover:bg-white/10 transition-colors"
-          aria-label="Close"
-        >
-          <CircleX className="h-12 w-12 text-white/80 hover:text-white" />
-        </button>
+        <DialogPrimitive.Content className="shadow-2xl bg-white-500 backdrop-filter backdrop-blur-lg bg-opacity-40 border border-gray-100 fixed top-[50%] left-[50%] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] duration-200 sm:max-w-lg rounded-lg p-6">
+          <DialogTitle className="sr-only"></DialogTitle>
 
-        {/* Content: Clean centered style */}
-        <div className="flex flex-col items-center justify-center h-full py-6 px-4">
-          {loadingRarity ? (
-            // Loading State - Rotating messages while fetching rarity
-            <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
-              <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-              <p className="text-lg font-medium text-white">{rotatingMessage}</p>
-            </div>
-          ) : rarityData?.success && rarityData.rarities ? (
-            // Success State - Show rarity breakdown
-            <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
-              <CheckCircle2 className="h-12 w-12 mx-auto text-green-500" />
-              <div className="space-y-2">
-                <p className="text-lg font-medium text-white">{quantity} pack(s) opened!</p>
-                <div className="text-base text-white/90">
-                  {Object.entries(rarityData.rarities)
-                    .filter(([_, count]) => count > 0)
-                    .map(([rarity, count]) => (
-                      <div key={rarity}>
-                        • {count}x {RARITY_MAP[Number(rarity)]}
-                      </div>
-                    ))}
+          {/* Close Icon - Top Right */}
+          <button
+            onClick={handleClose}
+            className="absolute -top-1 -right-1 z-50 rounded-full p-2 transition-colors"
+            aria-label="Close"
+          >
+            <CircleX className="h-12 w-12 text-black/80 hover:text-black" />
+          </button>
+
+          {/* Content: Clean centered style */}
+          <div className="flex flex-col items-center justify-center h-full py-6 px-4">
+            {loadingRarity ? (
+              // Loading State - Rotating messages while fetching rarity
+              <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
+                <p className="text-xl font-medium text-black/80">
+                  {rotatingMessage}
+                </p>
+              </div>
+            ) : rarityData?.success && rarityData.rarities ? (
+              // Success State - Show rarity breakdown
+              <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
+                <BadgeCheck className="h-12 w-12 mx-auto text-black/80 hover:text-black animate-bounce" />
+                <div className="space-y-2">
+                  <p className="text-2xl font-medium text-black uppercase">
+                    {quantity} pack(s) opened!
+                  </p>
+                  <div className="text-xl text-black">
+                    {Object.entries(rarityData.rarities)
+                      .filter(([_, count]) => count > 0)
+                      .map(([rarity, count]) => (
+                        <div key={rarity}>
+                          • {count}x {RARITY_MAP[Number(rarity)]}
+                        </div>
+                      ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            // Fallback - Still waiting
-            <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
-              <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
-              <p className="text-lg font-medium text-white">{rotatingMessage}</p>
-            </div>
-          )}
-        </div>
-      </DialogContent>
+            ) : (
+              // Fallback - Still waiting
+              <div className="text-center space-y-4 py-12 animate-in fade-in duration-500">
+                <p className="text-lg font-medium text-black">
+                  {rotatingMessage}
+                </p>
+              </div>
+            )}
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPortal>
     </Dialog>
   );
 }
