@@ -6,11 +6,13 @@
 
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import type { Address } from "viem";
 import { useContractInfo } from "@/hooks/useVibeAPI";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { CircleX, Loader2 } from "lucide-react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 interface PackSuccessModalProps {
   /** BoosterDrop contract address to fetch pack image */
@@ -36,9 +38,39 @@ export function PackSuccessModal({
   onPacksOpened,
 }: PackSuccessModalProps) {
   const { data: contractInfo, loading } = useContractInfo(collectionAddress);
+  const packImageRef = useRef<HTMLDivElement>(null);
+  const quantityRef = useRef<HTMLDivElement>(null);
 
   // Get pack image from contract info
   const packImage = contractInfo?.contractInfo?.packImage;
+
+  // GSAP pop animation - staggered elastic bounce
+  useGSAP(() => {
+    if (open && !loading && packImage && packImageRef.current && quantityRef.current) {
+      // Set initial state (invisible and scaled down)
+      gsap.set([packImageRef.current, quantityRef.current], {
+        scale: 0,
+        opacity: 0
+      });
+
+      // Animate pack image first with elastic bounce
+      gsap.to(packImageRef.current, {
+        scale: 1,
+        opacity: 1,
+        duration: 0.6,
+        ease: "elastic.out(1, 0.5)"
+      });
+
+      // Animate quantity text 0.2s later with same elastic bounce
+      gsap.to(quantityRef.current, {
+        scale: 1,
+        opacity: 1,
+        duration: 0.6,
+        delay: 0.2,
+        ease: "elastic.out(1, 0.5)"
+      });
+    }
+  }, [open, loading, packImage]);
 
   // Handle modal close
   const handleClose = () => {
@@ -69,13 +101,16 @@ export function PackSuccessModal({
               </div>
             ) : packImage ? (
               <>
-                <img
-                  src={packImage}
-                  alt={`Pack x${quantity}`}
-                  className="w-full h-auto rounded-lg shadow-2xl"
-                />
-                {/* ACQUIRED text - bottom right, slightly outside */}
-                <div className="absolute bottom-5 right-[-10px] pointer-events-none">
+                {/* Pack image with animation */}
+                <div ref={packImageRef}>
+                  <img
+                    src={packImage}
+                    alt={`Pack x${quantity}`}
+                    className="w-full h-auto rounded-lg shadow-2xl"
+                  />
+                </div>
+                {/* Quantity text with animation - bottom right, slightly outside */}
+                <div ref={quantityRef} className="absolute bottom-5 right-[-10px] pointer-events-none">
                   <h2 className="text-white text-9xl italic font-extrabold [text-shadow:0_0_10px_#00aaff,0_0_20px_#37f0e4,0_0_40px_#009fff] p-0 m-0">
                     x{quantity}
                   </h2>

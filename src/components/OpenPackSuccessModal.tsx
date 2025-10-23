@@ -38,24 +38,24 @@ function BouncingText({ text }: { text: string }) {
 
   useGSAP(() => {
     if (containerRef.current) {
-      gsap.to('.char', {
+      gsap.to(".char", {
         y: -8,
         duration: 0.5,
         stagger: {
           each: 0.05,
           repeat: -1,
           yoyo: true,
-          ease: "power1.inOut"
-        }
+          ease: "bounce.out",
+        },
       });
     }
   }, [text]);
 
   return (
     <div ref={containerRef} className="inline-flex">
-      {text.split('').map((char, i) => (
+      {text.split("").map((char, i) => (
         <span key={i} className="char inline-block">
-          {char === ' ' ? '\u00A0' : char}
+          {char === " " ? "\u00A0" : char}
         </span>
       ))}
     </div>
@@ -78,7 +78,7 @@ export function OpenPackSuccessModal({
     "Magic happening...",
     "Creating your cards...",
     "Brewing some magic...",
-    "Crafting rarities..."
+    "Crafting rarities...",
   ];
 
   const [messageIndex, setMessageIndex] = React.useState(0);
@@ -126,9 +126,7 @@ export function OpenPackSuccessModal({
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="border-none bg-transparent shadow-none">
-        <DialogTitle className="sr-only">
-          Booster Packs Opened Successfully
-        </DialogTitle>
+        <DialogTitle className="sr-only"></DialogTitle>
 
         {/* Close Icon - Top Right */}
         <button
@@ -143,12 +141,11 @@ export function OpenPackSuccessModal({
         <div className="flex flex-col items-center justify-between h-full py-6 px-4">
           <div className="w-full max-w-sm space-y-3">
             {/* Success State with Rarity Breakdown */}
-            <Alert className="bg-green-500/20 border-green-500/50 backdrop-blur-sm">
-              <CheckCircle2 className="h-4 w-4 text-green-400" />
-              <AlertDescription className="text-green-100">
-                <strong>Success!</strong> {quantity} pack(s) opened!
+            <Alert className="bg-black/20 border-black/50 backdrop-blur-sm">
+              <AlertDescription className="text-green-100 text-lg">
+                <strong>Great!</strong> {quantity} pack(s) opened!
                 {loadingRarity ? (
-                  <div className="mt-2 flex items-center gap-2 text-sm">
+                  <div className="mt-2 flex items-center gap-2 text-xl">
                     <Loader2 className="h-3 w-3 animate-spin flex-shrink-0" />
                     <BouncingText text={rotatingMessage} />
                   </div>

@@ -120,7 +120,7 @@ export function OpenPacksButton({
       setOpen(false) // Close main dialog
       setShowSuccessModal(true) // Show success modal
     }
-  }, [isSuccess, quantity])
+  }, [isSuccess])
 
   const handleOpen = () => {
     openPacks()
