@@ -11,6 +11,7 @@ import { useAccount } from 'wagmi'
 import type { Address } from 'viem'
 import { useOpenPacks } from '@/hooks/useOpenPacks'
 import { API_CHAIN_ID } from '@/lib/config'
+import { parseTransactionError } from '@/lib/parseTransactionError'
 import {
   Dialog,
   DialogContent,
@@ -168,7 +169,7 @@ export function OpenPacksButton({
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  {openError}
+                  {typeof openError === 'string' ? openError : parseTransactionError(openError)}
                 </AlertDescription>
               </Alert>
             )}

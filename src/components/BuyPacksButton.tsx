@@ -13,6 +13,7 @@ import type { Address } from 'viem'
 import { formatEther, parseEther } from 'viem'
 import { boosterDropV2_ABI } from '@/abi/boosterDropV2_ABI'
 import { REFERRER_ADDRESS, API_CHAIN_ID } from '@/lib/config'
+import { parseTransactionError } from '@/lib/parseTransactionError'
 import {
   Dialog,
   DialogContent,
@@ -284,7 +285,7 @@ export function BuyPacksButton({
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  {mintError?.message || confirmError?.message || priceError?.message || 'Transaction failed'}
+                  {parseTransactionError(mintError || confirmError || priceError)}
                 </AlertDescription>
               </Alert>
             )}

@@ -14,6 +14,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { CheckCircle, Loader2, Ticket } from "lucide-react";
+import { parseTransactionError } from "@/lib/parseTransactionError";
 
 interface BuyTicketButtonProps {
   competitionId: bigint;
@@ -130,13 +131,7 @@ export function BuyTicketButton({
       {error && (
         <Alert variant="destructive">
           <AlertDescription>
-            {error.message.includes("Already owns ticket")
-              ? "You already own a ticket for this competition"
-              : error.message.includes("Not eligible")
-                ? `You must own an NFT from ${collectionAddress.slice(0, 6)}...${collectionAddress.slice(-4)}`
-                : error.message.includes("Competition not active")
-                  ? "This competition is not currently active"
-                  : "Failed to purchase ticket. Please try again."}
+            {parseTransactionError(error)}
           </AlertDescription>
         </Alert>
       )}

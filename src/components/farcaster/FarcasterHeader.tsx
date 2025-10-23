@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
 import { HowItWorksDrawer } from "./HowItWorksDrawer";
 import { CompactWalletButton } from "./CompactWalletButton";
+import { BalanceDisplay } from "./BalanceDisplay";
 import localFont from "next/font/local";
 
 const spartanFont = localFont({
@@ -46,7 +47,7 @@ export function FarcasterHeader() {
             </span>
           </div>
 
-          {/* Right side: Wallet + Info */}
+          {/* Right side: Info + Balance + Wallet */}
           <div className="flex items-center gap-2">
             {/* Info Icon */}
             <Button
@@ -57,6 +58,9 @@ export function FarcasterHeader() {
             >
               <Info className="h-5 w-5" />
             </Button>
+
+            {/* Balance Display - Shows ETH balance in USD */}
+            <BalanceDisplay />
 
             {/* Wallet Button - Shows connected wallet */}
             <CompactWalletButton />

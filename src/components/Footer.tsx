@@ -32,9 +32,13 @@ const FOOTER_LINKS = {
 };
 
 const SOCIAL_LINKS = [
-  { label: "GitHub", href: "https://github.com", icon: Github },
-  { label: "Twitter", href: "https://twitter.com", icon: Twitter },
-  { label: "Documentation", href: "/docs", icon: FileText },
+  // { label: "GitHub", href: "https://github.com", icon: Github },
+  {
+    label: "Twitter",
+    href: "https://twitter.com/geoart_studio",
+    icon: Twitter,
+  },
+  // { label: "Documentation", href: "/docs", icon: FileText },
 ];
 
 // ============================================================================
@@ -70,7 +74,7 @@ export function Footer() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="hover:text-primary transition-colors !text-black/50"
+                    className="hover:!text-primary transition-colors !text-black/50"
                     aria-label={social.label}
                   >
                     <Icon className="w-5 h-5" />
@@ -140,8 +144,17 @@ export function Footer() {
             © {currentYear} GeoArt. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground">
-            Built by 0xDas on{" "}
-            <span className="font-semibold text-blue-600">Base</span>
+            Built by{" "}
+            <Link
+              href="https://x.com/0xdasx"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="!text-muted-foreground hover:underline hover:text-blue-500">
+                0xDas
+              </span>
+            </Link>{" "}
+            on <span className="font-semibold">Base</span>
           </p>
         </div>
       </div>

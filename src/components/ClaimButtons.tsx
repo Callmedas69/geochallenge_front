@@ -19,6 +19,7 @@ import { useAccount, useReadContract } from 'wagmi'
 import { CheckCircle, Loader2, Trophy, Users, DollarSign } from 'lucide-react'
 import { geoChallenge_implementation_ABI } from '@/abi'
 import { CONTRACT_ADDRESSES } from '@/lib/contractList'
+import { parseTransactionError } from '@/lib/parseTransactionError'
 
 /**
  * Claim Winner Prize Button
@@ -185,11 +186,7 @@ export function ClaimPrizeButton({
           <Alert variant="destructive">
             <AlertDescription className="space-y-2">
               <p>
-                {error.message.includes('Already claimed')
-                  ? 'Prize already claimed'
-                  : error.message.includes('timeout')
-                    ? 'Transaction timeout'
-                    : 'Failed to claim prize'}
+                {parseTransactionError(error)}
               </p>
               <Button
                 onClick={retry}
@@ -378,11 +375,7 @@ export function ClaimParticipantPrizeButton({
           <Alert variant="destructive">
             <AlertDescription className="space-y-2">
               <p>
-                {error.message.includes('Already claimed')
-                  ? 'Prize already claimed'
-                  : error.message.includes('timeout')
-                    ? 'Transaction timeout'
-                    : 'Failed to claim prize'}
+                {parseTransactionError(error)}
               </p>
               <Button
                 onClick={retry}
@@ -548,11 +541,7 @@ export function ClaimRefundButton({
           <Alert variant="destructive">
             <AlertDescription className="space-y-2">
               <p>
-                {error.message.includes('Already claimed')
-                  ? 'Refund already claimed'
-                  : error.message.includes('timeout')
-                    ? 'Transaction timeout'
-                    : 'Failed to claim refund'}
+                {parseTransactionError(error)}
               </p>
               <Button
                 onClick={retry}

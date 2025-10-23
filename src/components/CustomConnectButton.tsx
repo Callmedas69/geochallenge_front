@@ -3,8 +3,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { Theme } from "@rainbow-me/rainbowkit";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { CustomAccountModal } from "./CustomAccountModal";
 
 export const obsidianTheme: Theme = {
   blurs: {
@@ -63,8 +61,6 @@ export const obsidianTheme: Theme = {
 };
 
 export function CustomConnectButton() {
-  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
-
   // Add CSS for learn more link
   if (typeof document !== "undefined") {
     const style = document.createElement("style");
@@ -105,14 +101,6 @@ export function CustomConnectButton() {
 
           return (
             <>
-              {account && (
-                <CustomAccountModal
-                  isOpen={isAccountModalOpen}
-                  onClose={() => setIsAccountModalOpen(false)}
-                  address={account.address}
-                  balance={account.displayBalance}
-                />
-              )}
               <div
                 {...(!ready && {
                   "aria-hidden": true,
@@ -177,7 +165,7 @@ export function CustomConnectButton() {
                       </Button>
 
                       <Button
-                        onClick={() => setIsAccountModalOpen(true)}
+                        onClick={openAccountModal}
                         variant="secondary"
                         className="flex gap-2 items-center text-white cursor-pointer bg-slate-900 hover:bg-slate-800 text-sm sm:text-base min-h-[44px] w-full sm:w-auto"
                       >

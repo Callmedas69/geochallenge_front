@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Wallet, Copy, LogOut } from "lucide-react";
 import {
@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from 'react';
+import { useState } from "react";
 
 /**
  * Compact wallet button for mobile header
@@ -47,7 +47,7 @@ export function CompactWalletButton() {
       // Reset after 2 seconds
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error('Failed to copy address:', error);
+      console.error("Failed to copy address:", error);
     }
   };
 
@@ -57,7 +57,7 @@ export function CompactWalletButton() {
    */
   const handleDisconnect = () => {
     // Set flag to prevent auto-reconnect (useAutoConnect will check this)
-    localStorage.setItem('fc_manual_disconnect', 'true');
+    localStorage.setItem("fc_manual_disconnect", "true");
     disconnect();
   };
 
@@ -67,10 +67,10 @@ export function CompactWalletButton() {
         <Button
           variant="ghost"
           size="sm"
-          className="text-xs gap-1 h-8 px-2 hover:bg-accent"
+          className="text-xs gap-1 h-10 hover:bg-accent"
           aria-label="Wallet menu"
         >
-          <Wallet className="h-3 w-3" />
+          <Wallet className="h-10 w-10" />
           {/* Hide address text on very small screens, show only icon */}
           <span className="hidden xs:inline">{shortAddress}</span>
         </Button>
@@ -78,12 +78,9 @@ export function CompactWalletButton() {
 
       <DropdownMenuContent align="end" className="w-48">
         {/* Copy Address */}
-        <DropdownMenuItem
-          onClick={handleCopy}
-          className="cursor-pointer"
-        >
+        <DropdownMenuItem onClick={handleCopy} className="cursor-pointer">
           <Copy className="h-4 w-4 mr-2" />
-          {copied ? 'Copied!' : 'Copy Address'}
+          {copied ? "Copied!" : "Copy Address"}
         </DropdownMenuItem>
 
         {/* Disconnect */}
