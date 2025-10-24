@@ -1,13 +1,13 @@
 /**
  * @title Farcaster MiniApp Homepage
  * @notice Minimal homepage optimized for Farcaster frames
- * @dev KISS principle: No hero section, just active competitions
+ * @dev KISS principle: No hero section, featured or active competitions
  * @dev Route: /miniapps (Farcaster-specific route)
  */
 
 "use client";
 
-import { CompetitionList } from "@/components/farcaster";
+import { FeaturedCompetitionsList } from "@/components/farcaster";
 import { EventNotifications } from "@/components/EventNotifications";
 import { useAutoConnect } from "@/lib/farcaster";
 import { ShareButton } from "@/components/farcaster/ShareButton";
@@ -47,17 +47,13 @@ export default function FarcasterHomePage() {
               Complete your VibeMarket trading card sets, earn prize prizes, and
               prove your grind on Base.
             </p>
-            <ShareButton
-              type="platform"
-              className="mt-4"
-            />
+            <ShareButton type="platform" className="mt-4" />
           </div>
         </div>
 
-        {/* Main Content: Active Competitions Only - No Hero */}
+        {/* Main Content: Featured or Active Competitions - No Hero */}
         <section>
-          <h1 className="font-bold text-sm mb-3">ACTIVE COMPETITION</h1>
-          <CompetitionList />
+          <FeaturedCompetitionsList />
         </section>
       </div>
     </>

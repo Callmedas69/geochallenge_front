@@ -6,6 +6,7 @@
 
 export { CompetitionCard } from './CompetitionCard';
 export { CompetitionList } from './CompetitionList';
+export { FeaturedCompetitionsList } from './FeaturedCompetitionsList';
 export { CompetitionTicket } from './CompetitionTicket';
 export { CompetitionProgress } from './CompetitionProgress';
 export { BottomNav } from './BottomNav';

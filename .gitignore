@@ -37,6 +37,7 @@ docs/*
 CLAUDE.md
 .claude
 scripts/*
+supabase/*
 
 # vercel
 .vercel

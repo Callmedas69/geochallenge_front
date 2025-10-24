@@ -1,6 +1,6 @@
 /**
  * @title Farcaster Browse Page
- * @notice Browse all competitions with filtering (Active/All tabs) for Farcaster miniApps
+ * @notice Browse all competitions with filtering (Active/All tabs) and sorting for Farcaster miniApps
  * @dev KISS principle: Mobile-optimized tabbed interface for competition browsing
  * @dev Route: /miniapps/browse (Farcaster-specific browse route)
  */
@@ -15,6 +15,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,14 +32,16 @@ import {
   FarcasterHeader,
 } from "@/components/farcaster";
 import { useAutoConnect } from "@/lib/farcaster";
-import { ArrowLeft, List } from "lucide-react";
+import { ArrowLeft, List, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
+import { type SortOption, SORT_OPTIONS_COMPACT } from "@/hooks/useSortedCompetitions";
 
 export default function FarcasterBrowsePage() {
   // Auto-connect Farcaster wallet
   useAutoConnect();
 
   const [activeTab, setActiveTab] = useState<"active" | "all">("active");
+  const [sortBy, setSortBy] = useState<SortOption>("tickets");
   const { competitions, isLoading } = useAllCompetitions();
 
   // Filter active competitions (state = 1)
@@ -40,6 +49,39 @@ export default function FarcasterBrowsePage() {
     () => competitions.filter((comp) => comp.state === 1),
     [competitions]
   );
+
+  // Sort competitions based on selected criteria
+  const sortedAllCompetitions = useMemo(() => {
+    const sorted = [...competitions].sort((a, b) => {
+      switch (sortBy) {
+        case "tickets":
+          return Number(b.totalTickets) - Number(a.totalTickets);
+        case "deadline":
+          return Number(a.deadline) - Number(b.deadline);
+        case "id":
+          return Number(b.id) - Number(a.id);
+        default:
+          return 0;
+      }
+    });
+    return sorted;
+  }, [competitions, sortBy]);
+
+  const sortedActiveCompetitions = useMemo(() => {
+    const sorted = [...activeCompetitions].sort((a, b) => {
+      switch (sortBy) {
+        case "tickets":
+          return Number(b.totalTickets) - Number(a.totalTickets);
+        case "deadline":
+          return Number(a.deadline) - Number(b.deadline);
+        case "id":
+          return Number(b.id) - Number(a.id);
+        default:
+          return 0;
+      }
+    });
+    return sorted;
+  }, [activeCompetitions, sortBy]);
 
   // Loading state
   if (isLoading) {
@@ -81,6 +123,19 @@ export default function FarcasterBrowsePage() {
           </p>
         </div>
 
+        {/* Sort Dropdown */}
+        <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+          <SelectTrigger className="w-full">
+            <ArrowUpDown className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tickets">{SORT_OPTIONS_COMPACT.tickets}</SelectItem>
+            <SelectItem value="deadline">{SORT_OPTIONS_COMPACT.deadline}</SelectItem>
+            <SelectItem value="id">{SORT_OPTIONS_COMPACT.id}</SelectItem>
+          </SelectContent>
+        </Select>
+
         {/* Tabs */}
         <Tabs
           value={activeTab}
@@ -89,17 +144,17 @@ export default function FarcasterBrowsePage() {
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="active" className="text-sm">
               Active
-              {activeCompetitions.length > 0 && (
+              {sortedActiveCompetitions.length > 0 && (
                 <Badge variant="secondary" className="ml-2 text-xs">
-                  {activeCompetitions.length}
+                  {sortedActiveCompetitions.length}
                 </Badge>
               )}
             </TabsTrigger>
             <TabsTrigger value="all" className="text-sm">
               All
-              {competitions.length > 0 && (
+              {sortedAllCompetitions.length > 0 && (
                 <Badge variant="secondary" className="ml-2 text-xs">
-                  {competitions.length}
+                  {sortedAllCompetitions.length}
                 </Badge>
               )}
             </TabsTrigger>
@@ -107,7 +162,7 @@ export default function FarcasterBrowsePage() {
 
           {/* Active Tab */}
           <TabsContent value="active" className="space-y-3 mt-4">
-            {activeCompetitions.length === 0 ? (
+            {sortedActiveCompetitions.length === 0 ? (
               <Card>
                 <CardHeader className="p-4">
                   <CardTitle className="text-base">
@@ -120,7 +175,7 @@ export default function FarcasterBrowsePage() {
                 </CardHeader>
               </Card>
             ) : (
-              activeCompetitions.map((comp, index) => (
+              sortedActiveCompetitions.map((comp, index) => (
                 <CompetitionCard
                   key={comp.id.toString()}
                   competitionId={comp.id}
@@ -132,7 +187,7 @@ export default function FarcasterBrowsePage() {
 
           {/* All Tab */}
           <TabsContent value="all" className="space-y-3 mt-4">
-            {competitions.length === 0 ? (
+            {sortedAllCompetitions.length === 0 ? (
               <Card>
                 <CardHeader className="p-4">
                   <CardTitle className="text-base">No Competitions</CardTitle>
@@ -142,7 +197,7 @@ export default function FarcasterBrowsePage() {
                 </CardHeader>
               </Card>
             ) : (
-              competitions.map((comp, index) => (
+              sortedAllCompetitions.map((comp, index) => (
                 <CompetitionCard
                   key={comp.id.toString()}
                   competitionId={comp.id}

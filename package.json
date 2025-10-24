@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test:supabase": "tsx supabase/test-connection.ts",
+    "test:api": "tsx supabase/test-api.ts"
   },
   "dependencies": {
     "@farcaster/miniapp-sdk": "^0.2.0",
@@ -40,6 +42,7 @@
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@rainbow-me/rainbowkit": "^2.2.8",
+    "@supabase/supabase-js": "^2.76.1",
     "@tanstack/react-query": "^5.90.2",
     "@vercel/og": "^0.8.5",
     "class-variance-authority": "^0.7.1",
@@ -73,7 +76,9 @@
     "@types/react-dom": "^19",
     "@wagmi/cli": "^2.6.0",
     "canvas": "^3.2.0",
+    "dotenv": "^17.2.3",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "tw-animate-css": "^1.4.0",
     "typescript": "^5"
   }

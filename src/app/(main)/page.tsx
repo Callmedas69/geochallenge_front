@@ -1,12 +1,12 @@
 /**
  * @title Homepage
- * @notice Main landing page showing active competitions only
- * @dev KISS principle: Simple layout with active competitions
+ * @notice Main landing page showing featured or active competitions
+ * @dev KISS principle: Simple layout with dynamic featured/active display
  */
 
 "use client";
 
-import { ActiveCompetitionList } from "@/components/ActiveCompetitionList";
+import { FeaturedCompetitionsList } from "@/components/FeaturedCompetitionsList";
 import { EventNotifications } from "@/components/EventNotifications";
 import { ShareIcons } from "@/components/web/ShareIcons";
 import { Separator } from "@/components/ui/separator";
@@ -29,19 +29,9 @@ export default function HomePage() {
 
       <Separator />
 
-      {/* Main Content: Active Competitions Only */}
+      {/* Main Content: Featured or Active Competitions */}
       <section className="space-y-4 mb-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
-            Active Competitions
-          </h2>
-          <Link href="/browse">
-            <Button variant="outline" className="w-full sm:w-auto">
-              View All Competitions
-            </Button>
-          </Link>
-        </div>
-        <ActiveCompetitionList />
+        <FeaturedCompetitionsList />
       </section>
     </div>
   );

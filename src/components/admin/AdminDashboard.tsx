@@ -20,6 +20,7 @@ import { CreateCompetitionForm } from "./CreateCompetitionForm";
 import { CompetitionActions } from "./CompetitionActions";
 import { EmergencyControls } from "./EmergencyControls";
 import { AdvancedSettings } from "./AdvancedSettings";
+import { FeaturedManagement } from "./FeaturedManagement";
 import {
   useCompetitionCount,
   useActiveCompetitions,
@@ -253,7 +254,11 @@ export function AdminDashboard() {
         </TabsContent>
 
         {/* Tab 2: Manage Competitions */}
-        <TabsContent value="manage">
+        <TabsContent value="manage" className="space-y-6">
+          {/* Featured Competitions Management */}
+          <FeaturedManagement />
+
+          {/* Competition Lifecycle Management */}
           <Card>
             <CardHeader>
               <CardTitle>Manage Competitions</CardTitle>

@@ -15,7 +15,12 @@
       "Bash(if exist .next rmdir /s /q .next)",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "WebFetch(domain:basescan.org)"
+      "WebFetch(domain:basescan.org)",
+      "Bash(test:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run test:api:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout /t 10 /nobreak)"
     ],
     "deny": [],
     "ask": []
