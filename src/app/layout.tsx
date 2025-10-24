@@ -20,13 +20,35 @@ export async function generateMetadata(): Promise<Metadata> {
   const URL = process.env.NEXT_PUBLIC_URL as string;
 
   return {
-    title: "GeoChallenge – Collect. Compete. Conquer.",
+    title: "GeoChallenge - Collect. Compete. Conquer.",
     description:
       "A GeoArt trading card competition platform built for Vibemarket. Complete your set. Claim your glory. Fully onchain.",
+
+    // ✅ OpenGraph metadata for Twitter, Discord, LinkedIn, etc.
+    openGraph: {
+      title: "GeoChallenge - Trading Card Competitions",
+      description:
+        "Complete your trading card sets and win prizes. Built for Vibemarket on Base.",
+      images: [`${URL}/og.png`],
+      url: URL,
+      siteName: "GeoChallenge",
+      type: "website",
+    },
+
+    // ✅ Twitter Card metadata
+    twitter: {
+      card: "summary_large_image",
+      title: "GeoChallenge - Trading Card Competitions",
+      description:
+        "Complete your trading card sets and win prizes. Built for Vibemarket on Base.",
+      images: [`${URL}/og.png`],
+      creator: "@0xdasx",
+    },
+
     other: {
       "fc:miniapp": JSON.stringify({
         version: "1",
-        imageUrl: `${URL}/hero.png`,
+        imageUrl: `${URL}/og.png`,
         button: {
           title: "Launch GeoChallenge",
           action: {
@@ -42,12 +64,6 @@ export async function generateMetadata(): Promise<Metadata> {
       // ✅ Safe-site metadata
       "geoart-verification": "official-geochallenge",
       "wallet-safety": "verified-base-dapp",
-      "og:site_name": "GeoChallenge",
-      "og:url": `${URL}`,
-      "og:type": "website",
-      "twitter:card": "summary_large_image",
-      "twitter:creator": "@0xd_eth",
-      "twitter:image": `${URL}/hero.png`,
       "application-name": "GeoChallenge",
       "theme-color": "#0a0a0a",
     },
