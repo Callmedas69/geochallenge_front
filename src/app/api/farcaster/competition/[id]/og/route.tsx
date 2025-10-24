@@ -92,10 +92,10 @@ async function fetchImageAsBase64(
       const timestamp = new Date().toISOString();
       console.warn(
         `[SECURITY_OG_IMAGE] ${timestamp} | ` +
-        `Blocked untrusted image URL | ` +
-        `Competition: ${context?.competitionId || 'N/A'} | ` +
-        `Source: ${context?.source || 'unknown'} | ` +
-        `URL: ${imageUrl}`
+          `Blocked untrusted image URL | ` +
+          `Competition: ${context?.competitionId || "N/A"} | ` +
+          `Source: ${context?.source || "unknown"} | ` +
+          `URL: ${imageUrl}`
       );
       return null;
     }
@@ -126,8 +126,8 @@ async function fetchCollectionData(
 ) {
   try {
     // Validate API key is configured (security: prevent demo key usage)
-    if (!process.env.VIBE_API_KEY || VIBE_API_KEY.includes('DEMO')) {
-      console.error('[SECURITY] VIBE_API_KEY not configured - using demo key');
+    if (!process.env.VIBE_API_KEY || VIBE_API_KEY.includes("DEMO")) {
+      console.error("[SECURITY] VIBE_API_KEY not configured - using demo key");
       return null; // Return null to fallback to default image
     }
 
@@ -156,7 +156,7 @@ async function fetchCollectionData(
     const packImageBase64 = packImageUrl
       ? await fetchImageAsBase64(packImageUrl, {
           competitionId,
-          source: 'vibe_api_collection_image',
+          source: "vibe_api_collection_image",
         })
       : null;
 
@@ -409,7 +409,7 @@ export async function GET(
             >
               <div
                 style={{
-                  fontSize: "16px",
+                  fontSize: "20px",
                   textTransform: "uppercase",
                   letterSpacing: "0.1em",
                   color: GEO_COLORS.mutedText,
@@ -435,7 +435,7 @@ export async function GET(
               {/* Description */}
               <div
                 style={{
-                  fontSize: "22px",
+                  fontSize: "24px",
                   color: GEO_COLORS.mutedText,
                   display: "flex",
                   marginTop: "4px",
@@ -443,8 +443,8 @@ export async function GET(
                   lineHeight: 1.3,
                 }}
               >
-                {description.length > 80
-                  ? description.slice(0, 80) + "..."
+                {description.length > 200
+                  ? description.slice(0, 200) + "..."
                   : description}
               </div>
 

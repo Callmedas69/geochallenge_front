@@ -31,13 +31,21 @@ export function ShareIcons({
         return;
       }
       shareUrl = FARCASTER_SHARING.webCompetitionUrl(competitionId);
-      shareText = collectionName
-        ? `Check out the ${collectionName} competition on GeoChallenge! 🎴\n\n${shareUrl}`
-        : `Join this competition on GeoChallenge! 🎴\n\n${shareUrl}`;
+      shareText =
+        platform === "twitter"
+          ? collectionName
+            ? `The ${collectionName} competition is live on GeoChallenge 🎴\nBuilt for @vibedotmarket on @base powered by @geoart_studio ⚡\n\n${shareUrl}`
+            : `A new competition is live on GeoChallenge 🎴\nBuilt for @vibedotmarket on @base powered by @geoart_studio⚡\n\n${shareUrl}`
+          : collectionName
+            ? `The ${collectionName} competition is live on GeoChallenge 🎴\nBuilt for @vibemarket on @base.base.eth  ⚡\n\n${shareUrl}`
+            : `A new competition is live on GeoChallenge 🎴\nBuilt for @vibemarket on @base.base.eth ⚡\n\n${shareUrl}`;
     } else {
       // Platform share
       shareUrl = FARCASTER_SHARING.webHomeUrl;
-      shareText = `Join me on GeoChallenge! Complete trading card sets and win prizes on Base 🎴\n\n${shareUrl}`;
+      shareText =
+        platform === "twitter"
+          ? `I'm joining GeoChallenge — the trading card competition built for @vibedotmarket 🎴\nComplete your set. Win prizes. On @base powered by @geoart_studio ⚡\n\n${shareUrl}`
+          : `I'm joining GeoChallenge — the trading card competition built for @vibemarket 🎴\nComplete your set. Win prizes. On @base.base.eth ⚡\n\n${shareUrl}`;
     }
 
     // Open share URL based on platform

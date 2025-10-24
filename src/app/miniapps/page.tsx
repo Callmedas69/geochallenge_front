@@ -49,8 +49,6 @@ export default function FarcasterHomePage() {
             </p>
             <ShareButton
               type="platform"
-              variant="default"
-              size="lg"
               className="mt-4"
             />
           </div>

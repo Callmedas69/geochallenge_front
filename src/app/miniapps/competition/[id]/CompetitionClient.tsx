@@ -510,8 +510,6 @@ export function FarcasterCompetitionDetailPage({
           collectionName={
             collectionInfo?.contractInfo?.nftName || metadata?.[0]
           }
-          variant="outline"
-          size="default"
           className="w-full"
         />
       </div>

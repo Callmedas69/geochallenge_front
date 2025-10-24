@@ -32,8 +32,11 @@ export function BuyTicketButton({
   const { address, isConnecting } = useAccount();
   const { buyTicket, isPending, isConfirming, isSuccess, error } =
     useBuyTicket();
-  const { data: ticketBalance, isLoading: checkingBalance, refetch } =
-    useUserTicketBalance(address, competitionId);
+  const {
+    data: ticketBalance,
+    isLoading: checkingBalance,
+    refetch,
+  } = useUserTicketBalance(address, competitionId);
 
   // Auto-refetch ticket balance when ticket purchase succeeds
   useEffect(() => {
@@ -130,19 +133,17 @@ export function BuyTicketButton({
       {/* Error Display */}
       {error && (
         <Alert variant="destructive">
-          <AlertDescription>
-            {parseTransactionError(error)}
-          </AlertDescription>
+          <AlertDescription>{parseTransactionError(error)}</AlertDescription>
         </Alert>
       )}
 
       {/* Info - Only show when button is ready */}
-      {!isPending && !isConfirming && !error && (
+      {/* {!isPending && !isConfirming && !error && (
         <p className="text-xs text-muted-foreground text-center">
           Required: Own NFT from {collectionAddress.slice(0, 6)}...
           {collectionAddress.slice(-4)}
         </p>
-      )}
+      )} */}
     </div>
   );
 }
