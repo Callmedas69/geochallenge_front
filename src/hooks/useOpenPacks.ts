@@ -24,8 +24,8 @@ interface OpenPacksState {
   isOpening: boolean
   /** True if packs opened successfully */
   isSuccess: boolean
-  /** Error message if opening failed */
-  error: string | null
+  /** Error object if opening failed */
+  error: Error | null
   /** Transaction hash */
   hash: `0x${string}` | undefined
 }
@@ -77,8 +77,8 @@ export function useOpenPacks({
   // Combine all loading states
   const isOpening = loadingFee || isConfirming || isWaitingConfirm
 
-  // Combine all error states
-  const error = writeError?.message || confirmError?.message || null
+  // Combine all error states - return Error object, not message string
+  const error = writeError || confirmError || null
 
   return {
     open,

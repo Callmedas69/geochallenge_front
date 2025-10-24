@@ -113,13 +113,13 @@ export function BuyTicketButton({
         {isPending && (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Waiting for approval...
+            Approval...
           </>
         )}
         {isConfirming && (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Confirming purchase...
+            Confirming...
           </>
         )}
         {!isPending && !isConfirming && (

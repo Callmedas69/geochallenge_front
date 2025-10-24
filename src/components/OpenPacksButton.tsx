@@ -169,7 +169,7 @@ export function OpenPacksButton({
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  {typeof openError === 'string' ? openError : parseTransactionError(openError)}
+                  {parseTransactionError(openError)}
                 </AlertDescription>
               </Alert>
             )}
@@ -188,20 +188,31 @@ export function OpenPacksButton({
               </div>
             </div>
 
-            {/* Quantity Input */}
+            {/* Quantity Input with Max Button */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 How many to open? (max {unopenedCount})
               </label>
-              <Input
-                type="number"
-                placeholder={`Enter 1-${unopenedCount}...`}
-                value={quantityToOpen}
-                onChange={(e) => setQuantityToOpen(e.target.value)}
-                min="1"
-                max={unopenedCount}
-                disabled={unopenedCount === 0}
-              />
+              <div className="relative">
+                <Input
+                  type="number"
+                  placeholder={`Enter 1-${unopenedCount}...`}
+                  value={quantityToOpen}
+                  onChange={(e) => setQuantityToOpen(e.target.value)}
+                  min="1"
+                  max={unopenedCount}
+                  disabled={unopenedCount === 0}
+                  className="pr-16"
+                />
+                <button
+                  type="button"
+                  onClick={() => setQuantityToOpen(unopenedCount.toString())}
+                  disabled={unopenedCount === 0}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold text-primary hover:text-primary/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  MAX
+                </button>
+              </div>
             </div>
 
             {/* Open Button */}
