@@ -35,17 +35,17 @@ export function ShareIcons({
         platform === "twitter"
           ? collectionName
             ? `The ${collectionName} competition is live on GeoChallenge 🎴\nBuilt for @vibedotmarket on @base powered by @geoart_studio ⚡\n\n${shareUrl}`
-            : `A new competition is live on GeoChallenge 🎴\nBuilt for @vibedotmarket on @base powered by @geoart_studio⚡\n\n${shareUrl}`
+            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibedotmarket on @base powered by @geoart_studio⚡\n\n${shareUrl}`
           : collectionName
-            ? `The ${collectionName} competition is live on GeoChallenge 🎴\nBuilt for @vibemarket on @base.base.eth  ⚡\n\n${shareUrl}`
-            : `A new competition is live on GeoChallenge 🎴\nBuilt for @vibemarket on @base.base.eth ⚡\n\n${shareUrl}`;
+            ? `The ${collectionName} competition is live on GeoChallenge 🎴\nBuilt for @vibemarket on @base.base.eth  \n\n`
+            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibemarket on @base.base.eth \n\n`;
     } else {
       // Platform share
       shareUrl = FARCASTER_SHARING.webHomeUrl;
       shareText =
         platform === "twitter"
           ? `I'm joining GeoChallenge — the trading card competition built for @vibedotmarket 🎴\nComplete your set. Win prizes. On @base powered by @geoart_studio ⚡\n\n${shareUrl}`
-          : `I'm joining GeoChallenge — the trading card competition built for @vibemarket 🎴\nComplete your set. Win prizes. On @base.base.eth ⚡\n\n${shareUrl}`;
+          : `I'm joining GeoChallenge — the trading card competition built for @vibemarket 🎴\nComplete your set. Win prizes. On @base.base.eth ⚡\n\n`;
     }
 
     // Open share URL based on platform
