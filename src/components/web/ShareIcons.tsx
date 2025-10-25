@@ -34,11 +34,11 @@ export function ShareIcons({
       shareText =
         platform === "twitter"
           ? collectionName
-            ? `The ${collectionName} competition is live on GeoChallenge 🎴\nBuilt for @vibedotmarket on @base powered by @geoart_studio ⚡\n\n${shareUrl}`
-            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibedotmarket on @base powered by @geoart_studio⚡\n\n${shareUrl}`
+            ? `The ${collectionName} competition is live on GeoChallenge 🎴\n\nBuilt for @vibedotmarket on @base powered by @geoart_studio ⚡\n${shareUrl}`
+            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibedotmarket on @base powered by @geoart_studio ⚡\n${shareUrl}`
           : collectionName
-            ? `The ${collectionName} competition is live on GeoChallenge 🎴\nBuilt for @vibemarket on @base.base.eth  \n\n`
-            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibemarket on @base.base.eth \n\n`;
+            ? `The ${collectionName} competition is live on GeoChallenge 🎴\n\nBuilt for @vibemarket on @base.base.eth \n`
+            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibemarket on @base.base.eth \n`;
     } else {
       // Platform share
       shareUrl = FARCASTER_SHARING.webHomeUrl;

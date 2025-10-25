@@ -38,11 +38,11 @@ export function ShareButton({
       shareText =
         platform === "twitter"
           ? collectionName
-            ? `The ${collectionName} competition is live on GeoChallenge 🎴\n\nBuilt for @vibedotmarket on @base powered by @geoart_studio ⚡\n\n${shareUrl}`
-            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibedotmarket on @base powered by @geoart_studio ⚡\n\n${shareUrl}`
+            ? `The ${collectionName} competition is live on GeoChallenge 🎴\n\nBuilt for @vibedotmarket on @base powered by @geoart_studio ⚡\n${shareUrl}`
+            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibedotmarket on @base powered by @geoart_studio ⚡\n${shareUrl}`
           : collectionName
-            ? `The ${collectionName} competition is live on GeoChallenge 🎴\n\nBuilt for @vibemarket on @base.base.eth \n\n`
-            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibemarket on @base.base.eth \n\n`;
+            ? `The ${collectionName} competition is live on GeoChallenge 🎴\n\nBuilt for @vibemarket on @base.base.eth \n`
+            : `A new competition is live on GeoChallenge 🎴\n\nBuilt for @vibemarket on @base.base.eth \n`;
       shareTitle = collectionName
         ? `${collectionName} - GeoChallenge`
         : `Competition #${competitionId} - GeoChallenge`;
@@ -51,8 +51,8 @@ export function ShareButton({
       shareUrl = FARCASTER_SHARING.homeUrl;
       shareText =
         platform === "twitter"
-          ? `I'm joining GeoChallenge — the trading card competition built for @vibedotmarket 🎴\n\nComplete your set. Win prizes. On @base powered by @geoart_studio ⚡\n\n${shareUrl}`
-          : `I'm joining GeoChallenge — the trading card competition built for @vibemarket 🎴\n\nComplete your set. Win prizes. On @base.base.eth ⚡\n\n${shareUrl}`;
+          ? `🎴 Collect. ⚔️ Compete. 👑 Conquer. \n\nThat’s the GeoChallenge way. \n\nThe trading card competition built for @vibedotmarket 🎴\n\nComplete your set. Win prizes. On @base powered by @geoart_studio ⚡\n${shareUrl}`
+          : `🎴 Collect. ⚔️ Compete. 👑 Conquer. \n\nThat’s the GeoChallenge way. \n\nThe trading card competition built for @vibemarket 🎴\n\nComplete your set. Win prizes. On @base.base.eth ⚡\n${shareUrl}`;
       shareTitle = "GeoChallenge - Trading Card Competitions";
     }
 
