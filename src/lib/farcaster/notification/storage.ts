@@ -16,8 +16,8 @@ import type { NotificationToken } from './types';
  * @security Only accessible via supabaseAdmin (service role)
  */
 export async function saveNotificationToken(data: NotificationToken): Promise<void> {
-  const { error } = await supabaseAdmin
-    .from('farcaster_notification_tokens')
+  const { error } = await (supabaseAdmin
+    .from('farcaster_notification_tokens') as any)
     .upsert({
       fid: data.fid,
       token: data.token,
@@ -41,8 +41,8 @@ export async function saveNotificationToken(data: NotificationToken): Promise<vo
  * @security Only accessible via supabaseAdmin (service role)
  */
 export async function removeNotificationToken(fid: number): Promise<void> {
-  const { error } = await supabaseAdmin
-    .from('farcaster_notification_tokens')
+  const { error } = await (supabaseAdmin
+    .from('farcaster_notification_tokens') as any)
     .update({ enabled: false, updated_at: new Date().toISOString() })
     .eq('fid', fid);
 
@@ -59,8 +59,8 @@ export async function removeNotificationToken(fid: number): Promise<void> {
  * @security Only accessible via supabaseAdmin (service role)
  */
 export async function getAllEnabledTokens(): Promise<NotificationToken[]> {
-  const { data, error } = await supabaseAdmin
-    .from('farcaster_notification_tokens')
+  const { data, error } = await (supabaseAdmin
+    .from('farcaster_notification_tokens') as any)
     .select('fid, token, url')
     .eq('enabled', true);
 
@@ -69,7 +69,7 @@ export async function getAllEnabledTokens(): Promise<NotificationToken[]> {
     throw error;
   }
 
-  return (data || []).map(row => ({
+  return (data || []).map((row: any) => ({
     fid: row.fid,
     token: row.token,
     url: row.url,
@@ -85,8 +85,8 @@ export async function getAllEnabledTokens(): Promise<NotificationToken[]> {
  * @security Only accessible via supabaseAdmin (service role)
  */
 export async function getTokenByFid(fid: number): Promise<NotificationToken | null> {
-  const { data, error } = await supabaseAdmin
-    .from('farcaster_notification_tokens')
+  const { data, error } = await (supabaseAdmin
+    .from('farcaster_notification_tokens') as any)
     .select('fid, token, url, enabled')
     .eq('fid', fid)
     .single();
