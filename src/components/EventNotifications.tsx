@@ -52,6 +52,24 @@ export function EventNotifications({
         onClick: () => (window.location.href = `/competition/${id.toString()}`),
       },
     })
+
+    // Send Farcaster push notifications (fire-and-forget, non-blocking)
+    fetch('/api/farcaster/notification/trigger/new-competition', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ competitionId: id.toString() }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          console.log(`✅ Push notifications sent for Competition #${id}`)
+        } else {
+          console.warn(`⚠️ Push notification failed for Competition #${id}`)
+        }
+      })
+      .catch((err) => {
+        // Don't throw - notification failure shouldn't affect user experience
+        console.error('Push notification error (non-critical):', err)
+      })
   })
 
   // Competition Started notifications

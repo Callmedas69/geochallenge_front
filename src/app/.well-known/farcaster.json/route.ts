@@ -18,7 +18,7 @@ export async function GET() {
       splashImageUrl: `${URL}/splash.png`,
       splashBackgroundColor: "#ffffff",
       castShareUrl: `${URL}/miniapps/share`,
-      // webhookUrl: `${URL}/api/webhook`,
+      webhookUrl: `${URL}/api/farcaster/notification/webhook`,
       subtitle: "Collect. Compete. Conquer.",
       description:
         "A GeoChallenge trading card competition platform. Complete your collection across all rarity tiers and claim your prize. Built on Base for Vibemarket, by GeoArt.",

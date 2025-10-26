@@ -90,9 +90,9 @@ export function FeaturedCompetitionsList() {
             Featured Competitions
           </Badge>
           <Link href="/browse">
-            <Button variant="outline" className="w-full sm:w-auto">
+            <span className="text-xs hover:underline">
               View All Competitions
-            </Button>
+            </span>
           </Link>
         </div>
       )}

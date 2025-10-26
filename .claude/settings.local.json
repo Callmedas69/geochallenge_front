@@ -22,7 +22,10 @@
       "Bash(npm run dev:*)",
       "Bash(timeout /t 10 /nobreak)",
       "Bash(ls:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:docs.farcaster.xyz)",
+      "Bash(npx tsx:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []
