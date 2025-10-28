@@ -25,7 +25,13 @@
       "Bash(curl:*)",
       "WebFetch(domain:docs.farcaster.xyz)",
       "Bash(npx tsx:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(python -m json.tool:*)",
+      "Bash(graph codegen)",
+      "Bash(graph build:*)",
+      "Bash(graph deploy:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

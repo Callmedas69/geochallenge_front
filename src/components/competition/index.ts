@@ -6,3 +6,4 @@
 export { CompetitionTicket } from './CompetitionTicket';
 export { OverallProgress } from './OverallProgress';
 export { RarityBreakdown } from './RarityBreakdown';
+export { CompetitionStats } from './CompetitionStats';

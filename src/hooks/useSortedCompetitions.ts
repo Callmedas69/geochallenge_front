@@ -100,7 +100,7 @@ export function useSortedCompetitions(
     return sorted.map((item) => item.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     // @ts-ignore - useMemo dependency array with readonly array causes deep type instantiation
-  }, [JSON.stringify(competitionIds), competitionsData, sortBy]);
+  }, [competitionIds.map(id => id.toString()).join(','), competitionsData, sortBy]);
 
   return {
     sortedIds,

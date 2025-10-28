@@ -19,10 +19,11 @@ import {
 } from "@/components/ClaimButtons";
 import { SubmitWinnerProof } from "@/components/SubmitWinnerProof";
 import { CollectionArtGallery } from "@/components/CollectionArtGallery";
+import { BuyPacksButton } from "@/components/BuyPacksButton";
+import { OpenPacksButton } from "@/components/OpenPacksButton";
 import {
   CompetitionTicket,
   OverallProgress,
-  RarityBreakdown,
 } from "@/components/competition";
 import { getRarityName, getRarityColor } from "@/lib/types";
 import {
@@ -68,6 +69,7 @@ import {
   TrendingUp,
   CheckCircle2,
   ArrowLeft,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -164,6 +166,57 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
     refetch: refetchProgress,
   } = useProgressCalculator(address || "", collectionAddressMemo, rarityTiers);
 
+  // Fetch participant stats from The Graph
+  const [participantStats, setParticipantStats] = useState<{
+    totalParticipants: number;
+    loading: boolean;
+  }>({ totalParticipants: 0, loading: true });
+
+  useEffect(() => {
+    async function fetchParticipantStats() {
+      try {
+        const response = await fetch(
+          `/api/stats/participants?competitionId=${competitionId}`
+        );
+        if (response.ok) {
+          const result = await response.json();
+          setParticipantStats({
+            totalParticipants: result.data?.totalParticipants || 0,
+            loading: false,
+          });
+        } else {
+          setParticipantStats({ totalParticipants: 0, loading: false });
+        }
+      } catch (error) {
+        console.error("[Participant Stats] Failed to fetch:", error);
+        setParticipantStats({ totalParticipants: 0, loading: false });
+      }
+    }
+
+    fetchParticipantStats();
+  }, [competitionId]);
+
+  // Save user progress to database (background, non-blocking)
+  // Security: Server calculates progress, verifies ticket ownership, rate limited
+  useEffect(() => {
+    if (address && competitionId) {
+      // Background save - don't await, don't block UI
+      // Server calculates progress from Vibe API (secure, no client data to fake)
+      fetch("/api/stats/user-progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userAddress: address,
+          competitionId: Number(competitionId),
+          // Server calculates: percentage, cardsOwned, cardsRequired
+        }),
+      }).catch((error) => {
+        // Silent fail - saving progress is nice-to-have, not critical
+        console.warn("[Progress Save] Failed:", error);
+      });
+    }
+  }, [address, competitionId]); // Trigger when address or competition changes
+
   // Memoized callback for pack opening to prevent infinite re-renders
   const handlePacksOpened = useCallback(() => {
     refetchProgress();
@@ -172,6 +225,9 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
 
   // Manual refetch state
   const [isRefetching, setIsRefetching] = useState(false);
+
+  // Collapsible breakdown state
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   // Manual refetch handler
   const handleRefetch = useCallback(async () => {
@@ -483,32 +539,27 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
                   </div>
                 </div>
 
-                {/* Tickets Sold - Live Counter */}
-                <div
-                  className={`flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg transition-all ${
-                    pulse ? "ring-2 ring-green-500 ring-offset-2" : ""
-                  }`}
-                >
-                  <Ticket className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 flex-shrink-0" />
+                {/* Participants - Unique Users */}
+                <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg">
+                  <Users className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
-                      Tickets Sold
-                      {pulse && (
-                        <Badge
-                          variant="default"
-                          className="animate-pulse bg-green-500 text-xs px-1 py-0"
-                        >
-                          <TrendingUp className="h-2 w-2" />
-                        </Badge>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      Participants
+                    </p>
+                    {participantStats.loading ? (
+                      <Skeleton className="h-6 w-12" />
+                    ) : (
+                      <p className="text-lg sm:text-xl font-bold truncate">
+                        {participantStats.totalParticipants}
+                      </p>
+                    )}
+                    {!participantStats.loading &&
+                      participantStats.totalParticipants > 0 && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {competition.totalTickets.toString()} ticket
+                          {competition.totalTickets > BigInt(1) ? "s" : ""} sold
+                        </p>
                       )}
-                    </p>
-                    <p
-                      className={`text-lg sm:text-xl font-bold transition-transform truncate ${
-                        pulse ? "scale-110 text-green-500" : ""
-                      }`}
-                    >
-                      {competition.totalTickets.toString()}
-                    </p>
                   </div>
                 </div>
               </div>
@@ -635,13 +686,52 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
 
                     {/* Overall Progress - Only if user has wallet connected and has ticket */}
                     {address && hasTicket && (
-                      <div className="mt-4 pt-4 border-t">
+                      <div className="mt-4 pt-4 border-t space-y-3">
                         <OverallProgress
                           progress={progress}
                           loading={loadingProgress}
                           onRefetch={handleRefetch}
                           isRefetching={isRefetching}
+                          competitionId={competitionId}
                         />
+
+                        {/* Collapsible Rarity Breakdown */}
+                        {progress && (
+                          <div className="space-y-2">
+                            <button
+                              onClick={() => setShowBreakdown(!showBreakdown)}
+                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              <span>{showBreakdown ? "▲" : "▼"}</span>
+                              <span>breakdown</span>
+                            </button>
+
+                            {showBreakdown && (
+                              <div className="space-y-2 pl-4">
+                                {Object.entries(progress.rarityBreakdown).map(
+                                  ([rarity, stats]) => {
+                                    const rarityNum = Number(rarity);
+                                    return (
+                                      <div
+                                        key={rarity}
+                                        className="flex items-center justify-between text-xs"
+                                      >
+                                        <span
+                                          className={`${getRarityColor(rarityNum)} px-2 py-1 rounded text-white`}
+                                        >
+                                          {getRarityName(rarityNum)}
+                                        </span>
+                                        <span className="text-muted-foreground">
+                                          {stats.owned}/{stats.required}
+                                        </span>
+                                      </div>
+                                    );
+                                  }
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -853,18 +943,22 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
             </CardContent>
           </Card>
 
-          {/* Rarity Breakdown - Only if user has wallet connected and has ticket */}
-          {address && hasTicket && (
+          {/* Quick Actions - Only if user has wallet connected and has ticket */}
+          {address && hasTicket && collectionAddressMemo && (
             <Card>
               <CardHeader>
-                <CardTitle>Your Progress</CardTitle>
+                <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
-              <CardContent>
-                <RarityBreakdown
-                  progress={progress}
-                  loading={loadingProgress}
-                  collectionAddress={collectionAddressMemo}
-                  showCTA={true}
+              <CardContent className="space-y-3">
+                <BuyPacksButton
+                  collectionAddress={
+                    collectionAddressMemo as `0x${string}`
+                  }
+                />
+                <OpenPacksButton
+                  collectionAddress={
+                    collectionAddressMemo as `0x${string}`
+                  }
                   onPacksOpened={handlePacksOpened}
                 />
               </CardContent>

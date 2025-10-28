@@ -38,6 +38,8 @@ CLAUDE.md
 .claude
 scripts/*
 supabase/*
+subgraph/*
+sql/*
 
 # vercel
 .vercel

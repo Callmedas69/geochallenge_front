@@ -21,6 +21,7 @@ import {
 import { SubmitWinnerProof } from "@/components/SubmitWinnerProof";
 import { CollectionArtGallery } from "@/components/CollectionArtGallery";
 import { CompetitionTicket, CompetitionProgress } from "@/components/farcaster";
+import { CompetitionStats } from "@/components/competition";
 import { BuyPacksButton } from "@/components/BuyPacksButton";
 import { OpenPacksButton } from "@/components/OpenPacksButton";
 import { getRarityName, getRarityColor } from "@/lib/types";
@@ -134,15 +135,22 @@ export function FarcasterCompetitionDetailPage({
   } = useCollectionRarityStats(competition?.collectionAddress || "");
 
   // Fetch collection art
-  const { data: collectionArt, loading: loadingCollectionArt, refetch: refetchArt } =
-    useCollectionArt(
-      competition?.collectionAddress || "",
-      competition?.rarityTiers || [],
-      address
-    );
+  const {
+    data: collectionArt,
+    loading: loadingCollectionArt,
+    refetch: refetchArt,
+  } = useCollectionArt(
+    competition?.collectionAddress || "",
+    competition?.rarityTiers || [],
+    address
+  );
 
   // Fetch user's collection progress
-  const { progress, loading: loadingProgress, refetch: refetchProgress } = useProgressCalculator(
+  const {
+    progress,
+    loading: loadingProgress,
+    refetch: refetchProgress,
+  } = useProgressCalculator(
     address || "",
     competition?.collectionAddress || "",
     competition?.rarityTiers || []
@@ -163,6 +171,9 @@ export function FarcasterCompetitionDetailPage({
 
   // Live ticket counter state
   const [pulse, setPulse] = useState(false);
+
+  // Participant count state (from The Graph)
+  const [participantCount, setParticipantCount] = useState<number>(0);
 
   // Countdown timer state
   const [timeRemaining, setTimeRemaining] = useState<string>("");
@@ -225,6 +236,22 @@ export function FarcasterCompetitionDetailPage({
     ),
     competitionId
   );
+
+  // Fetch participant count from The Graph
+  useEffect(() => {
+    if (competitionId) {
+      fetch(`/api/stats/participants?competitionId=${competitionId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.data) {
+            setParticipantCount(data.data.totalParticipants || 0);
+          }
+        })
+        .catch(() => {
+          // Silent fail - fall back to showing 0
+        });
+    }
+  }, [competitionId]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -388,7 +415,7 @@ export function FarcasterCompetitionDetailPage({
             <span className="text-base font-bold">{ticketPriceETH} Ξ</span>
           </div>
 
-          {/* Tickets Sold */}
+          {/* Total Participants */}
           <div
             className={`flex items-center justify-between p-2 bg-muted rounded transition-all ${
               pulse ? "ring-2 ring-green-500" : ""
@@ -397,7 +424,7 @@ export function FarcasterCompetitionDetailPage({
             <div className="flex items-center gap-2">
               <Ticket className="h-5 w-5 text-blue-500" />
               <span className="text-sm text-muted-foreground">
-                Tickets Sold
+                Total Participants
                 {pulse && (
                   <Badge className="ml-2 animate-pulse bg-green-500 text-xs px-1 py-0">
                     <TrendingUp className="h-2 w-2" />
@@ -410,7 +437,7 @@ export function FarcasterCompetitionDetailPage({
                 pulse ? "scale-110 text-green-500" : ""
               }`}
             >
-              {competition.totalTickets.toString()}
+              {participantCount}
             </span>
           </div>
 
@@ -638,6 +665,7 @@ export function FarcasterCompetitionDetailPage({
               hasTicket={hasTicket}
               onRefetch={handleRefetch}
               isRefetching={isRefetching}
+              competitionId={competitionId}
             />
 
             {/* Pack Actions - Side by side when user doesn't have complete set */}

@@ -7,6 +7,7 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -34,6 +35,8 @@ interface CompetitionProgressProps {
   onRefetch?: () => void;
   /** Optional: Refetching state */
   isRefetching?: boolean;
+  /** Optional: Competition ID for fetching stats */
+  competitionId?: bigint;
 }
 
 /**
@@ -47,11 +50,30 @@ export function CompetitionProgress({
   hasTicket,
   onRefetch,
   isRefetching = false,
+  competitionId,
 }: CompetitionProgressProps) {
+  const [stats, setStats] = useState<{ highestProgress: number } | null>(null);
+
+  // Fetch competition stats if competitionId provided
+  useEffect(() => {
+    if (competitionId) {
+      fetch(`/api/stats/user-progress?competitionId=${competitionId}&limit=1`)
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.success && result.data && result.data.length > 0) {
+            setStats({ highestProgress: result.data[0].percentage });
+          }
+        })
+        .catch(() => {})
+    }
+  }, [competitionId]);
+
   // Don't show if user doesn't have ticket or isn't connected
   if (!address || !hasTicket) {
     return null;
   }
+
+  const bestProgress = stats?.highestProgress ?? 0;
 
   return (
     <Card>
@@ -76,15 +98,35 @@ export function CompetitionProgress({
                     </button>
                   )}
                 </div>
-                <span
-                  className={`font-bold ${
-                    progress.percentage === 100
-                      ? "text-green-600"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {progress.percentage.toFixed(0)}%
-                </span>
+
+                {/* Competition Stats Inline */}
+                <div className="font-bold text-sm">
+                  {bestProgress > 0 && progress.percentage >= bestProgress ? (
+                    // User is leading
+                    <>
+                      <span className="text-blue-600">
+                        Your: {progress.percentage.toFixed(1)}%
+                      </span>{" "}
+                      <span className="text-green-600">(Leading!)</span>
+                    </>
+                  ) : bestProgress > 0 ? (
+                    // Normal case: show comparison
+                    <>
+                      <span className="text-blue-600">
+                        Your: {progress.percentage.toFixed(1)}%
+                      </span>
+                      <span className="text-muted-foreground"> | </span>
+                      <span className="text-amber-600">
+                        Best: {bestProgress.toFixed(1)}%
+                      </span>
+                    </>
+                  ) : (
+                    // No other competitors yet
+                    <span className="text-blue-600">
+                      Your: {progress.percentage.toFixed(1)}%
+                    </span>
+                  )}
+                </div>
               </div>
               <Progress value={progress.percentage} className="h-4" />
               <p className="text-xs text-muted-foreground">

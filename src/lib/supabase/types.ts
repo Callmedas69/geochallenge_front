@@ -38,6 +38,52 @@ export interface Database {
           notes?: string | null
         }
       }
+      competition_stats_cache: {
+        Row: {
+          competition_id: number
+          total_participants: number
+          last_updated: string
+          last_refreshed_by: string
+        }
+        Insert: {
+          competition_id: number
+          total_participants: number
+          last_updated?: string
+          last_refreshed_by: string
+        }
+        Update: {
+          competition_id?: number
+          total_participants?: number
+          last_updated?: string
+          last_refreshed_by?: string
+        }
+      }
+      user_progress: {
+        Row: {
+          user_address: string
+          competition_id: number
+          percentage: number
+          cards_owned: number
+          cards_required: number
+          last_updated: string
+        }
+        Insert: {
+          user_address: string
+          competition_id: number
+          percentage: number
+          cards_owned: number
+          cards_required: number
+          last_updated?: string
+        }
+        Update: {
+          user_address?: string
+          competition_id?: number
+          percentage?: number
+          cards_owned?: number
+          cards_required?: number
+          last_updated?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

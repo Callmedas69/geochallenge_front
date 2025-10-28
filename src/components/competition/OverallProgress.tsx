@@ -7,6 +7,7 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RefreshCw } from "lucide-react";
@@ -28,6 +29,10 @@ interface OverallProgressProps {
   onRefetch?: () => void;
   /** Optional: Refetching state */
   isRefetching?: boolean;
+  /** Optional: Highest progress from leaderboard */
+  highestProgress?: number;
+  /** Optional: Competition ID for stats */
+  competitionId?: bigint;
 }
 
 /**
@@ -39,7 +44,28 @@ export function OverallProgress({
   loading,
   onRefetch,
   isRefetching = false,
+  highestProgress,
+  competitionId,
 }: OverallProgressProps) {
+  const [stats, setStats] = useState<{ highestProgress: number } | null>(null);
+  const [loadingStats, setLoadingStats] = useState(false);
+
+  // Fetch competition stats if competitionId provided
+  useEffect(() => {
+    if (competitionId) {
+      setLoadingStats(true);
+      fetch(`/api/stats/user-progress?competitionId=${competitionId}&limit=1`)
+        .then(res => res.json())
+        .then(result => {
+          if (result.success && result.data && result.data.length > 0) {
+            setStats({ highestProgress: result.data[0].percentage });
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoadingStats(false));
+    }
+  }, [competitionId]);
+
   if (loading) {
     return <Skeleton className="h-20 w-full" />;
   }
@@ -47,6 +73,8 @@ export function OverallProgress({
   if (!progress) {
     return null;
   }
+
+  const bestProgress = highestProgress ?? stats?.highestProgress ?? 0;
 
   return (
     <div className="space-y-2">
@@ -64,19 +92,27 @@ export function OverallProgress({
             </button>
           )}
         </div>
-        <span
-          className={`font-bold ${
-            progress.percentage === 100
-              ? "text-green-600"
-              : progress.percentage >= 67
-                ? "text-blue-600"
-                : progress.percentage >= 34
-                  ? "text-orange-600"
-                  : "text-red-600"
-          }`}
-        >
-          {progress.percentage.toFixed(0)}%
-        </span>
+
+        {/* Competition Stats Inline */}
+        <div className="font-bold text-sm">
+          {bestProgress > 0 && progress.percentage >= bestProgress ? (
+            // User is leading
+            <>
+              <span className="text-blue-600">Your: {progress.percentage.toFixed(1)}%</span>{" "}
+              <span className="text-green-600">(Leading!)</span>
+            </>
+          ) : bestProgress > 0 ? (
+            // Normal case: show comparison
+            <>
+              <span className="text-blue-600">Your: {progress.percentage.toFixed(1)}%</span>
+              <span className="text-muted-foreground"> | </span>
+              <span className="text-amber-600">Best: {bestProgress.toFixed(1)}%</span>
+            </>
+          ) : (
+            // No other competitors yet
+            <span className="text-blue-600">Your: {progress.percentage.toFixed(1)}%</span>
+          )}
+        </div>
       </div>
       <Progress
         value={progress.percentage}

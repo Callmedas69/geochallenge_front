@@ -19,13 +19,13 @@ const NETWORKS = {
   sepolia: {
     chainId: 84532,
     name: "Base Sepolia",
-    rpcUrl: "https://sepolia.base.org",
+    rpcUrl: process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC || "https://sepolia.base.org",
     blockExplorer: "https://sepolia.basescan.org",
   },
   mainnet: {
     chainId: 8453,
     name: "Base",
-    rpcUrl: "https://mainnet.base.org",
+    rpcUrl: process.env.NEXT_PUBLIC_BASE_MAINNET_RPC || "https://mainnet.base.org",
     blockExplorer: "https://basescan.org",
   },
 } as const;
