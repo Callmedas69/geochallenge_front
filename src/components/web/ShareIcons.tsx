@@ -66,22 +66,22 @@ export function ShareIcons({
         {/* Twitter Icon */}
         <button
           onClick={() => handleShare("twitter")}
-          className="p-2 rounded-full hover:bg-muted transition-colors group"
+          className="p-3 sm:p-2 rounded-full hover:bg-muted active:bg-muted/80 transition-colors group min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label="Share on Twitter"
           title="Share on Twitter"
         >
-          <Twitter className="h-5 w-5 text-muted-foreground group-hover:text-blue-500 transition-colors" />
+          <Twitter className="h-6 w-6 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-blue-500 transition-colors" />
         </button>
 
         {/* Farcaster Icon */}
         <button
           onClick={() => handleShare("farcaster")}
-          className="p-2 rounded-full hover:bg-muted transition-colors group"
+          className="p-3 sm:p-2 rounded-full hover:bg-muted active:bg-muted/80 transition-colors group min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label="Share on Farcaster"
           title="Share on Farcaster"
         >
           <svg
-            className="h-5 w-5 text-muted-foreground group-hover:text-purple-600 transition-colors"
+            className="h-6 w-6 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-purple-600 transition-colors"
             viewBox="0 0 1000 1000"
             fill="currentColor"
             xmlns="http://www.w3.org/2000/svg"

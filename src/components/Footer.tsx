@@ -50,7 +50,7 @@ export function Footer() {
 
   return (
     <footer className="border-t bg-background">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-6 sm:py-8 md:py-12 pb-20 md:pb-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
@@ -59,7 +59,7 @@ export function Footer() {
               Vibemarket trading card competition platform on Base. Collect,
               compete, and win!
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {SOCIAL_LINKS.map((social) => {
                 const Icon = social.icon;
                 return (
@@ -74,7 +74,7 @@ export function Footer() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="hover:!text-primary transition-colors !text-black/50"
+                    className="hover:!text-primary transition-colors !text-black/50 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md hover:bg-muted"
                     aria-label={social.label}
                   >
                     <Icon className="w-5 h-5" />

@@ -67,10 +67,10 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
     return (
       <Card className="h-full">
         <div className="flex flex-col sm:flex-row gap-4">
-          <div className="w-full sm:w-44 flex-shrink-0 p-6">
-            <Skeleton className="aspect-[5/7] max-w-[200px] mx-auto sm:max-w-none" />
+          <div className="w-full sm:w-44 flex-shrink-0 p-4 sm:p-6">
+            <Skeleton className="aspect-[5/7] max-w-[180px] mx-auto sm:max-w-none sm:mx-0" />
           </div>
-          <div className="flex-1 p-6 pt-4 sm:pt-6">
+          <div className="flex-1 p-4 sm:p-6 pt-4 sm:pt-6">
             <Skeleton className="h-5 sm:h-6 w-3/4" />
             <Skeleton className="h-3 sm:h-4 w-1/2 mt-2" />
             <Skeleton className="h-16 sm:h-20 w-full mt-4" />
@@ -110,11 +110,11 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
 
   return (
     <Link href={`/competition/${competitionId.toString()}`}>
-      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+      <Card className="h-full hover:shadow-lg active:shadow-md active:scale-[0.98] transition-all cursor-pointer">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* LEFT: Collection Image Thumbnail - Trading Card Aspect Ratio (5:7) */}
-          <div className="w-full sm:w-44 flex-shrink-0 p-6">
-            <div className="aspect-[5/7] relative bg-muted overflow-hidden max-w-[200px] mx-auto sm:max-w-none">
+          <div className="w-full sm:w-44 flex-shrink-0 p-4 sm:p-6">
+            <div className="aspect-[5/7] relative bg-muted overflow-hidden max-w-[180px] mx-auto sm:max-w-none sm:mx-0">
               {loadingImage ? (
                 <Skeleton className="w-full h-full" />
               ) : imageUrl ? (
@@ -159,8 +159,8 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
             <CardContent className="space-y-3 pb-6">
               {/* Prize Pool */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                <div className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <span className="text-xs sm:text-sm text-muted-foreground">
                     Prize Pool
                   </span>
@@ -172,8 +172,8 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
 
               {/* Tickets Sold */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <span className="text-xs sm:text-sm text-muted-foreground">
                     Tickets Sold
                   </span>
@@ -185,8 +185,8 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
 
               {/* Ticket Price */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                <div className="flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <span className="text-xs sm:text-sm text-muted-foreground">
                     Ticket Price
                   </span>
@@ -198,8 +198,8 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
 
               {/* Deadline */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <span className="text-xs sm:text-sm text-muted-foreground">
                     Deadline
                   </span>
@@ -219,8 +219,8 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
               {/* Countdown Timer - Only show for active competitions */}
               {competition.state === 1 && (
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                     <span className="text-xs sm:text-sm text-muted-foreground">
                       Time Left
                     </span>
@@ -234,18 +234,18 @@ export function CompetitionCard({ competitionId }: { competitionId: bigint }) {
                       // Less than 1 day - show in red
                       <Badge
                         variant="destructive"
-                        className="text-[10px] sm:text-xs font-mono px-1.5 sm:px-2"
+                        className="text-xs sm:text-sm font-mono px-2"
                       >
                         {countdownText}
                       </Badge>
                     ) : countdown.totalSeconds < 259200 ? (
                       // Less than 3 days - show in yellow/orange
-                      <Badge className="bg-orange-500 text-[10px] sm:text-xs font-mono px-1.5 sm:px-2">
+                      <Badge className="bg-orange-500 text-xs sm:text-sm font-mono px-2">
                         {countdownText}
                       </Badge>
                     ) : (
                       // More than 3 days - show in green
-                      <Badge className="bg-green-500 text-[10px] sm:text-xs font-mono px-1.5 sm:px-2">
+                      <Badge className="bg-green-500 text-xs sm:text-sm font-mono px-2">
                         {countdownText}
                       </Badge>
                     )}

@@ -31,7 +31,8 @@
       "Bash(graph build:*)",
       "Bash(graph deploy:*)",
       "Bash(npm uninstall:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

@@ -15,13 +15,13 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
+    <div className="container mx-auto px-4 py-4 sm:py-6 md:py-8 space-y-4 sm:space-y-6 md:space-y-8">
       {/* Global event notifications */}
       <EventNotifications />
 
       {/* Hero Section */}
-      <div className="text-center space-y-4 py-8 min-h-[calc(100vh-8rem)] md:min-h-[calc(100vh-6rem)] flex flex-col items-center justify-center">
-        <p className="text-lg sm:text-xl md:text-2xl font-bold italic max-w-2xl mx-auto px-4">
+      <div className="text-center space-y-4 py-4 sm:py-8 min-h-[60vh] sm:min-h-[calc(100vh-8rem)] md:min-h-[calc(100vh-6rem)] flex flex-col items-center justify-center">
+        <p className="text-lg sm:text-xl md:text-2xl font-bold italic max-w-2xl mx-auto">
           "Complete the sets, win prizes."
         </p>
         <ShareIcons type="platform" />
@@ -30,7 +30,7 @@ export default function HomePage() {
       <Separator />
 
       {/* Main Content: Featured or Active Competitions */}
-      <section className="space-y-4 mb-8">
+      <section className="space-y-4 mb-4 sm:mb-6 md:mb-8">
         <FeaturedCompetitionsList />
       </section>
     </div>

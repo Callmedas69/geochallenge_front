@@ -46,12 +46,12 @@ export function FeaturedCompetitionsList() {
       <div className="space-y-4 sm:space-y-6">
         <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
+            <Card key={i} className={i >= 2 ? "hidden sm:block" : ""}>
               <div className="flex flex-col sm:flex-row gap-4">
-                <div className="w-full sm:w-44 flex-shrink-0 p-6">
-                  <Skeleton className="aspect-[5/7] max-w-[200px] mx-auto sm:max-w-none" />
+                <div className="w-full sm:w-44 flex-shrink-0 p-4 sm:p-6">
+                  <Skeleton className="aspect-[5/7] max-w-[180px] sm:max-w-none mx-auto sm:mx-0" />
                 </div>
-                <div className="flex-1 p-6 pt-4 sm:pt-6">
+                <div className="flex-1 p-4 sm:p-6 pt-4 sm:pt-6">
                   <Skeleton className="h-5 sm:h-6 w-3/4" />
                   <Skeleton className="h-3 sm:h-4 w-1/2 mt-2" />
                   <Skeleton className="h-16 sm:h-20 w-full mt-4" />
@@ -84,14 +84,14 @@ export function FeaturedCompetitionsList() {
         <div className="flex items-center gap-2 justify-between">
           <Badge
             variant="default"
-            className="gap-1.5 font-bold text-3xl bg-black rounded-none"
+            className="gap-1.5 font-bold text-xl sm:text-2xl md:text-3xl bg-black rounded-none"
           >
-            <Sparkles className="h-3 w-3" />
+            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
             Featured Competitions
           </Badge>
-          <Link href="/browse">
-            <span className="text-xs hover:underline">
-              View All Competitions
+          <Link href="/browse" className="px-3 py-2 min-h-[44px] flex items-center justify-center hover:bg-muted rounded-md transition-colors">
+            <span className="text-sm hover:underline">
+              View All
             </span>
           </Link>
         </div>
