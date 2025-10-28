@@ -146,7 +146,7 @@ export function OpenPacksButton({
         </div>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <PackageOpen className="h-5 w-5" />
@@ -208,7 +208,8 @@ export function OpenPacksButton({
                   type="button"
                   onClick={() => setQuantityToOpen(unopenedCount.toString())}
                   disabled={unopenedCount === 0}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-semibold text-primary hover:text-primary/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-sm font-semibold text-primary hover:text-primary/80 active:text-primary/60 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] px-2 flex items-center justify-center"
+                  aria-label="Set to maximum packs"
                 >
                   MAX
                 </button>

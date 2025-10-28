@@ -86,7 +86,7 @@ export function CollectionArtGallery({
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 min-[480px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
         {[...Array(5)].map((_, i) => (
           <Skeleton key={i} className="aspect-[5/7] rounded-lg" />
         ))}
@@ -107,16 +107,18 @@ export function CollectionArtGallery({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 min-[480px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
         {displayedCards.map((card) => {
           const isOwned = card.ownedCount > 0;
           const starImage =
             RARITY_STARS[card.rarity as keyof typeof RARITY_STARS];
 
           return (
-            <div
+            <button
               key={card.imageUrl}
-              className="relative aspect-[5/7] rounded-lg overflow-hidden bg-muted hover:scale-105 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md"
+              type="button"
+              className="relative aspect-[5/7] rounded-lg overflow-hidden bg-muted hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 w-full"
+              aria-label={`View ${card.name} (${isOwned ? `owned x${card.ownedCount}` : 'not owned'})`}
             >
               <GalleryImage imageUrl={card.imageUrl} isOwned={isOwned} />
 
@@ -124,7 +126,7 @@ export function CollectionArtGallery({
               {starImage && (
                 <div className="absolute top-1 right-1 flex gap-0.5">
                   {Array.from({ length: card.rarity }).map((_, index) => (
-                    <div key={index} className="w-4 h-4 relative">
+                    <div key={index} className="w-5 h-5 sm:w-4 sm:h-4 relative">
                       <Image
                         src={starImage}
                         alt={`Rarity ${card.rarity}`}
@@ -138,11 +140,11 @@ export function CollectionArtGallery({
 
               {/* Ownership Badge */}
               {isOwned && (
-                <Badge className="absolute top-10 right-2 bg-green-600 text-white font-bold text-xs px-2 py-1">
+                <Badge className="absolute top-10 right-2 bg-green-600 text-white font-bold text-sm px-2 py-1.5">
                   x{card.ownedCount}
                 </Badge>
               )}
-            </div>
+            </button>
           );
         })}
       </div>

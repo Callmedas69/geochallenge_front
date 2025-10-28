@@ -281,7 +281,7 @@ export function BuyPacksButton({
         </div>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md">
         {!isConfirmed && (
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">

@@ -53,6 +53,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { ShareIcons } from "@/components/web/ShareIcons";
 import { formatEther } from "viem";
 import { useAccount, useReadContract } from "wagmi";
@@ -70,6 +75,7 @@ import {
   CheckCircle2,
   ArrowLeft,
   Users,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -228,6 +234,9 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
 
   // Collapsible breakdown state
   const [showBreakdown, setShowBreakdown] = useState(false);
+
+  // Collapsible Pack Info state (default open on desktop, closed on mobile)
+  const [isPackInfoOpen, setIsPackInfoOpen] = useState(true);
 
   // Manual refetch handler
   const handleRefetch = useCallback(async () => {
@@ -433,15 +442,18 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
     !isWinner; // Winner cannot claim participant prize
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
+    <div className="container mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="space-y-4">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Competitions
-          </Link>
-        </Button>
+        {/* Sticky Back Button for Mobile */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-2 sm:static sm:bg-transparent sm:backdrop-blur-none">
+          <Button variant="ghost" size="default" className="sm:h-11" asChild>
+            <Link href="/">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Competitions
+            </Link>
+          </Button>
+        </div>
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex-1">
@@ -481,14 +493,14 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
         <div className="lg:col-span-2 space-y-6">
           {/* Prize Pool & Details */}
           <Card>
-            <CardContent className="space-y-6 p-6">
+            <CardContent className="space-y-4 p-4 sm:space-y-6 sm:p-6">
               {/* Main Stats Grid */}
               <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 {/* Prize Pool */}
                 <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg">
                   <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm text-muted-foreground">
+                    <p className="text-sm sm:text-base text-muted-foreground">
                       Prize Pool
                     </p>
                     <p className="text-lg sm:text-xl font-bold truncate">
@@ -511,7 +523,7 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
                 <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg">
                   <Package className="h-6 w-6 sm:h-8 sm:w-8 text-purple-500 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm text-muted-foreground">
+                    <p className="text-sm sm:text-base text-muted-foreground">
                       Booster Box
                     </p>
                     {competition.boosterBoxEnabled ? (
@@ -530,7 +542,7 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
                 <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg">
                   <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm text-muted-foreground">
+                    <p className="text-sm sm:text-base text-muted-foreground">
                       Ticket Price
                     </p>
                     <p className="text-lg sm:text-xl font-bold truncate">
@@ -543,7 +555,7 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
                 <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted rounded-lg">
                   <Users className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm text-muted-foreground">
+                    <p className="text-sm sm:text-base text-muted-foreground">
                       Participants
                     </p>
                     {participantStats.loading ? (
@@ -565,11 +577,19 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
               </div>
 
               {/* NFT Collection Info */}
-              <div className="space-y-4 pt-4 border-t">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                  Pack Info
-                </h3>
+              <Collapsible
+                open={isPackInfoOpen}
+                onOpenChange={setIsPackInfoOpen}
+                className="space-y-4 pt-4 border-t"
+              >
+                <CollapsibleTrigger className="flex items-center justify-between w-full hover:text-foreground transition-colors group min-h-[44px]">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                    Pack Info
+                  </h3>
+                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isPackInfoOpen ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
 
+                <CollapsibleContent>
                 {loadingCollectionInfo ? (
                   <Skeleton className="h-56  w-full" />
                 ) : collectionInfoError ? (
@@ -700,7 +720,9 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
                           <div className="space-y-2">
                             <button
                               onClick={() => setShowBreakdown(!showBreakdown)}
-                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors min-h-[44px] py-2"
+                              aria-label="Toggle rarity breakdown"
+                              aria-expanded={showBreakdown}
                             >
                               <span>{showBreakdown ? "▲" : "▼"}</span>
                               <span>breakdown</span>
@@ -714,10 +736,10 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
                                     return (
                                       <div
                                         key={rarity}
-                                        className="flex items-center justify-between text-xs"
+                                        className="flex items-center justify-between text-sm"
                                       >
                                         <span
-                                          className={`${getRarityColor(rarityNum)} px-2 py-1 rounded text-white`}
+                                          className={`${getRarityColor(rarityNum)} px-2 py-1.5 rounded text-white text-sm`}
                                         >
                                           {getRarityName(rarityNum)}
                                         </span>
@@ -753,7 +775,8 @@ export function CompetitionClient({ id }: CompetitionClientProps) {
                     )}
                   </div>
                 ) : null}
-              </div>
+                </CollapsibleContent>
+              </Collapsible>
 
               {isExpired && isActive && (
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">

@@ -85,9 +85,10 @@ export function OverallProgress({
             <button
               onClick={onRefetch}
               disabled={isRefetching}
-              className="flex items-center gap-1 text-xs px-2 py-1 rounded-md hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 text-sm px-3 py-2.5 rounded-md hover:bg-muted active:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+              aria-label="Update progress"
             >
-              <RefreshCw className={`h-3 w-3 ${isRefetching ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
               <span>Update</span>
             </button>
           )}
