@@ -116,7 +116,8 @@ export function CustomConnectButton() {
                     return (
                       <Button
                         onClick={openConnectModal}
-                        className="!text-white cursor-pointer bg-slate-900 hover:bg-slate-800 text-sm sm:text-base min-h-[44px]"
+                        className="!text-white cursor-pointer bg-slate-900 hover:bg-slate-800 text-sm sm:text-base min-h-[44px] h-auto px-3 sm:px-4"
+                        size="sm"
                       >
                         Connect Wallet
                       </Button>
@@ -128,7 +129,7 @@ export function CustomConnectButton() {
                       <Button
                         onClick={openChainModal}
                         variant="destructive"
-                        className="bg-red-600 hover:bg-red-700 text-sm sm:text-base min-h-[44px]"
+                        className="bg-red-600 hover:bg-red-700 text-sm sm:text-base min-h-[44px] h-auto px-3 sm:px-4"
                       >
                         Wrong network
                       </Button>
@@ -140,7 +141,7 @@ export function CustomConnectButton() {
                       <Button
                         onClick={openChainModal}
                         variant="secondary"
-                        className="hidden sm:flex gap-2 items-center text-white cursor-pointer bg-slate-900 hover:bg-slate-800 text-sm sm:text-base min-h-[44px] w-auto"
+                        className="hidden sm:flex gap-2 items-center text-white cursor-pointer bg-slate-900 hover:bg-slate-800 text-sm sm:text-base min-h-[44px] h-auto sm:px-4 w-auto"
                       >
                         {chain.hasIcon && (
                           <div
@@ -167,7 +168,7 @@ export function CustomConnectButton() {
                       <Button
                         onClick={openAccountModal}
                         variant="secondary"
-                        className="flex gap-2 items-center text-white cursor-pointer bg-slate-900 hover:bg-slate-800 text-sm sm:text-base min-h-[44px] w-full sm:w-auto"
+                        className="flex gap-1.5 sm:gap-2 items-center text-white cursor-pointer bg-slate-900 hover:bg-slate-800 text-sm sm:text-base min-h-[44px] px-3 sm:px-4 w-auto"
                       >
                         <span className="truncate max-w-[120px] sm:max-w-none">
                           {displayName}

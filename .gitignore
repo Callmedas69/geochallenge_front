@@ -34,7 +34,7 @@ yarn-error.log*
 .env*
 smartContract/*
 docs/*
-CLAUDE.md
+# CLAUDE.md
 .claude
 scripts/*
 supabase/*
